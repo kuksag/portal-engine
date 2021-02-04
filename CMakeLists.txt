@@ -9,7 +9,7 @@ add_subdirectory(libs)
 
 include_directories(
         libs/AntTweakBar-1.16/include/
-        libs/glfw-3.1.2/include/
+        libs/glfw-3.3.2/include/
         libs/glm-0.9.7.1/
         libs/glew-1.13.0/include/
         libs/assimp-3.0.1270/include/
