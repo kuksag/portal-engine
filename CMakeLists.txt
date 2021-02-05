@@ -19,7 +19,7 @@ include_directories(
 set(ALL_LIBS ${OPENGL_LIBRARY} glfw GLEW_1130)
 
 
-include_directories(common)
+include_directories(include res src)
 
-add_executable(run_main src/main.cpp)
+add_executable(run_main src/main.cpp src/shader-loader.cpp include/shader-loader.h)
 target_link_libraries(run_main ${ALL_LIBS})
