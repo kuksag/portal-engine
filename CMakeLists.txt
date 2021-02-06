@@ -4,22 +4,14 @@ project(portal_engine)
 set(CMAKE_CXX_STANDARD 17)
 
 find_package(OpenGL REQUIRED)
+set(OPENGL_LIBS ${OPENGL_LIBRARY} glfw GLEW)
 
-add_subdirectory(libs)
+add_executable(main src/main.cpp src/shader-loader.cpp include/shader-loader.h)
 
-include_directories(
-        libs/AntTweakBar-1.16/include/
-        libs/glfw-3.3.2/include/
-        libs/glm-0.9.7.1/
-        libs/glew-1.13.0/include/
-        libs/assimp-3.0.1270/include/
-        .
-)
-
-set(ALL_LIBS ${OPENGL_LIBRARY} glfw GLEW_1130)
-
-
-include_directories(include res src)
-
-add_executable(run_main src/main.cpp src/shader-loader.cpp include/shader-loader.h)
-target_link_libraries(run_main ${ALL_LIBS})
+target_include_directories(main PUBLIC
+        include
+        res
+        src
+        include
+        ${OPENGL_INCLUDE_DIR})
+target_link_libraries(main ${OPENGL_LIBS})
