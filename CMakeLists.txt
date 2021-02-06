@@ -11,7 +11,5 @@ add_executable(main src/main.cpp src/shader-loader.cpp include/shader-loader.h)
 target_include_directories(main PUBLIC
         include
         res
-        src
-        include
-        ${OPENGL_INCLUDE_DIR})
+        src)
 target_link_libraries(main ${OPENGL_LIBS})
