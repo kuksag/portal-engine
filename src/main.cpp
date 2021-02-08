@@ -81,7 +81,8 @@ int main() {
         glm::mat4 model_matrix = glm::mat4(1.0f);
         glfwGetCursorPos(window, &x_mouse, &y_mouse);
 
-        auto time_delta = float(glfwGetTime() - last_time);
+        auto time_delta = static_cast<float>(glfwGetTime() - last_time);
+        last_time = glfwGetTime();
         auto x_delta = WIDTH / 2.0 - x_mouse;
         auto y_delta = HEIGHT / 2.0 - y_mouse;
 

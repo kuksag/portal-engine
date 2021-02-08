@@ -24,7 +24,7 @@ float initial_vertical_angle = 0.0f;
 // initial Field Of View, degree
 float initial_fov = 45.0f;
 
-float initial_movement_speed = 0.03f;    // 3 units / second
+float initial_movement_speed = 3.0f;    // 3 units / second
 float initial_mouse_sensitivity = 0.005f;
 float initial_ratio = 4.0f / 3.0f;
 float initial_display_range_near = 0.1f;
