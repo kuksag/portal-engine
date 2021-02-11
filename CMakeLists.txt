@@ -15,7 +15,7 @@ target_include_directories(GLFW INTERFACE ${GLFW_INCLUDE_DIRS})
 target_link_libraries(GLFW INTERFACE ${GLFW_LIBRARIES})
 add_library(GLFW::GLFW ALIAS GLFW)
 
-if (NOT glm::glm)
+if (NOT TARGET glm::glm)
   add_library(glm::glm ALIAS glm)
 endif()
 
