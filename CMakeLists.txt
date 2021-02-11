@@ -3,11 +3,11 @@ project(portal_engine)
 
 set(CMAKE_CXX_STANDARD 17)
 
-SET(CMAKE_MODULE_PATH "${CMAKE_SOURCE_DIR}/CMake/" ${CMAKE_MODULE_PATH})
+set(CMAKE_MODULE_PATH "${CMAKE_SOURCE_DIR}/CMake/" ${CMAKE_MODULE_PATH})
 
 find_package(OpenGL REQUIRED)
 find_package(GLEW REQUIRED)
-find_package(glm CONFIG REQUIRED)
+find_package(glm REQUIRED)
 
 find_package(GLFW REQUIRED)
 add_library(GLFW INTERFACE)
