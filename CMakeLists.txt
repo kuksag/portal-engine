@@ -3,13 +3,25 @@ project(portal_engine)
 
 set(CMAKE_CXX_STANDARD 17)
 
+SET(CMAKE_MODULE_PATH "${CMAKE_SOURCE_DIR}/CMake/" ${CMAKE_MODULE_PATH})
+
 find_package(OpenGL REQUIRED)
-set(OPENGL_LIBS ${OPENGL_LIBRARY} glfw GLEW)
+find_package(GLEW REQUIRED)
+find_package(glm CONFIG REQUIRED)
 
-add_executable(main src/main.cpp src/shader-loader.cpp include/shader-loader.h)
+find_package(GLFW REQUIRED)
+add_library(GLFW INTERFACE)
+target_include_directories(GLFW INTERFACE ${GLFW_INCLUDE_DIRS})
+target_link_libraries(GLFW INTERFACE ${GLFW_LIBRARIES})
+add_library(GLFW::GLFW ALIAS GLFW)
 
-target_include_directories(main PUBLIC
-        include
-        res
-        src)
+if (NOT glm::glm)
+  add_library(glm::glm ALIAS glm)
+endif()
+
+set(OPENGL_LIBS OpenGL::GL GLFW::GLFW GLEW::GLEW glm::glm)
+
+add_executable(main src/main.cpp src/shader-loader.cpp include/shader-loader.h src/camera.cpp include/camera.h)
+
+target_include_directories(main PUBLIC include src)
 target_link_libraries(main ${OPENGL_LIBS})
