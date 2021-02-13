@@ -69,7 +69,7 @@ void Game::run() {
         controller->cursor_position_callback();
         controller->key_callback();
         controller->update_time();
-        glfwSetWindowUserPointer(window, controller);
+        glfwSetWindowUserPointer(window, controller.get());
         glfwSetScrollCallback(window, scroll_callback);
 
         // ---------------------------------------------------------------------

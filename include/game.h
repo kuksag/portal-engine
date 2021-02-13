@@ -4,6 +4,8 @@
 #include <GL/glew.h>
 #include <GLFW/glfw3.h>
 
+#include <memory>
+
 #include "camera.h"
 #include "controls.h"
 
@@ -11,8 +13,8 @@ struct Controller;
 
 struct Game {
 private:
-    Camera *camera;
-    Controller *controller;
+    std::unique_ptr<Camera> camera;
+    std::unique_ptr<Controller> controller;
     GLFWwindow *window;
 
     // TODO: add `RenderEngine` object, that actually draws graphics
@@ -20,12 +22,15 @@ private:
     void window_initialise();
 
 public:
-    Game() : camera(new Camera()), controller(new Controller(this)), window() {
+    Game()
+        : camera(std::make_unique<Camera>()),
+          controller(std::make_unique<Controller>(this)),
+          window() {
         window_initialise();
 
         // TODO:
-        //  graphics_initialise(); <- step, where we load all resources (shaders,
-        //  textures etc.)
+        //  graphics_initialise(); <- step, where we load all resources
+        //  (shaders, textures etc.)
 
         // TODO:
         //  world_initialise(); <- step, where we place all the objects
