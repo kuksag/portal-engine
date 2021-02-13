@@ -59,11 +59,32 @@ void Controller::key_callback() {
         }
     }
 
-    // TODO: add `full_screen` key
+    for (auto &key : KEY_FULLSCREEN) {
+        if (glfwGetKey(game->window, key) == GLFW_PRESS) {
+            toggle_fullscreen();
+        }
+    }
 }
 
 void Controller::update_time() {
     last_time_point = static_cast<float>(glfwGetTime());
+}
+
+void Controller::toggle_fullscreen() {
+    const GLFWvidmode *mode = glfwGetVideoMode(glfwGetPrimaryMonitor());
+    if (is_fullscreen) {
+        glfwSetWindowMonitor(game->window, glfwGetPrimaryMonitor(), 0, 0,
+                             Settings::Window::WIDTH, Settings::Window::HEIGHT,
+                             mode->refreshRate);
+        glViewport(0, 0, Settings::Window::WIDTH, Settings::Window::HEIGHT);
+    } else {
+        glfwSetWindowMonitor(game->window, nullptr, 0, 0,
+                             Settings::Window::FULL_WIDTH,
+                             Settings::Window::FULL_HEIGHT, mode->refreshRate);
+        glViewport(0, 0, Settings::Window::FULL_WIDTH,
+                   Settings::Window::FULL_HEIGHT);
+    }
+    is_fullscreen = !is_fullscreen;
 }
 
 void scroll_callback(GLFWwindow *window, double x_delta, double y_delta) {

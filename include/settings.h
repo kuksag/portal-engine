@@ -9,14 +9,20 @@ namespace Controls {
 // TODO:
 //  Clang-Tidy: Initialization of '***' with static storage duration may
 //  throw an exception that cannot be caught
+
 const std::vector<int> KEY_FORWARD = {GLFW_KEY_W, GLFW_KEY_UP};
 const std::vector<int> KEY_RIGHT = {GLFW_KEY_D, GLFW_KEY_RIGHT};
 const std::vector<int> KEY_BACKWARD = {GLFW_KEY_S, GLFW_KEY_DOWN};
 const std::vector<int> KEY_LEFT = {GLFW_KEY_A, GLFW_KEY_LEFT};
+
+const std::vector<int> KEY_FULLSCREEN = {GLFW_KEY_F11};
+
+const int REFRESH_RATE = 60;
 }    // namespace Controls
 
 namespace Window {
 const int WIDTH = 1024, HEIGHT = 768;
+const int FULL_WIDTH = 1920, FULL_HEIGHT = 1200;
 const char TITLE[] = "Portal Engine";
 }    // namespace Window
 

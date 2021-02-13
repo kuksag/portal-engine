@@ -11,9 +11,10 @@ private:
     // TODO: use unique_ptr?
     Game *game;
     float last_time_point;
+    bool is_fullscreen;
 
 public:
-    explicit Controller(Game *game_) : game(game_), last_time_point() {
+    explicit Controller(Game *game_) : game(game_), last_time_point(), is_fullscreen(false) {
         update_time();
     }
 
@@ -22,6 +23,8 @@ public:
     void key_callback();
 
     void update_time();
+
+    void toggle_fullscreen();
 
     // TODO:
     //    void mouse_button_callback(int button, int action, int mods);
