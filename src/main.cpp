@@ -5,6 +5,7 @@
 
 #include "shader-loader.h"
 #include "camera.h"
+#include <SOIL/SOIL.h>
 
 int main() {
     GLFWwindow *window;
@@ -53,7 +54,9 @@ int main() {
     glBindVertexArray(vertex_array_id);
 
     static const GLfloat vertex_buffer_data[] = {
-        -1.0f, -1.0f, 0.0f, 1.0f, -1.0f, 0.0f, 0.0f, 1.0f, 0.0f,
+        -1.0f,  -1.0f, 0.0f,
+         1.0f,  -1.0f, 0.0f,
+         0.0f,   1.0f, 0.0f,
     };
 
     GLuint vertex_buffer;

@@ -21,7 +21,10 @@ endif()
 
 set(OPENGL_LIBS OpenGL::GL GLFW::GLFW GLEW::GLEW glm::glm)
 
+find_path(SOIL_INCLUDE_DIR SOIL/SOIL.h)
+find_library(SOIL_LIBRARY NAMES SOIL)
+
 add_executable(main src/main.cpp src/shader-loader.cpp include/shader-loader.h src/camera.cpp include/camera.h)
 
-target_include_directories(main PUBLIC include src)
-target_link_libraries(main ${OPENGL_LIBS})
+target_include_directories(main PUBLIC include src ${SOIL_INCLUDE_DIR})
+target_link_libraries(main ${OPENGL_LIBS} ${SOIL_LIBRARY})
