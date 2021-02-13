@@ -5,6 +5,7 @@ namespace Settings {
 
 namespace Window {
 const int WIDTH = 1024, HEIGHT = 768;
+const char TITLE[] = "Portal Engine";
 }
 
 namespace Camera {
@@ -12,10 +13,18 @@ const float X_POS = 0.0f;
 const float Y_POS = 0.0f;
 const float Z_POS = 2.0f;
 
+// radians
 const float HORIZONTAL_ANGLE = M_PI;
 const float VERTICAL_ANGLE = 0;
+const float VERTICAL_ANGLE_MIN = -M_PI_2;
+const float VERTICAL_ANGLE_MAX = M_PI_2;
 
+
+// degrees
 const float FOV = 45.0f;
+const float FOV_MIN = 1.0f;
+const float FOV_MAX = 120.0f;
+
 const float RATIO = 4.0f / 3.0f;
 
 const float MOVE_SPEED = 3.0f;

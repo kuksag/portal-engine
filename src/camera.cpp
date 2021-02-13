@@ -6,6 +6,9 @@
 #include <cmath>
 #include <glm/glm.hpp>
 
+#include "settings.h"
+using namespace Settings::Camera;
+
 [[nodiscard]] glm::vec3 Camera::get_position() const { return position; }
 
 // conversion from spherical coords to Cartesian
@@ -60,14 +63,15 @@ void Camera::process_mouse_move(float x_delta, float y_delta, bool constraint) {
     vertical_angle += mouse_sensitivity * y_delta;
 
     if (constraint) {
-        if (vertical_angle < -M_PI_2) vertical_angle = -M_PI_2;
-        if (vertical_angle > M_PI_2) vertical_angle = M_PI_2;
+        if (vertical_angle < VERTICAL_ANGLE_MIN)
+            vertical_angle = VERTICAL_ANGLE_MIN;
+        if (vertical_angle > VERTICAL_ANGLE_MAX)
+            vertical_angle = VERTICAL_ANGLE_MAX;
     }
 }
 
 void Camera::process_mouse_scroll(float y_delta) {
-    // TODO: this is have to be in settings.txt
     fov += y_delta;
-    if (fov < 1.0f) fov = 1.0f;
-    if (fov > 120.0f) fov = 120.0f;
+    if (fov < FOV_MIN) fov = FOV_MIN;
+    if (fov > FOV_MAX) fov = FOV_MAX;
 }
