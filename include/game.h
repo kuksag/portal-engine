@@ -22,19 +22,7 @@ private:
     void window_initialise();
 
 public:
-    Game()
-        : camera(std::make_unique<Camera>()),
-          controller(std::make_unique<Controller>(this)),
-          window() {
-        window_initialise();
-
-        // TODO:
-        //  graphics_initialise(); <- step, where we load all resources
-        //  (shaders, textures etc.)
-
-        // TODO:
-        //  world_initialise(); <- step, where we place all the objects
-    }
+    Game();
 
     void run();
 

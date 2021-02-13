@@ -3,20 +3,18 @@
 
 #include <GL/glew.h>
 #include <GLFW/glfw3.h>
+#include <memory>
 
 struct Game;
 
 struct Controller {
 private:
-    // TODO: use unique_ptr?
-    Game *game;
+    std::unique_ptr<Game> game;
     float last_time_point;
     bool is_fullscreen;
 
 public:
-    explicit Controller(Game *game_) : game(game_), last_time_point(), is_fullscreen(false) {
-        update_time();
-    }
+    explicit Controller(Game *game_);
 
     void scroll_callback(double y_delta);
     void cursor_position_callback();

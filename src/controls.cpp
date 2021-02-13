@@ -96,3 +96,8 @@ void scroll_callback(GLFWwindow *window, double x_delta, double y_delta) {
         assert(false);
     }
 }
+
+Controller::Controller(Game *game_)
+    : game(game_), last_time_point(), is_fullscreen(false) {
+    update_time();
+}

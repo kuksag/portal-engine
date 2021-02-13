@@ -7,6 +7,20 @@
 #include "shader-loader.h"
 using namespace Settings::Window;
 
+Game::Game()
+    : camera(std::make_unique<Camera>()),
+      controller(std::make_unique<Controller>(this)),
+      window() {
+    window_initialise();
+
+    // TODO:
+    //  graphics_initialise(); <- step, where we load all resources
+    //  (shaders, textures etc.)
+
+    // TODO:
+    //  world_initialise(); <- step, where we place all the objects
+}
+
 void Game::window_initialise() {
     if (!glfwInit()) {
         std::cerr << "Failed to initialize GLFW\n";
@@ -100,6 +114,8 @@ void Game::run() {
                      3);    // 3 indices starting at 0 -> 1 triangle
 
         glDisableVertexAttribArray(0);
+
+        // ---------------------------------------------------------------------
 
         // ---------------------------------------------------------------------
 
