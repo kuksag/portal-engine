@@ -2,7 +2,6 @@
 #include <GLFW/glfw3.h>
 
 #include <iostream>
-
 #include "shader-loader.h"
 #include "camera.h"
 #include <SOIL/SOIL.h>
@@ -47,26 +46,65 @@ int main() {
     glfwSetInputMode(window, GLFW_STICKY_KEYS, GL_TRUE);
     glfwSetInputMode(window, GLFW_CURSOR, GLFW_CURSOR_DISABLED);
 
-
-
-    GLuint vertex_array_id;
-    glGenVertexArrays(1, &vertex_array_id);
-    glBindVertexArray(vertex_array_id);
-
-    static const GLfloat vertex_buffer_data[] = {
-        -1.0f,  -1.0f, 0.0f,
-         1.0f,  -1.0f, 0.0f,
-         0.0f,   1.0f, 0.0f,
-    };
-
-    GLuint vertex_buffer;
-    glGenBuffers(1, &vertex_buffer);
-    glBindBuffer(GL_ARRAY_BUFFER, vertex_buffer);
-    glBufferData(GL_ARRAY_BUFFER, sizeof(vertex_buffer_data),
-                 vertex_buffer_data, GL_STATIC_DRAW);
-
     GLuint program_id = load_shader("res/shaders/temp.vertexshader",
                                     "res/shaders/temp.fragmentshader");
+
+    static const GLfloat vertex_buffer_data[] = {
+        /// Позиуии вершин     Позици координат
+         -1.0f, -1.0f, 0.0f,   0.0f, 0.0f,
+          1.0f, -1.0f, 0.0f,   1.0f, 0.0f,
+          0.0f,  1.0f, 0.0f,   0.5f, 1.0f,
+    };
+
+    GLuint indices[] = {
+        0, 1, 2,
+    };
+    ///Задает треугольники (тройки вершин), которые мы рисуем.
+    /// В случае дного не обязательно это использовать
+
+    GLuint vertex_buffer, vertex_array_id, element_buffer;
+    glGenVertexArrays(1, &vertex_array_id);
+    glGenBuffers(1, &vertex_buffer);
+    glGenBuffers(1, &element_buffer);
+
+    glBindVertexArray(vertex_array_id);
+
+    glBindBuffer(GL_ARRAY_BUFFER, vertex_buffer);
+    glBufferData(GL_ARRAY_BUFFER, sizeof(vertex_buffer_data), vertex_buffer_data, GL_STATIC_DRAW);
+
+    glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, element_buffer);
+    glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(indices), indices, GL_STATIC_DRAW);
+
+    glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 5 * sizeof(GLfloat), (GLvoid*)0);
+    glEnableVertexAttribArray(0);
+
+    glVertexAttribPointer(1, 2, GL_FLOAT, GL_FALSE, 5 * sizeof(GLfloat), (GLvoid*)(3 * sizeof(GLfloat)));
+    glEnableVertexAttribArray(1);
+
+    glBindVertexArray(0);
+    /// Раньше подобный код с glVertexAttribPointer был в теле цикла
+    /// С помощью vertex_array можно избавиться от копипаста
+    /// И это кажется более правильный вариант с точки зрения OpenGL
+
+
+    ///Загрузка текстур
+    GLuint texture;
+    glGenTextures(1, &texture);
+    glBindTexture(GL_TEXTURE_2D, texture);
+
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
+
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+
+    int width, height;
+    unsigned char* image = SOIL_load_image("res/textures/container.jpeg", &width, &height, 0, SOIL_LOAD_RGB);
+    glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, width, height, 0, GL_RGB, GL_UNSIGNED_BYTE, image);
+    glGenerateMipmap(GL_TEXTURE_2D);
+    SOIL_free_image_data(image);
+    glBindTexture(GL_TEXTURE_2D, 0); // Unbind texture when done, so we won't accidentily mess up our texture.
+
 
 
     GLuint MatrixID = glGetUniformLocation(program_id, "MVP");
@@ -78,8 +116,6 @@ int main() {
     do {
         glClearColor(0.0f, 0.0f, 0.4f, 0.0f);
         glClear(GL_COLOR_BUFFER_BIT);
-
-        glUseProgram(program_id);
 
         glm::mat4 model_matrix = glm::mat4(1.0f);
         glfwGetCursorPos(window, &x_mouse, &y_mouse);
@@ -108,28 +144,21 @@ int main() {
         glm::mat4 MVP = camera.get_projection_matrix() * camera.get_view_matrix() *
                         model_matrix;
 
+        glBindTexture(GL_TEXTURE_2D, texture);
+        glUseProgram(program_id);
         glUniformMatrix4fv(MatrixID, 1, GL_FALSE, &MVP[0][0]);
-
-        glEnableVertexAttribArray(0);
-        glBindBuffer(GL_ARRAY_BUFFER, vertex_buffer);
-        glVertexAttribPointer(0,    // attribute 0. No particular reason for 0,
-                                    // but must match the layout in the shader.
-                              3,    // size
-                              GL_FLOAT,    // type
-                              GL_FALSE,    // normalized?
-                              0,           // stride
-                              nullptr      // array buffer offset
-        );
-
-        glDrawArrays(GL_TRIANGLES, 0,
-                     3);    // 3 indices starting at 0 -> 1 triangle
-
-        glDisableVertexAttribArray(0);
+        glBindVertexArray(vertex_array_id);
+        glDrawElements(GL_TRIANGLES, 3, GL_UNSIGNED_INT, 0);
+        glBindVertexArray(0);
 
         glfwSwapBuffers(window);
         glfwPollEvents();
     } while (glfwGetKey(window, GLFW_KEY_ESCAPE) != GLFW_PRESS &&
              glfwWindowShouldClose(window) == 0);
+
+    glDeleteVertexArrays(1, &vertex_array_id);
+    glDeleteBuffers(1, &vertex_buffer);
+    glDeleteBuffers(1, &element_buffer);
 
     glfwTerminate();
 

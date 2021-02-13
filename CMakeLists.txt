@@ -9,6 +9,7 @@ find_package(OpenGL REQUIRED)
 find_package(GLEW REQUIRED)
 find_package(glm REQUIRED)
 
+
 find_package(GLFW REQUIRED)
 add_library(GLFW INTERFACE)
 target_include_directories(GLFW INTERFACE ${GLFW_INCLUDE_DIRS})
