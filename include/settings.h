@@ -39,7 +39,7 @@ const float FOV_MAX = 120.0f;
 const float RATIO = 4.0f / 3.0f;
 
 const float MOVE_SPEED = 3.0f;
-const float MOUSE_SENSITIVITY = 0.005f;
+const float MOUSE_SENSITIVITY = 0.25f;
 const float SCROLL_SENSITIVITY = 1.0f;
 
 const float DISPLAY_RANGE_NEAR = 0.1f;
