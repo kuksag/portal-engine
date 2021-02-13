@@ -1,7 +1,5 @@
 #include "controls.h"
 
-#include <algorithm>
-
 #include "game.h"
 #include "settings.h"
 using namespace Settings::Controls;

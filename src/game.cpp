@@ -72,7 +72,6 @@ void Game::run() {
         glfwSetWindowUserPointer(window, controller);
         glfwSetScrollCallback(window, scroll_callback);
 
-
         // ---------------------------------------------------------------------
         // TODO: this part should be done during `iterate` of RenderEngine
 

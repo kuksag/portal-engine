@@ -1,8 +1,8 @@
 #ifndef PORTAL_ENGINE_SETTINGS_H
 #define PORTAL_ENGINE_SETTINGS_H
 
-#include <vector>
 #include <cmath>
+#include <vector>
 namespace Settings {
 
 namespace Controls {
