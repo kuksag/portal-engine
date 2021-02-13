@@ -16,12 +16,12 @@ target_link_libraries(GLFW INTERFACE ${GLFW_LIBRARIES})
 add_library(GLFW::GLFW ALIAS GLFW)
 
 if (NOT TARGET glm::glm)
-  add_library(glm::glm ALIAS glm)
-endif()
+    add_library(glm::glm ALIAS glm)
+endif ()
 
 set(OPENGL_LIBS OpenGL::GL GLFW::GLFW GLEW::GLEW glm::glm)
 
-add_executable(main src/main.cpp src/shader-loader.cpp include/shader-loader.h src/camera.cpp include/camera.h)
+add_executable(main src/main.cpp src/shader-loader.cpp include/shader-loader.h src/camera.cpp include/camera.h src/controls.cpp include/controls.h src/game.cpp include/game.h include/settings.h)
 
 target_include_directories(main PUBLIC include src)
 target_link_libraries(main ${OPENGL_LIBS})
