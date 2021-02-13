@@ -1,5 +1,5 @@
-#ifndef PORTAL_ENGINE_H
-#define PORTAL_ENGINE_H
+#ifndef PORTAL_ENGINE_CAMERA_H
+#define PORTAL_ENGINE_CAMERA_H
 
 #include <GL/glew.h>
 #include <GLFW/glfw3.h>
