@@ -37,6 +37,8 @@ void Game::window_initialise() {
 
     glfwSetInputMode(window, GLFW_STICKY_KEYS, GL_TRUE);
     glfwSetInputMode(window, GLFW_CURSOR, GLFW_CURSOR_DISABLED);
+
+    glfwSetCursorPos(window, WIDTH, HEIGHT);
 }
 
 void Game::run() {
@@ -64,11 +66,12 @@ void Game::run() {
     // -------------------------------------------------------------------------
 
     do {
+        controller->cursor_position_callback();
+        controller->key_callback();
         controller->update_time();
         glfwSetWindowUserPointer(window, controller);
         glfwSetScrollCallback(window, scroll_callback);
-        glfwSetCursorPosCallback(window, cursor_position_callback);
-        glfwSetKeyCallback(window, key_callback);
+
 
         // ---------------------------------------------------------------------
         // TODO: this part should be done during `iterate` of RenderEngine

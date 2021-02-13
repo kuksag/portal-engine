@@ -19,8 +19,8 @@ public:
     }
 
     void scroll_callback(double y_delta);
-    void cursor_position_callback(double x_delta, double y_delta);
-    void key_callback(int key, int action);
+    void cursor_position_callback();
+    void key_callback();
 
     void update_time();
 
