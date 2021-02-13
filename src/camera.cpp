@@ -71,7 +71,7 @@ void Camera::process_mouse_move(float x_delta, float y_delta, bool constraint) {
 }
 
 void Camera::process_mouse_scroll(float y_delta) {
-    fov += y_delta;
+    fov += scroll_sensitivity * y_delta;
     if (fov < FOV_MIN) fov = FOV_MIN;
     if (fov > FOV_MAX) fov = FOV_MAX;
 }

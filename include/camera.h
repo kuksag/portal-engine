@@ -19,13 +19,14 @@ private:
 
     float move_speed;
     float mouse_sensitivity;
+    float scroll_sensitivity;
     float fov;
     float ratio;
     float display_range_near;
     float display_range_far;
 
 public:
-    explicit Camera(glm::vec3 position_ = glm::vec3(X_POS, Y_POS, Z_POS),
+    explicit Camera(glm::vec3 position_ = glm::vec3(POS_X, POS_Y, POS_Z),
                     float horizontal_angle_ = HORIZONTAL_ANGLE,
                     float vertical_angle_ = VERTICAL_ANGLE)
         : position(position_),
@@ -33,6 +34,7 @@ public:
           vertical_angle(vertical_angle_),
           move_speed(MOVE_SPEED),
           mouse_sensitivity(MOUSE_SENSITIVITY),
+          scroll_sensitivity(SCROLL_SENSITIVITY),
           fov(FOV),
           ratio(RATIO),
           display_range_near(DISPLAY_RANGE_NEAR),
