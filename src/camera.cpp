@@ -56,11 +56,11 @@ void Camera::move_left(float time_delta) {
     position -= move_speed * time_delta * get_right_direction();
 }
 
-void Camera::process_mouse_move(float x_delta, float y_delta, bool constraint) {
+void Camera::process_mouse_move(float x_delta, float y_delta, float time_delta, bool constraint) {
     // 'constraint = true' means that we cannot flip the screen
 
-    horizontal_angle += mouse_sensitivity * x_delta;
-    vertical_angle += mouse_sensitivity * y_delta;
+    horizontal_angle += mouse_sensitivity * time_delta * x_delta;
+    vertical_angle += mouse_sensitivity * time_delta * y_delta;
 
     if (constraint) {
         if (vertical_angle < VERTICAL_ANGLE_MIN)

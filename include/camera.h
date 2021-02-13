@@ -53,7 +53,7 @@ public:
     void move_right(float time_delta);
     void move_left(float time_delta);
 
-    void process_mouse_move(float x_delta, float y_delta,
+    void process_mouse_move(float x_delta, float y_delta, float time_delta,
                             bool constraint = true);
     void process_mouse_scroll(float y_delta);
 };
