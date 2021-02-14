@@ -1,8 +1,5 @@
 #include "camera.h"
 
-#include <GL/glew.h>
-#include <GLFW/glfw3.h>
-
 #include <cmath>
 #include <glm/glm.hpp>
 
@@ -56,7 +53,8 @@ void Camera::move_left(float time_delta) {
     position -= move_speed * time_delta * get_right_direction();
 }
 
-void Camera::process_mouse_move(float x_delta, float y_delta, float time_delta, bool constraint) {
+void Camera::process_mouse_move(float x_delta, float y_delta, float time_delta,
+                                bool constraint) {
     // 'constraint = true' means that we cannot flip the screen
 
     horizontal_angle += mouse_sensitivity * time_delta * x_delta;

@@ -3,18 +3,18 @@
 
 #include <GL/glew.h>
 #include <GLFW/glfw3.h>
-#include <memory>
 
-struct Game;
+#include "camera.h"
 
 struct Controller {
 private:
-    std::unique_ptr<Game> game;
+    Camera *camera;
+    GLFWwindow *window;
     float last_time_point;
     bool is_fullscreen;
 
 public:
-    explicit Controller(Game *game_);
+    explicit Controller(Camera *camera_, GLFWwindow *window);
 
     void scroll_callback(double y_delta);
     void cursor_position_callback();
