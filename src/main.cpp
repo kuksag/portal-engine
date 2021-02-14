@@ -1,5 +1,6 @@
 #include <GL/glew.h>
 #include <GLFW/glfw3.h>
+#include <SOIL.h>
 
 #include <iostream>
 #include <string>
@@ -8,7 +9,6 @@
 #include "controls.h"
 #include "settings.h"
 #include "shader-loader.h"
-#include <SOIL.h>
 using namespace Settings::Window;
 
 void window_initialise(GLFWwindow *&window) {
@@ -40,8 +40,8 @@ void window_initialise(GLFWwindow *&window) {
     }
 
     glfwSetInputMode(window, GLFW_STICKY_KEYS, GL_TRUE);
-        glfwSetInputMode(window, GLFW_CURSOR, GLFW_CURSOR_DISABLED);
-//    glfwSetInputMode(window, GLFW_CURSOR, GLFW_CURSOR_NORMAL);
+    glfwSetInputMode(window, GLFW_CURSOR, GLFW_CURSOR_DISABLED);
+    //    glfwSetInputMode(window, GLFW_CURSOR, GLFW_CURSOR_NORMAL);
 
     glfwSetCursorPos(window, WIDTH, HEIGHT);
 }
@@ -56,13 +56,14 @@ int main() {
 
     static const GLfloat vertex_buffer_data[] = {
         /// Позиуии вершин     Позици координат
-         -1.0f, -1.0f, 0.0f,   0.0f, 0.0f,
-          1.0f, -1.0f, 0.0f,   1.0f, 0.0f,
-          0.0f,  1.0f, 0.0f,   0.5f, 1.0f,
+        -1.0f, -1.0f, 0.0f, 0.0f, 0.0f, 1.0f, -1.0f, 0.0f,
+        1.0f,  0.0f,  0.0f, 1.0f, 0.0f, 0.5f, 1.0f,
     };
 
     GLuint indices[] = {
-        0, 1, 2,
+        0,
+        1,
+        2,
     };
     ///Задает треугольники (тройки вершин), которые мы рисуем.
     /// В случае дного не обязательно это использовать
@@ -75,22 +76,25 @@ int main() {
     glBindVertexArray(vertex_array_id);
 
     glBindBuffer(GL_ARRAY_BUFFER, vertex_buffer);
-    glBufferData(GL_ARRAY_BUFFER, sizeof(vertex_buffer_data), vertex_buffer_data, GL_STATIC_DRAW);
+    glBufferData(GL_ARRAY_BUFFER, sizeof(vertex_buffer_data),
+                 vertex_buffer_data, GL_STATIC_DRAW);
 
     glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, element_buffer);
-    glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(indices), indices, GL_STATIC_DRAW);
+    glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(indices), indices,
+                 GL_STATIC_DRAW);
 
-    glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 5 * sizeof(GLfloat), (GLvoid*)0);
+    glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 5 * sizeof(GLfloat),
+                          (GLvoid *)0);
     glEnableVertexAttribArray(0);
 
-    glVertexAttribPointer(1, 2, GL_FLOAT, GL_FALSE, 5 * sizeof(GLfloat), (GLvoid*)(3 * sizeof(GLfloat)));
+    glVertexAttribPointer(1, 2, GL_FLOAT, GL_FALSE, 5 * sizeof(GLfloat),
+                          (GLvoid *)(3 * sizeof(GLfloat)));
     glEnableVertexAttribArray(1);
 
     glBindVertexArray(0);
     /// Раньше подобный код с glVertexAttribPointer был в теле цикла
     /// С помощью vertex_array можно избавиться от копипаста
     /// И это кажется более правильный вариант с точки зрения OpenGL
-
 
     ///Загрузка текстур
     GLuint texture;
@@ -104,12 +108,14 @@ int main() {
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
 
     int width, height;
-    unsigned char* image = SOIL_load_image("res/textures/container.jpeg", &width, &height, 0, SOIL_LOAD_RGB);
-    glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, width, height, 0, GL_RGB, GL_UNSIGNED_BYTE, image);
+    unsigned char *image = SOIL_load_image("res/textures/container.jpeg",
+                                           &width, &height, 0, SOIL_LOAD_RGB);
+    glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, width, height, 0, GL_RGB,
+                 GL_UNSIGNED_BYTE, image);
     glGenerateMipmap(GL_TEXTURE_2D);
     SOIL_free_image_data(image);
-    glBindTexture(GL_TEXTURE_2D, 0); // Unbind texture when done, so we won't accidentily mess up our texture.
-
+    glBindTexture(GL_TEXTURE_2D, 0);    // Unbind texture when done, so we won't
+                                        // accidentily mess up our texture.
 
     GLuint MatrixID = glGetUniformLocation(program_id, "MVP");
     // -------------------------------------------------------------------------
@@ -129,8 +135,8 @@ int main() {
         glClear(GL_COLOR_BUFFER_BIT);
 
         glm::mat4 model_matrix = glm::mat4(1.0f);
-        glm::mat4 MVP = camera.get_projection_matrix() * camera.get_view_matrix() *
-                        model_matrix;
+        glm::mat4 MVP = camera.get_projection_matrix() *
+                        camera.get_view_matrix() * model_matrix;
 
         glBindTexture(GL_TEXTURE_2D, texture);
         glUseProgram(program_id);
