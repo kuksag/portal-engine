@@ -1,6 +1,6 @@
 #include <GL/glew.h>
 #include <GLFW/glfw3.h>
-#include <SOIL.h>
+#include <SOIL/SOIL.h>
 
 #include <iostream>
 #include <string>
@@ -114,8 +114,7 @@ int main() {
                  GL_UNSIGNED_BYTE, image);
     glGenerateMipmap(GL_TEXTURE_2D);
     SOIL_free_image_data(image);
-    glBindTexture(GL_TEXTURE_2D, 0);    // Unbind texture when done, so we won't
-                                        // accidentily mess up our texture.
+    glBindTexture(GL_TEXTURE_2D, 0);
 
     GLuint MatrixID = glGetUniformLocation(program_id, "MVP");
     // -------------------------------------------------------------------------
