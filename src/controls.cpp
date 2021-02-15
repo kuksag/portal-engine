@@ -71,7 +71,13 @@ void Controller::key_callback() {
 
     for (auto &key : KEY_FULLSCREEN) {
         if (glfwGetKey(window, key) == GLFW_PRESS) {
-            toggle_fullscreen();
+            toggle_fullscreen(true);
+        }
+    }
+
+    for (auto &key : KEY_WINDOWED) {
+        if (glfwGetKey(window, key) == GLFW_PRESS) {
+            toggle_fullscreen(false);
         }
     }
 }
@@ -80,21 +86,30 @@ void Controller::update_time() {
     last_time_point = static_cast<float>(glfwGetTime());
 }
 
-void Controller::toggle_fullscreen() {
-    const GLFWvidmode *mode = glfwGetVideoMode(glfwGetPrimaryMonitor());
-    if (is_fullscreen) {
-        glfwSetWindowMonitor(window, glfwGetPrimaryMonitor(), 0, 0,
-                             Settings::Window::WIDTH, Settings::Window::HEIGHT,
-                             mode->refreshRate);
-        glViewport(0, 0, Settings::Window::WIDTH, Settings::Window::HEIGHT);
+void Controller::toggle_fullscreen(bool flag) {
+    static int pos_x_last = 0;
+    static int pos_y_last = 0;
+    static int width_last_size = Settings::Window::WIDTH;
+    static int height_last_size = Settings::Window::HEIGHT;
+
+    if (flag == is_fullscreen) return;
+
+    if (flag) {
+        glfwGetWindowPos(window, &pos_x_last, &pos_y_last);
+        glfwGetWindowSize(window, &width_last_size, &height_last_size);
+
+        const GLFWvidmode *mode = glfwGetVideoMode(glfwGetPrimaryMonitor());
+
+        glfwSetWindowMonitor(window, glfwGetPrimaryMonitor(), 0, 0, mode->width,
+                             mode->height, mode->refreshRate);
+        framebuffer_size_callback(window, mode->width, mode->height);
+        is_fullscreen = true;
     } else {
-        glfwSetWindowMonitor(window, nullptr, 0, 0,
-                             Settings::Window::FULL_WIDTH,
-                             Settings::Window::FULL_HEIGHT, mode->refreshRate);
-        glViewport(0, 0, Settings::Window::FULL_WIDTH,
-                   Settings::Window::FULL_HEIGHT);
+        glfwSetWindowMonitor(window, nullptr, pos_x_last, pos_y_last,
+                             width_last_size, height_last_size, 0);
+        framebuffer_size_callback(window, width_last_size, height_last_size);
+        is_fullscreen = false;
     }
-    is_fullscreen = !is_fullscreen;
 }
 
 void scroll_callback(GLFWwindow *window, double x_delta, double y_delta) {
@@ -105,4 +120,8 @@ void scroll_callback(GLFWwindow *window, double x_delta, double y_delta) {
     } else {
         assert(false);
     }
+}
+
+void framebuffer_size_callback(GLFWwindow *window, int width, int height) {
+    glViewport(0, 0, width, height);
 }

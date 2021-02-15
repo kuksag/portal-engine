@@ -31,6 +31,7 @@ void window_initialise(GLFWwindow *&window) {
         assert(false);
     }
     glfwMakeContextCurrent(window);
+    glViewport(0, 0, WIDTH, HEIGHT);
 
     glewExperimental = true;
     if (glewInit() != GLEW_OK) {
@@ -128,6 +129,7 @@ int main() {
         controller.update_time();
         glfwSetWindowUserPointer(window, &controller);
         glfwSetScrollCallback(window, scroll_callback);
+        glfwSetFramebufferSizeCallback(window, framebuffer_size_callback);
 
         // ---------------------------------------------------------------------
 

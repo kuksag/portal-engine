@@ -22,7 +22,7 @@ public:
 
     void update_time();
 
-    void toggle_fullscreen();
+    void toggle_fullscreen(bool flag);
 
     // TODO:
     //    void mouse_button_callback(int button, int action, int mods);
@@ -30,5 +30,7 @@ public:
 };
 
 void scroll_callback(GLFWwindow *window, double x_delta, double y_delta);
+
+void framebuffer_size_callback(GLFWwindow *window, int width, int height);
 
 #endif    // PORTAL_ENGINE_CONTROLS_H
