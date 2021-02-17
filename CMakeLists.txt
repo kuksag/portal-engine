@@ -9,17 +9,22 @@ find_package(OpenGL REQUIRED)
 find_package(GLEW REQUIRED)
 find_package(glm REQUIRED)
 find_package(SOIL REQUIRED)
-
 find_package(GLFW REQUIRED)
+find_package(ASSIMP REQUIRED)
+
 add_library(GLFW INTERFACE)
 target_include_directories(GLFW INTERFACE ${GLFW_INCLUDE_DIRS})
 target_link_libraries(GLFW INTERFACE ${GLFW_LIBRARIES})
 add_library(GLFW::GLFW ALIAS GLFW)
 
-find_library(SOIL_LIBRARY NAMES SOIL)
 add_library(SOIL INTERFACE)
 target_include_directories(SOIL INTERFACE ${SOIL_INCLUDE_DIRS})
 target_link_libraries(SOIL INTERFACE ${SOIL_LIBRARIES})
+
+add_library(ASSIMP INTERFACE)
+target_include_directories(ASSIMP INTERFACE ${ASSIMP_INCLUDE_DIRS})
+target_link_libraries(ASSIMP INTERFACE ${ASSIMP_LIBRARIES})
+add_library(ASSIMP::ASSIMP ALIAS ASSIMP)
 
 if (NOT TARGET glm::glm)
     add_library(glm::glm ALIAS glm)
