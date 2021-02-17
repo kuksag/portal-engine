@@ -191,7 +191,7 @@ int main() {
 
         // ---------------------------------------------------------------------
         glBindTexture(GL_TEXTURE_2D, texture);
-        glUseProgram(temp_shader.get_id());
+        temp_shader.use();
 
         glUniformMatrix4fv(temp_shader.get_uniform_id("MVP"), 1, GL_FALSE,
                            &MVP[0][0]);
@@ -201,7 +201,7 @@ int main() {
         glBindVertexArray(0);
         // ---------------------------------------------------------------------
         float timeValue = glfwGetTime();
-        glUseProgram(fancy_shader.get_id());
+        fancy_shader.use();
         glUniform3f(fancy_shader.get_uniform_id("fancy_color"), sin(timeValue),
                     0.2, cos(timeValue));
 
