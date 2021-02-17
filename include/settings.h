@@ -16,6 +16,7 @@ const std::vector<int> KEY_BACKWARD = {GLFW_KEY_S, GLFW_KEY_DOWN};
 const std::vector<int> KEY_LEFT = {GLFW_KEY_A, GLFW_KEY_LEFT};
 
 const std::vector<int> KEY_FULLSCREEN = {GLFW_KEY_F11};
+const std::vector<int> KEY_WINDOWED = {GLFW_KEY_F12};
 
 const int REFRESH_RATE = 60;
 }    // namespace Controls
