@@ -116,11 +116,71 @@ int main() {
     SOIL_free_image_data(image);
     glBindTexture(GL_TEXTURE_2D, 0);    // Unbind texture when done, so we won't
                                         // accidentily mess up our texture.
-
-    GLuint MatrixID = glGetUniformLocation(program_id, "MVP");
     // -------------------------------------------------------------------------
+    GLfloat fancy_triangle[] = {
+        // positions         // colors
+        1.0f,  0.0f, 0.0, 1.0f, 0.0f, 0.0f,
+        0.0f,  1.0f, 0.0, 0.0f, 1.0f, 0.0f,
+        0.0f,  0.0f, 1.0, 0.0f, 0.0f, 1.0f,
+
+        1.0f,  0.0f, 0.0, 1.0f, 0.0f, 0.0f,
+        0.0f,  1.0f, 0.0, 0.0f, 1.0f, 0.0f,
+        0.0f,  0.0f, 0.0, 0.5f, 0.5f, 0.5f,
+
+        1.0f,  0.0f, 0.0, 1.0f, 0.0f, 0.0f,
+        0.0f,  0.0f, 1.0, 0.0f, 0.0f, 1.0f,
+        0.0f,  0.0f, 0.0, 0.5f, 0.5f, 0.5f,
+
+        0.0f,  0.0f, 1.0, 0.0f, 0.0f, 1.0f,
+        0.0f,  1.0f, 0.0, 0.0f, 1.0f, 0.0f,
+        0.0f,  0.0f, 0.0, 0.5f, 0.5f, 0.5f
+    };
+
+    // modifying location
+    std::vector<float> translate = {2.0f, -0.5f, 1.0f};
+    float size = 3;
+    for (int i = 0; i < 4 * 3; i++) {
+        for (int j = 0; j < 3; j++) {
+            fancy_triangle[6 * i + j] *= size;
+            fancy_triangle[6 * i + j] += translate[j];
+        }
+    }
+
+    // modifying color
+
+
+
+    unsigned int VBO, VAO;
+    glGenVertexArrays(1, &VAO);
+    glGenBuffers(1, &VBO);
+    // bind the Vertex Array Object first, then bind and set vertex buffer(s),
+    // and then configure vertex attributes(s).
+    glBindVertexArray(VAO);
+
+    glBindBuffer(GL_ARRAY_BUFFER, VBO);
+    glBufferData(GL_ARRAY_BUFFER, sizeof(fancy_triangle), fancy_triangle,
+                 GL_STATIC_DRAW);
+
+    glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 6 * sizeof(float), nullptr);
+    glEnableVertexAttribArray(0);
+
+    glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, 6 * sizeof(float),
+                          (void *)(3 * sizeof(float)));
+    glEnableVertexAttribArray(1);
+
+    glBindBuffer(GL_ARRAY_BUFFER, 0);
+
+    glBindVertexArray(0);
+    unsigned int fancy_shader = load_shader("res/shaders/fancy.vertexshader",
+                                            "res/shaders/fancy.fragmentshader");
+
+    // -------------------------------------------------------------------------
+    GLuint MatrixID = glGetUniformLocation(program_id, "MVP");
+    GLuint vertexColorLocation = glGetUniformLocation(fancy_shader, "fancy_color");
     Camera camera;
     Controller controller(&camera, window);
+    // -------------------------------------------------------------------------
+    glEnable(GL_DEPTH_TEST);
     // -------------------------------------------------------------------------
     do {
         controller.cursor_position_callback();
@@ -132,20 +192,31 @@ int main() {
         // ---------------------------------------------------------------------
 
         glClearColor(0.0f, 0.0f, 0.4f, 0.0f);
-        glClear(GL_COLOR_BUFFER_BIT);
+        glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
         glm::mat4 model_matrix = glm::mat4(1.0f);
         glm::mat4 MVP = camera.get_projection_matrix() *
                         camera.get_view_matrix() * model_matrix;
 
+        // ---------------------------------------------------------------------
         glBindTexture(GL_TEXTURE_2D, texture);
         glUseProgram(program_id);
 
         glUniformMatrix4fv(MatrixID, 1, GL_FALSE, &MVP[0][0]);
         glBindVertexArray(vertex_array_id);
         glDrawElements(GL_TRIANGLES, 3, GL_UNSIGNED_INT, 0);
-        glBindVertexArray(0);
 
+        glBindVertexArray(0);
+        // ---------------------------------------------------------------------
+        float timeValue = glfwGetTime();
+        glUseProgram(fancy_shader);
+        glUniform3f(vertexColorLocation, sin(timeValue), 0.2, cos(timeValue));
+
+
+        glUniformMatrix4fv(MatrixID, 1, GL_FALSE, &MVP[0][0]);
+        glBindVertexArray(VAO);
+        glDrawArrays(GL_TRIANGLES, 0, 12);
+        glBindVertexArray(0);
         // ---------------------------------------------------------------------
 
         glfwSwapBuffers(window);
