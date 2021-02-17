@@ -1,6 +1,6 @@
 #include <GL/glew.h>
 #include <GLFW/glfw3.h>
-#include <SOIL.h>
+#include <SOIL/SOIL.h>
 
 #include <iostream>
 #include <string>
@@ -9,6 +9,7 @@
 #include "controls.h"
 #include "settings.h"
 #include "shader-loader.h"
+#include "model.h"
 using namespace Settings::Window;
 
 void window_initialise(GLFWwindow *&window) {
@@ -67,6 +68,11 @@ int main() {
     };
     ///Задает треугольники (тройки вершин), которые мы рисуем.
     /// В случае дного не обязательно это использовать
+
+    //---------------------------------------------------
+    Model model("res/models/GiantStone/Stone.obj");
+    model.program_id = program_id;
+    //---------------------------------------------------
 
     GLuint vertex_buffer, vertex_array_id, element_buffer;
     glGenVertexArrays(1, &vertex_array_id);
@@ -147,6 +153,8 @@ int main() {
         glBindVertexArray(0);
 
         // ---------------------------------------------------------------------
+        model.Draw();
+        //----------------------------------------------------------------------
 
         glfwSwapBuffers(window);
         glfwPollEvents();
