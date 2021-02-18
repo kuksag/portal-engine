@@ -114,8 +114,76 @@ int main() {
                  GL_UNSIGNED_BYTE, image);
     glGenerateMipmap(GL_TEXTURE_2D);
     SOIL_free_image_data(image);
-    glBindTexture(GL_TEXTURE_2D, 0);    // Unbind texture when done, so we won't
-                                        // accidentily mess up our texture.
+    glBindTexture(GL_TEXTURE_2D, 0);
+    //--------------------------------------------------------------------------
+    // Освещаемый куб
+    static const GLfloat light_cube_vertexes[] = {
+        -0.5f, -0.5f, -0.5f,  0.0f,  0.0f, -1.0f,
+        0.5f, -0.5f, -0.5f,  0.0f,  0.0f, -1.0f,
+        0.5f,  0.5f, -0.5f,  0.0f,  0.0f, -1.0f,
+        0.5f,  0.5f, -0.5f,  0.0f,  0.0f, -1.0f,
+        -0.5f,  0.5f, -0.5f,  0.0f,  0.0f, -1.0f,
+        -0.5f, -0.5f, -0.5f,  0.0f,  0.0f, -1.0f,
+
+        -0.5f, -0.5f,  0.5f,  0.0f,  0.0f,  1.0f,
+        0.5f, -0.5f,  0.5f,  0.0f,  0.0f,  1.0f,
+        0.5f,  0.5f,  0.5f,  0.0f,  0.0f,  1.0f,
+        0.5f,  0.5f,  0.5f,  0.0f,  0.0f,  1.0f,
+        -0.5f,  0.5f,  0.5f,  0.0f,  0.0f,  1.0f,
+        -0.5f, -0.5f,  0.5f,  0.0f,  0.0f,  1.0f,
+
+        -0.5f,  0.5f,  0.5f, -1.0f,  0.0f,  0.0f,
+        -0.5f,  0.5f, -0.5f, -1.0f,  0.0f,  0.0f,
+        -0.5f, -0.5f, -0.5f, -1.0f,  0.0f,  0.0f,
+        -0.5f, -0.5f, -0.5f, -1.0f,  0.0f,  0.0f,
+        -0.5f, -0.5f,  0.5f, -1.0f,  0.0f,  0.0f,
+        -0.5f,  0.5f,  0.5f, -1.0f,  0.0f,  0.0f,
+
+        0.5f,  0.5f,  0.5f,  1.0f,  0.0f,  0.0f,
+        0.5f,  0.5f, -0.5f,  1.0f,  0.0f,  0.0f,
+        0.5f, -0.5f, -0.5f,  1.0f,  0.0f,  0.0f,
+        0.5f, -0.5f, -0.5f,  1.0f,  0.0f,  0.0f,
+        0.5f, -0.5f,  0.5f,  1.0f,  0.0f,  0.0f,
+        0.5f,  0.5f,  0.5f,  1.0f,  0.0f,  0.0f,
+
+        -0.5f, -0.5f, -0.5f,  0.0f, -1.0f,  0.0f,
+        0.5f, -0.5f, -0.5f,  0.0f, -1.0f,  0.0f,
+        0.5f, -0.5f,  0.5f,  0.0f, -1.0f,  0.0f,
+        0.5f, -0.5f,  0.5f,  0.0f, -1.0f,  0.0f,
+        -0.5f, -0.5f,  0.5f,  0.0f, -1.0f,  0.0f,
+        -0.5f, -0.5f, -0.5f,  0.0f, -1.0f,  0.0f,
+
+        -0.5f,  0.5f, -0.5f,  0.0f,  1.0f,  0.0f,
+        0.5f,  0.5f, -0.5f,  0.0f,  1.0f,  0.0f,
+        0.5f,  0.5f,  0.5f,  0.0f,  1.0f,  0.0f,
+        0.5f,  0.5f,  0.5f,  0.0f,  1.0f,  0.0f,
+        -0.5f,  0.5f,  0.5f,  0.0f,  1.0f,  0.0f,
+        -0.5f,  0.5f, -0.5f,  0.0f,  1.0f,  0.0f
+    };
+
+    GLuint light_vertex_buffer, light_vertex_array_id;
+    glGenVertexArrays(1, &light_vertex_array_id);
+    glGenBuffers(1, &light_vertex_buffer);
+
+    glBindVertexArray(light_vertex_array_id);
+
+    glBindBuffer(GL_ARRAY_BUFFER, light_vertex_buffer);
+    glBufferData(GL_ARRAY_BUFFER, sizeof(light_cube_vertexes),
+                 light_cube_vertexes, GL_STATIC_DRAW);
+    //vertex coords
+    glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 6 * sizeof(GLfloat),
+                          (GLvoid *)0);
+    glEnableVertexAttribArray(0);
+
+    //normal
+    glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, 6 * sizeof(GLfloat),
+                          (GLvoid *)(3 * sizeof(GLfloat)));
+    glEnableVertexAttribArray(1);
+
+    glBindVertexArray(0);
+
+    ShaderProgram light_shader("light.vertex", "light.fragment");
+
     // -------------------------------------------------------------------------
     GLfloat fancy_triangle[] = {// positions         // colors
                                 1.0f, 0.0f, 0.0,  1.0f, 0.0f, 0.0f, 0.0f, 1.0f,
@@ -160,6 +228,7 @@ int main() {
     glfwSetWindowUserPointer(window, &controller);
     glfwSetScrollCallback(window, scroll_callback);
     glfwSetFramebufferSizeCallback(window, framebuffer_size_callback);
+
     // -------------------------------------------------------------------------
     do {
         controller.cursor_position_callback();
@@ -213,6 +282,17 @@ int main() {
         glDrawElements(GL_TRIANGLES, 12, GL_UNSIGNED_INT, nullptr);
         glBindVertexArray(0);
         // ---------------------------------------------------------------------
+        light_shader.use();
+        glm::mat4 MVP_trans = MVP;
+        glUniformMatrix4fv(light_shader.get_uniform_id("MVP"), 1, GL_FALSE,
+                           &MVP[0][0]);
+        glUniform3f(light_shader.get_uniform_id("light_color"), 1.0f, 1.0f, 1.0f);
+        glUniform3f(light_shader.get_uniform_id("light_pos"), -3.0f, -1.0f, -3.0f);
+        glUniform3f(light_shader.get_uniform_id("trans"), 3.0f, 3.0f, 3.0f);
+        glBindVertexArray(light_vertex_array_id);
+        glDrawArrays(GL_TRIANGLES, 0, 36);
+        glBindVertexArray(0);
+        //----------------------------------------------------------------------
 
         glfwSwapBuffers(window);
         glfwPollEvents();
