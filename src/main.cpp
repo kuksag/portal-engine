@@ -8,7 +8,7 @@
 #include "camera.h"
 #include "controls.h"
 #include "settings.h"
-#include "shader-loader.h"
+#include "shader.h"
 using namespace Settings::Window;
 
 void window_initialise(GLFWwindow *&window) {
@@ -52,8 +52,7 @@ int main() {
     window_initialise(window);
     // -------------------------------------------------------------------------
 
-    GLuint program_id = load_shader("res/shaders/temp.vertexshader",
-                                    "res/shaders/temp.fragmentshader");
+    ShaderProgram temp_shader("temp.vertex", "temp.fragment");
 
     static const GLfloat vertex_buffer_data[] = {
         /// Позиуии вершин     Позици координат
@@ -120,22 +119,17 @@ int main() {
     // -------------------------------------------------------------------------
     GLfloat fancy_triangle[] = {
         // positions         // colors
-        1.0f,  0.0f, 0.0, 1.0f, 0.0f, 0.0f,
-        0.0f,  1.0f, 0.0, 0.0f, 1.0f, 0.0f,
-        0.0f,  0.0f, 1.0, 0.0f, 0.0f, 1.0f,
+        1.0f, 0.0f, 0.0,  1.0f, 0.0f, 0.0f, 0.0f, 1.0f, 0.0,
+        0.0f, 1.0f, 0.0f, 0.0f, 0.0f, 1.0,  0.0f, 0.0f, 1.0f,
 
-        1.0f,  0.0f, 0.0, 1.0f, 0.0f, 0.0f,
-        0.0f,  1.0f, 0.0, 0.0f, 1.0f, 0.0f,
-        0.0f,  0.0f, 0.0, 0.5f, 0.5f, 0.5f,
+        1.0f, 0.0f, 0.0,  1.0f, 0.0f, 0.0f, 0.0f, 1.0f, 0.0,
+        0.0f, 1.0f, 0.0f, 0.0f, 0.0f, 0.0,  0.5f, 0.5f, 0.5f,
 
-        1.0f,  0.0f, 0.0, 1.0f, 0.0f, 0.0f,
-        0.0f,  0.0f, 1.0, 0.0f, 0.0f, 1.0f,
-        0.0f,  0.0f, 0.0, 0.5f, 0.5f, 0.5f,
+        1.0f, 0.0f, 0.0,  1.0f, 0.0f, 0.0f, 0.0f, 0.0f, 1.0,
+        0.0f, 0.0f, 1.0f, 0.0f, 0.0f, 0.0,  0.5f, 0.5f, 0.5f,
 
-        0.0f,  0.0f, 1.0, 0.0f, 0.0f, 1.0f,
-        0.0f,  1.0f, 0.0, 0.0f, 1.0f, 0.0f,
-        0.0f,  0.0f, 0.0, 0.5f, 0.5f, 0.5f
-    };
+        0.0f, 0.0f, 1.0,  0.0f, 0.0f, 1.0f, 0.0f, 1.0f, 0.0,
+        0.0f, 1.0f, 0.0f, 0.0f, 0.0f, 0.0,  0.5f, 0.5f, 0.5f};
 
     // modifying location
     std::vector<float> translate = {2.0f, -0.5f, 1.0f};
@@ -148,8 +142,6 @@ int main() {
     }
 
     // modifying color
-
-
 
     unsigned int VBO, VAO;
     glGenVertexArrays(1, &VAO);
@@ -172,24 +164,21 @@ int main() {
     glBindBuffer(GL_ARRAY_BUFFER, 0);
 
     glBindVertexArray(0);
-    unsigned int fancy_shader = load_shader("res/shaders/fancy.vertexshader",
-                                            "res/shaders/fancy.fragmentshader");
+    ShaderProgram fancy_shader("fancy.vertex", "fancy.fragment");
 
     // -------------------------------------------------------------------------
-    GLuint MatrixID = glGetUniformLocation(program_id, "MVP");
-    GLuint vertexColorLocation = glGetUniformLocation(fancy_shader, "fancy_color");
     Camera camera;
     Controller controller(&camera, window);
     // -------------------------------------------------------------------------
     glEnable(GL_DEPTH_TEST);
+    glfwSetWindowUserPointer(window, &controller);
+    glfwSetScrollCallback(window, scroll_callback);
+    glfwSetFramebufferSizeCallback(window, framebuffer_size_callback);
     // -------------------------------------------------------------------------
     do {
         controller.cursor_position_callback();
         controller.key_callback();
         controller.update_time();
-        glfwSetWindowUserPointer(window, &controller);
-        glfwSetScrollCallback(window, scroll_callback);
-        glfwSetFramebufferSizeCallback(window, framebuffer_size_callback);
 
         // ---------------------------------------------------------------------
 
@@ -202,20 +191,22 @@ int main() {
 
         // ---------------------------------------------------------------------
         glBindTexture(GL_TEXTURE_2D, texture);
-        glUseProgram(program_id);
+        temp_shader.use();
 
-        glUniformMatrix4fv(MatrixID, 1, GL_FALSE, &MVP[0][0]);
+        glUniformMatrix4fv(temp_shader.get_uniform_id("MVP"), 1, GL_FALSE,
+                           &MVP[0][0]);
         glBindVertexArray(vertex_array_id);
         glDrawElements(GL_TRIANGLES, 3, GL_UNSIGNED_INT, 0);
 
         glBindVertexArray(0);
         // ---------------------------------------------------------------------
         float timeValue = glfwGetTime();
-        glUseProgram(fancy_shader);
-        glUniform3f(vertexColorLocation, sin(timeValue), 0.2, cos(timeValue));
+        fancy_shader.use();
+        glUniform3f(fancy_shader.get_uniform_id("fancy_color"), sin(timeValue),
+                    0.2, cos(timeValue));
 
-
-        glUniformMatrix4fv(MatrixID, 1, GL_FALSE, &MVP[0][0]);
+        glUniformMatrix4fv(fancy_shader.get_uniform_id("MVP"), 1, GL_FALSE,
+                           &MVP[0][0]);
         glBindVertexArray(VAO);
         glDrawArrays(GL_TRIANGLES, 0, 12);
         glBindVertexArray(0);
