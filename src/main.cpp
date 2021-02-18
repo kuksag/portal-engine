@@ -117,19 +117,12 @@ int main() {
     glBindTexture(GL_TEXTURE_2D, 0);    // Unbind texture when done, so we won't
                                         // accidentily mess up our texture.
     // -------------------------------------------------------------------------
-    GLfloat fancy_triangle[] = {
-        // positions         // colors
-        1.0f, 0.0f, 0.0,  1.0f, 0.0f, 0.0f, 0.0f, 1.0f, 0.0,
-        0.0f, 1.0f, 0.0f, 0.0f, 0.0f, 1.0,  0.0f, 0.0f, 1.0f,
+    GLfloat fancy_triangle[] = {// positions         // colors
+                                1.0f, 0.0f, 0.0,  1.0f, 0.0f, 0.0f, 0.0f, 1.0f,
+                                0.0,  0.0f, 1.0f, 0.0f, 0.0f, 0.0f, 0.0,  0.5f,
+                                0.5f, 0.5f, 0.0f, 0.0f, 1.0,  0.0f, 0.0f, 1.0f};
 
-        1.0f, 0.0f, 0.0,  1.0f, 0.0f, 0.0f, 0.0f, 1.0f, 0.0,
-        0.0f, 1.0f, 0.0f, 0.0f, 0.0f, 0.0,  0.5f, 0.5f, 0.5f,
-
-        1.0f, 0.0f, 0.0,  1.0f, 0.0f, 0.0f, 0.0f, 0.0f, 1.0,
-        0.0f, 0.0f, 1.0f, 0.0f, 0.0f, 0.0,  0.5f, 0.5f, 0.5f,
-
-        0.0f, 0.0f, 1.0,  0.0f, 0.0f, 1.0f, 0.0f, 1.0f, 0.0,
-        0.0f, 1.0f, 0.0f, 0.0f, 0.0f, 0.0,  0.5f, 0.5f, 0.5f};
+    int fancy_indices[]{0, 2, 1, 0, 2, 3, 0, 1, 3, 1, 2, 3};
 
     unsigned int VBO, VAO, EBO;
     glGenVertexArrays(1, &VAO);
@@ -138,6 +131,10 @@ int main() {
     // bind the Vertex Array Object first, then bind and set vertex buffer(s),
     // and then configure vertex attributes(s).
     glBindVertexArray(VAO);
+
+    glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, EBO);
+    glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(fancy_indices), fancy_indices,
+                 GL_STATIC_DRAW);
 
     glBindBuffer(GL_ARRAY_BUFFER, VBO);
     glBufferData(GL_ARRAY_BUFFER, sizeof(fancy_triangle), fancy_triangle,
@@ -195,10 +192,14 @@ int main() {
                     0.2, cos(timeValue));
 
         glm::mat4 translation_matrix(1.0f), scale_matrix(1.0f);
-        translation_matrix =
-            glm::translate(translation_matrix, glm::vec3(sin(glfwGetTime() / 4) * 0.8f, cos(glfwGetTime() / 32) * 0.5f, cos(glfwGetTime() / 8) * 0.6f));
         scale_matrix =
-            glm::scale(scale_matrix, glm::vec3(2.0f, 2.0f, 2.0f));
+            glm::scale(scale_matrix, glm::vec3(sin(glfwGetTime() / 8) * 6.0f,
+                                               sin(glfwGetTime() / 8) * 6.0f,
+                                               sin(glfwGetTime() / 8) * 6.0f));
+        translation_matrix = glm::translate(
+            translation_matrix, glm::vec3(sin(glfwGetTime() / 4) * 0.8f,
+                                          cos(glfwGetTime() / 32) * 0.5f,
+                                          cos(glfwGetTime() / 8) * 0.6f));
 
         glm::mat4 rotation_matrix(1.0f);
         rotation_matrix = glm::rotate(rotation_matrix, (float)glfwGetTime(),
@@ -209,7 +210,7 @@ int main() {
         glUniformMatrix4fv(fancy_shader.get_uniform_id("MVP"), 1, GL_FALSE,
                            &MVP[0][0]);
         glBindVertexArray(VAO);
-        glDrawArrays(GL_TRIANGLES, 0, 12);
+        glDrawElements(GL_TRIANGLES, 12, GL_UNSIGNED_INT, nullptr);
         glBindVertexArray(0);
         // ---------------------------------------------------------------------
 
