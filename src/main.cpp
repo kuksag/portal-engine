@@ -131,21 +131,10 @@ int main() {
         0.0f, 0.0f, 1.0,  0.0f, 0.0f, 1.0f, 0.0f, 1.0f, 0.0,
         0.0f, 1.0f, 0.0f, 0.0f, 0.0f, 0.0,  0.5f, 0.5f, 0.5f};
 
-    // modifying location
-    std::vector<float> translate = {2.0f, -0.5f, 1.0f};
-    float size = 3;
-    for (int i = 0; i < 4 * 3; i++) {
-        for (int j = 0; j < 3; j++) {
-            fancy_triangle[6 * i + j] *= size;
-            fancy_triangle[6 * i + j] += translate[j];
-        }
-    }
-
-    // modifying color
-
-    unsigned int VBO, VAO;
+    unsigned int VBO, VAO, EBO;
     glGenVertexArrays(1, &VAO);
     glGenBuffers(1, &VBO);
+    glGenBuffers(1, &EBO);
     // bind the Vertex Array Object first, then bind and set vertex buffer(s),
     // and then configure vertex attributes(s).
     glBindVertexArray(VAO);
@@ -205,6 +194,18 @@ int main() {
         glUniform3f(fancy_shader.get_uniform_id("fancy_color"), sin(timeValue),
                     0.2, cos(timeValue));
 
+        glm::mat4 translation_matrix(1.0f), scale_matrix(1.0f);
+        translation_matrix =
+            glm::translate(translation_matrix, glm::vec3(sin(glfwGetTime() / 4) * 0.8f, cos(glfwGetTime() / 32) * 0.5f, cos(glfwGetTime() / 8) * 0.6f));
+        scale_matrix =
+            glm::scale(scale_matrix, glm::vec3(2.0f, 2.0f, 2.0f));
+
+        glm::mat4 rotation_matrix(1.0f);
+        rotation_matrix = glm::rotate(rotation_matrix, (float)glfwGetTime(),
+                                      glm::vec3(0.4f, 0.8f, -0.1f));
+
+        MVP = camera.get_projection_matrix() * camera.get_view_matrix() *
+              scale_matrix * rotation_matrix * translation_matrix;
         glUniformMatrix4fv(fancy_shader.get_uniform_id("MVP"), 1, GL_FALSE,
                            &MVP[0][0]);
         glBindVertexArray(VAO);
