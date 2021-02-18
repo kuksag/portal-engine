@@ -283,9 +283,10 @@ int main() {
         glBindVertexArray(0);
         // ---------------------------------------------------------------------
         light_shader.use();
-        glm::mat4 MVP_trans = MVP;
+        glm::mat4 MVP_trans = camera.get_projection_matrix() *
+                              camera.get_view_matrix() * glm::mat4(1.0f);
         glUniformMatrix4fv(light_shader.get_uniform_id("MVP"), 1, GL_FALSE,
-                           &MVP[0][0]);
+                           &MVP_trans[0][0]);
         glUniform3f(light_shader.get_uniform_id("light_color"), 1.0f, 1.0f, 1.0f);
         glUniform3f(light_shader.get_uniform_id("light_pos"), -3.0f, -1.0f, -3.0f);
         glUniform3f(light_shader.get_uniform_id("trans"), 3.0f, 3.0f, 3.0f);
