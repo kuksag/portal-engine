@@ -66,7 +66,7 @@ int main() {
         2,
     };
     ///Задает треугольники (тройки вершин), которые мы рисуем.
-    /// В случае дного не обязательно это использовать
+    /// В случае одного не обязательно это использовать
 
     GLuint vertex_buffer, vertex_array_id, element_buffer;
     glGenVertexArrays(1, &vertex_array_id);
@@ -118,35 +118,48 @@ int main() {
     //--------------------------------------------------------------------------
     // Освещаемый куб
     static const GLfloat light_cube_vertexes[] = {
-        -0.5f, -0.5f, -0.5f, 0.0f,  0.0f,  -1.0f, 0.5f,  -0.5f, -0.5f,
-        0.0f,  0.0f,  -1.0f, 0.5f,  0.5f,  -0.5f, 0.0f,  0.0f,  -1.0f,
-        0.5f,  0.5f,  -0.5f, 0.0f,  0.0f,  -1.0f, -0.5f, 0.5f,  -0.5f,
-        0.0f,  0.0f,  -1.0f, -0.5f, -0.5f, -0.5f, 0.0f,  0.0f,  -1.0f,
+        -0.5f, -0.5f, -0.5f,    0.0f,  0.0f,  -1.0f,
+        0.5f,  -0.5f, -0.5f,    0.0f,  0.0f,  -1.0f,
+        0.5f,  0.5f,  -0.5f,    0.0f,  0.0f,  -1.0f,
+        0.5f,  0.5f,  -0.5f,    0.0f,  0.0f,  -1.0f,
+        -0.5f, 0.5f,  -0.5f,    0.0f,  0.0f,  -1.0f,
+        -0.5f, -0.5f, -0.5f,    0.0f,  0.0f,  -1.0f,
 
-        -0.5f, -0.5f, 0.5f,  0.0f,  0.0f,  1.0f,  0.5f,  -0.5f, 0.5f,
-        0.0f,  0.0f,  1.0f,  0.5f,  0.5f,  0.5f,  0.0f,  0.0f,  1.0f,
-        0.5f,  0.5f,  0.5f,  0.0f,  0.0f,  1.0f,  -0.5f, 0.5f,  0.5f,
-        0.0f,  0.0f,  1.0f,  -0.5f, -0.5f, 0.5f,  0.0f,  0.0f,  1.0f,
+        -0.5f, -0.5f, 0.5f,     0.0f,  0.0f,  1.0f,
+        0.5f,  -0.5f, 0.5f,     0.0f,  0.0f,  1.0f,
+        0.5f,  0.5f,  0.5f,     0.0f,  0.0f,  1.0f,
+        0.5f,  0.5f,  0.5f,     0.0f,  0.0f,  1.0f,
+        -0.5f, 0.5f,  0.5f,     0.0f,  0.0f,  1.0f,
+        -0.5f, -0.5f, 0.5f,     0.0f,  0.0f,  1.0f,
 
-        -0.5f, 0.5f,  0.5f,  -1.0f, 0.0f,  0.0f,  -0.5f, 0.5f,  -0.5f,
-        -1.0f, 0.0f,  0.0f,  -0.5f, -0.5f, -0.5f, -1.0f, 0.0f,  0.0f,
-        -0.5f, -0.5f, -0.5f, -1.0f, 0.0f,  0.0f,  -0.5f, -0.5f, 0.5f,
-        -1.0f, 0.0f,  0.0f,  -0.5f, 0.5f,  0.5f,  -1.0f, 0.0f,  0.0f,
+        -0.5f, 0.5f,  0.5f,    -1.0f, 0.0f,  0.0f,
+        -0.5f, 0.5f,  -0.5f,   -1.0f, 0.0f,  0.0f,
+        -0.5f, -0.5f, -0.5f,   -1.0f, 0.0f,  0.0f,
+        -0.5f, -0.5f, -0.5f,   -1.0f, 0.0f,  0.0f,
+        -0.5f, -0.5f, 0.5f,    -1.0f, 0.0f,  0.0f,
+        -0.5f, 0.5f,  0.5f,    -1.0f, 0.0f,  0.0f,
 
-        0.5f,  0.5f,  0.5f,  1.0f,  0.0f,  0.0f,  0.5f,  0.5f,  -0.5f,
-        1.0f,  0.0f,  0.0f,  0.5f,  -0.5f, -0.5f, 1.0f,  0.0f,  0.0f,
-        0.5f,  -0.5f, -0.5f, 1.0f,  0.0f,  0.0f,  0.5f,  -0.5f, 0.5f,
-        1.0f,  0.0f,  0.0f,  0.5f,  0.5f,  0.5f,  1.0f,  0.0f,  0.0f,
+        0.5f,  0.5f,  0.5f,     1.0f,  0.0f,  0.0f,
+        0.5f,  0.5f,  -0.5f,    1.0f,  0.0f,  0.0f,
+        0.5f,  -0.5f, -0.5f,    1.0f,  0.0f,  0.0f,
+        0.5f,  -0.5f, -0.5f,    1.0f,  0.0f,  0.0f,
+        0.5f,  -0.5f, 0.5f,     1.0f,  0.0f,  0.0f,
+        0.5f,  0.5f,  0.5f,     1.0f,  0.0f,  0.0f,
 
-        -0.5f, -0.5f, -0.5f, 0.0f,  -1.0f, 0.0f,  0.5f,  -0.5f, -0.5f,
-        0.0f,  -1.0f, 0.0f,  0.5f,  -0.5f, 0.5f,  0.0f,  -1.0f, 0.0f,
-        0.5f,  -0.5f, 0.5f,  0.0f,  -1.0f, 0.0f,  -0.5f, -0.5f, 0.5f,
-        0.0f,  -1.0f, 0.0f,  -0.5f, -0.5f, -0.5f, 0.0f,  -1.0f, 0.0f,
+        -0.5f, -0.5f, -0.5f,    0.0f,  -1.0f, 0.0f,
+        0.5f,  -0.5f, -0.5f,    0.0f,  -1.0f, 0.0f,
+        0.5f,  -0.5f, 0.5f,     0.0f,  -1.0f, 0.0f,
+        0.5f,  -0.5f, 0.5f,     0.0f,  -1.0f, 0.0f,
+        -0.5f, -0.5f, 0.5f,     0.0f,  -1.0f, 0.0f,
+        -0.5f, -0.5f, -0.5f,    0.0f,  -1.0f, 0.0f,
 
-        -0.5f, 0.5f,  -0.5f, 0.0f,  1.0f,  0.0f,  0.5f,  0.5f,  -0.5f,
-        0.0f,  1.0f,  0.0f,  0.5f,  0.5f,  0.5f,  0.0f,  1.0f,  0.0f,
-        0.5f,  0.5f,  0.5f,  0.0f,  1.0f,  0.0f,  -0.5f, 0.5f,  0.5f,
-        0.0f,  1.0f,  0.0f,  -0.5f, 0.5f,  -0.5f, 0.0f,  1.0f,  0.0f};
+        -0.5f, 0.5f,  -0.5f,    0.0f,  1.0f,  0.0f,
+        0.5f,  0.5f,  -0.5f,    0.0f,  1.0f,  0.0f,
+        0.5f,  0.5f,  0.5f,     0.0f,  1.0f,  0.0f,
+        0.5f,  0.5f,  0.5f,     0.0f,  1.0f,  0.0f,
+        -0.5f, 0.5f,  0.5f,     0.0f,  1.0f,  0.0f,
+        -0.5f, 0.5f,  -0.5f,    0.0f,  1.0f,  0.0f
+    };
 
     GLuint light_vertex_buffer, light_vertex_array_id;
     glGenVertexArrays(1, &light_vertex_array_id);
@@ -272,20 +285,19 @@ int main() {
                                        current_center_m4[0][1],
                                        current_center_m4[0][2]};
 
-        MVP = camera.get_projection_matrix() * camera.get_view_matrix() *
+        glm::mat4 MVP_PYRAMID = camera.get_projection_matrix() * camera.get_view_matrix() *
               scale_matrix * rotation_matrix * translation_matrix;
         glUniformMatrix4fv(fancy_shader.get_uniform_id("MVP"), 1, GL_FALSE,
-                           &MVP[0][0]);
+                           &MVP_PYRAMID[0][0]);
         glBindVertexArray(VAO);
         glDrawElements(GL_TRIANGLES, 12, GL_UNSIGNED_INT, nullptr);
         glBindVertexArray(0);
         // ---------------------------------------------------------------------
         light_shader.use();
-        glm::mat4 MVP_trans =
-            camera.get_projection_matrix() * camera.get_view_matrix() *
-            glm::translate(glm::mat4(1.0f), glm::vec3(3.0f, 3.0f, 3.0f));
+        glUniform3f(light_shader.get_uniform_id("trans"),
+                           3.0f, 3.0f, 3.0f);
         glUniformMatrix4fv(light_shader.get_uniform_id("MVP"), 1, GL_FALSE,
-                           &MVP_trans[0][0]);
+                           &MVP[0][0]);
         glUniform3f(light_shader.get_uniform_id("light_color"),
                     current_fancy_color[0], current_fancy_color[1],
                     current_fancy_color[2]);
@@ -296,12 +308,11 @@ int main() {
         glDrawArrays(GL_TRIANGLES, 0, 36);
         glBindVertexArray(0);
         //----------------------------------------------------------------------
-        
         float distance = 0;
         for (int i = 0; i < 3; i++) {
             distance += (current_center_v3[i] - camera.get_position()[i]) * (current_center_v3[i] - camera.get_position()[i]);
         }
-        
+
 
         //----------------------------------------------------------------------
 
