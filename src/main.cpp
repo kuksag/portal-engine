@@ -1,6 +1,6 @@
 #include <GL/glew.h>
 #include <GLFW/glfw3.h>
-#include <SOIL.h>
+#include <SOIL/SOIL.h>
 
 #include <iostream>
 #include <string>
@@ -301,7 +301,7 @@ int main() {
         for (int i = 0; i < 3; i++) {
             distance += (current_center_v3[i] - camera.get_position()[i]) * (current_center_v3[i] - camera.get_position()[i]);
         }
-        std::cerr << sqrt(distance) << '\n';
+        
 
         //----------------------------------------------------------------------
 
