@@ -278,10 +278,8 @@ int main() {
             translation_matrix * rotation_matrix * scale_matrix;
 
         glm::mat4 current_center_m4 =
-            pyramid_mode_matrix * glm::mat4({{1.0f, 1.0f, 1.0f, 1.0f},
-                                             {1.0f, 1.0f, 1.0f, 1.0f},
-                                             {1.0f, 1.0f, 1.0f, 1.0f},
-                                             {1.0f, 1.0f, 1.0f, 1.0f}});
+            pyramid_mode_matrix * glm::mat4(glm::vec4(1.0f), glm::vec4(1.0f),
+                                            glm::vec4(1.0f), glm::vec4(1.0f));
         glm::vec3 current_center_v3 = {current_center_m4[0][0],
                                        current_center_m4[0][1],
                                        current_center_m4[0][2]};
