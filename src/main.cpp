@@ -254,39 +254,40 @@ int main() {
 
         glBindVertexArray(0);
         // ---------------------------------------------------------------------
-        float timeValue = glfwGetTime();
+        float time_value = glfwGetTime();
         fancy_shader.use();
-        glm::vec3 current_fancy_color = {sin(timeValue), 0.2, cos(timeValue)};
+        glm::vec3 current_fancy_color = {sin(time_value), 0.2, cos(time_value)};
         glUniform3f(fancy_shader.get_uniform_id("fancy_color"),
                     current_fancy_color[0], current_fancy_color[1],
                     current_fancy_color[2]);
 
-        glm::mat4 translation_matrix(1.0f), scale_matrix(1.0f);
-        scale_matrix =
-            glm::scale(scale_matrix, glm::vec3(sin(glfwGetTime() / 8) * 2.0f,
-                                               sin(glfwGetTime() / 8) * 2.0f,
-                                               sin(glfwGetTime() / 8) * 2.0f));
+        glm::mat4 rotation_matrix(1.0f), translation_matrix(1.0f),
+            scale_matrix(1.0f);
+
+        rotation_matrix = glm::rotate(rotation_matrix, time_value,
+                                      glm::vec3(6 * M_PI, M_PI, M_PI_2));
+        float radius = 3.0f;
+        glm::vec3 pivot = {3.0f, 3.0f, 3.0f};
         translation_matrix = glm::translate(
-            translation_matrix, glm::vec3(sin(glfwGetTime() / 4) * 0.8f,
-                                          cos(glfwGetTime() / 32) * 0.5f,
-                                          cos(glfwGetTime() / 8) * 0.6f));
+            translation_matrix,
+            glm::vec3(cos(time_value / 2) * radius, sin(time_value / 2),
+                      sin(time_value / 2) * radius) +
+                pivot);
 
-        glm::mat4 rotation_matrix(1.0f);
-        rotation_matrix = glm::rotate(rotation_matrix, (float)glfwGetTime(),
-                                      glm::vec3(0.4f, 0.8f, -0.1f));
+        glm::mat4 pyramid_mode_matrix =
+            translation_matrix * rotation_matrix * scale_matrix;
 
-        glm::mat4 current_center_m4 = scale_matrix * rotation_matrix *
-                                      translation_matrix *
-                                      glm::mat4({{1.0f, 1.0f, 1.0f, 1.0f},
-                                                 {1.0f, 1.0f, 1.0f, 1.0f},
-                                                 {1.0f, 1.0f, 1.0f, 1.0f},
-                                                 {1.0f, 1.0f, 1.0f, 1.0f}});
+        glm::mat4 current_center_m4 =
+            pyramid_mode_matrix * glm::mat4({{1.0f, 1.0f, 1.0f, 1.0f},
+                                             {1.0f, 1.0f, 1.0f, 1.0f},
+                                             {1.0f, 1.0f, 1.0f, 1.0f},
+                                             {1.0f, 1.0f, 1.0f, 1.0f}});
         glm::vec3 current_center_v3 = {current_center_m4[0][0],
                                        current_center_m4[0][1],
                                        current_center_m4[0][2]};
 
-        glm::mat4 MVP_PYRAMID = camera.get_projection_matrix() * camera.get_view_matrix() *
-              scale_matrix * rotation_matrix * translation_matrix;
+        glm::mat4 MVP_PYRAMID = camera.get_projection_matrix() *
+                                camera.get_view_matrix() * pyramid_mode_matrix;
         glUniformMatrix4fv(fancy_shader.get_uniform_id("MVP"), 1, GL_FALSE,
                            &MVP_PYRAMID[0][0]);
         glBindVertexArray(VAO);
@@ -294,8 +295,7 @@ int main() {
         glBindVertexArray(0);
         // ---------------------------------------------------------------------
         light_shader.use();
-        glUniform3f(light_shader.get_uniform_id("trans"),
-                           3.0f, 3.0f, 3.0f);
+        glUniform3f(light_shader.get_uniform_id("trans"), 3.0f, 3.0f, 3.0f);
         glUniformMatrix4fv(light_shader.get_uniform_id("MVP"), 1, GL_FALSE,
                            &MVP[0][0]);
         glUniform3f(light_shader.get_uniform_id("light_color"),
