@@ -308,13 +308,6 @@ int main() {
         glDrawArrays(GL_TRIANGLES, 0, 36);
         glBindVertexArray(0);
         //----------------------------------------------------------------------
-        float distance = 0;
-        for (int i = 0; i < 3; i++) {
-            distance += (current_center_v3[i] - camera.get_position()[i]) * (current_center_v3[i] - camera.get_position()[i]);
-        }
-
-
-        //----------------------------------------------------------------------
 
         glfwSwapBuffers(window);
         glfwPollEvents();
