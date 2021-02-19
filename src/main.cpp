@@ -234,10 +234,9 @@ int main() {
         controller.key_callback();
         controller.update_time();
 
-        // ---------------------------------------------------------------------
-
         glClearColor(0.0f, 0.0f, 0.4f, 0.0f);
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+        // ---------------------------------------------------------------------
 
         glm::mat4 model_matrix = glm::mat4(1.0f);
         glm::mat4 MVP = camera.get_projection_matrix() *
@@ -254,13 +253,8 @@ int main() {
 
         glBindVertexArray(0);
         // ---------------------------------------------------------------------
+        // pyramid pos, color, transformations etc.
         float time_value = glfwGetTime();
-        fancy_shader.use();
-        glm::vec3 current_fancy_color = {sin(time_value), 0.2, cos(time_value)};
-        glUniform3f(fancy_shader.get_uniform_id("fancy_color"),
-                    current_fancy_color[0], current_fancy_color[1],
-                    current_fancy_color[2]);
-
         glm::mat4 rotation_matrix(1.0f), translation_matrix(1.0f),
             scale_matrix(1.0f);
 
@@ -283,15 +277,36 @@ int main() {
         glm::vec3 current_center_v3 = {current_center_m4[0][0],
                                        current_center_m4[0][1],
                                        current_center_m4[0][2]};
-
+        // ---------------------------------------------------------------------
+        // pyrmaid camera
+        fancy_shader.use();
         glm::mat4 MVP_PYRAMID = camera.get_projection_matrix() *
                                 camera.get_view_matrix() * pyramid_mode_matrix;
         glUniformMatrix4fv(fancy_shader.get_uniform_id("MVP"), 1, GL_FALSE,
                            &MVP_PYRAMID[0][0]);
+        // ---------------------------------------------------------------------
+        // pyramid shape draw
+        glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
+        glm::vec3 current_fancy_color = {0.0f, 0.0f, 0.0f};
+        glUniform3f(fancy_shader.get_uniform_id("fancy_color"),
+                    current_fancy_color[0], current_fancy_color[1],
+                    current_fancy_color[2]);
+        glBindVertexArray(VAO);
+        glDrawElements(GL_TRIANGLES, 12, GL_UNSIGNED_INT, nullptr);
+        glBindVertexArray(0);
+        glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
+        // ---------------------------------------------------------------------
+        // pyramid draw
+        current_fancy_color = {sin(time_value), 0.2, cos(time_value)};
+        glUniform3f(fancy_shader.get_uniform_id("fancy_color"),
+                    current_fancy_color[0], current_fancy_color[1],
+                    current_fancy_color[2]);
+
         glBindVertexArray(VAO);
         glDrawElements(GL_TRIANGLES, 12, GL_UNSIGNED_INT, nullptr);
         glBindVertexArray(0);
         // ---------------------------------------------------------------------
+        // "cube of shade" draw
         light_shader.use();
         glUniform3f(light_shader.get_uniform_id("trans"), 3.0f, 3.0f, 3.0f);
         glUniformMatrix4fv(light_shader.get_uniform_id("MVP"), 1, GL_FALSE,
