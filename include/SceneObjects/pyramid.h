@@ -13,10 +13,12 @@ private:
 public:
     Pyramid();
 
-    void supply_shader(const glm::vec3 &fancy_color);
+    void supply_shader(const glm::vec3 &color);
 
     void draw(const glm::mat4 &camera_projection_view) override;
     void draw_shape(const glm::mat4 &camera_projection_view) override;
+
+    glm::vec3 get_center() const;
 };
 
 #endif    // PORTAL_ENGINE_PYRAMID_H
