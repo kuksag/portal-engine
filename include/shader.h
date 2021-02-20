@@ -20,8 +20,8 @@ private:
     std::string fragment_shader_name;
 
 public:
-    explicit ShaderProgram(const std::string &vertex_shader_name,
-                           const std::string &fragment_shader_name);
+    explicit ShaderProgram(std::string vertex_shader_name,
+                           std::string fragment_shader_name);
 
     void use() const;
 
