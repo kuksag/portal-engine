@@ -4,7 +4,8 @@
 #include "entity.h"
 
 struct Drawable : Entity {
-    virtual void draw() = 0;
+    virtual void draw(const glm::mat4 &camera_projection_view) = 0;
+    virtual void draw_shape(const glm::mat4 &camera_projection_view) = 0;
 };
 
 #endif    // PORTAL_ENGINE_DRAWABLE_H
