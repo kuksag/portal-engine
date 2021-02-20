@@ -28,8 +28,16 @@ endif ()
 
 set(OPENGL_LIBS OpenGL::GL GLFW::GLFW GLEW::GLEW glm::glm SOIL)
 
-
-add_executable(main src/main.cpp src/camera.cpp include/camera.h src/controls.cpp include/controls.h include/settings.h src/shader.cpp include/shader.h src/entity.cpp include/entity.h src/drawable.cpp include/drawable.h src/model.cpp include/model.h src/mesh.cpp src/mesh.h)
+add_executable(main
+        src/main.cpp
+        src/camera.cpp include/camera.h
+        src/controls.cpp include/controls.h
+        include/settings.h
+        src/shader.cpp include/shader.h
+        src/entity.cpp include/entity.h
+        src/drawable.cpp include/drawable.h
+        src/mesh.cpp include/mesh.h
+        src/SceneObjects/pyramid.cpp include/SceneObjects/pyramid.h)
 
 target_include_directories(main PUBLIC include src)
 target_link_libraries(main ${OPENGL_LIBS})

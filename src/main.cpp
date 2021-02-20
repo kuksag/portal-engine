@@ -9,6 +9,8 @@
 #include "controls.h"
 #include "settings.h"
 #include "shader.h"
+
+#include "SceneObjects/pyramid.h"
 using namespace Settings::Window;
 
 void window_initialise(GLFWwindow *&window) {
@@ -41,8 +43,8 @@ void window_initialise(GLFWwindow *&window) {
     }
 
     glfwSetInputMode(window, GLFW_STICKY_KEYS, GL_TRUE);
-    glfwSetInputMode(window, GLFW_CURSOR, GLFW_CURSOR_DISABLED);
-    //    glfwSetInputMode(window, GLFW_CURSOR, GLFW_CURSOR_NORMAL);
+//    glfwSetInputMode(window, GLFW_CURSOR, GLFW_CURSOR_DISABLED);
+        glfwSetInputMode(window, GLFW_CURSOR, GLFW_CURSOR_NORMAL);
 
     glfwSetCursorPos(window, WIDTH, HEIGHT);
 }
@@ -52,7 +54,7 @@ int main() {
     window_initialise(window);
     // -------------------------------------------------------------------------
 
-    ShaderProgram temp_shader("temp.vertex", "temp.fragment");
+    ShaderProgram temp_shader("shaders/temp.vertex", "shaders/temp.fragment");
 
     static const GLfloat vertex_buffer_data[] = {
         /// Позиуии вершин     Позици координат
@@ -182,42 +184,79 @@ int main() {
 
     glBindVertexArray(0);
 
-    ShaderProgram light_shader("light.vertex", "light.fragment");
+    ShaderProgram light_shader("shaders/light.vertex", "shaders/light.fragment");
 
     // -------------------------------------------------------------------------
-    GLfloat fancy_triangle[] = {1.0f, 0.0f, 0.0,  1.0f, 0.0f, 0.0f, 0.0f, 1.0f,
-                                0.0,  0.0f, 1.0f, 0.0f, 0.0f, 0.0f, 0.0,  0.5f,
-                                0.5f, 0.5f, 0.0f, 0.0f, 1.0,  0.0f, 0.0f, 1.0f};
+    std::vector<GLfloat> fancy_triangle = {1.0f, 0.0f, 0.0,
+                                0.0f, 1.0f, 0.0,
+                                0.0f, 0.0f, 0.0,
+                                0.0f, 0.0f, 1.0};
 
-    int fancy_indices[]{0, 2, 1, 0, 2, 3, 0, 1, 3, 1, 2, 3};
+    std::vector<GLfloat> ftc = {1.0f, 0.0f, 0.0f,
+                     0.0f, 1.0f, 0.0f,
+                     0.5f, 0.5f, 0.5f,
+                     0.0f, 0.0f, 1.0f};
 
-    unsigned int VBO, VAO, EBO;
+    std::vector<int> fancy_indices = {0, 2, 1, 0, 2, 3, 0, 1, 3, 1, 2, 3};
+
+    unsigned int VBO, CBO, VAO, EBO;
     glGenVertexArrays(1, &VAO);
     glGenBuffers(1, &VBO);
+    glGenBuffers(1, &CBO);
     glGenBuffers(1, &EBO);
-    // bind the Vertex Array Object first, then bind and set vertex buffer(s),
-    // and then configure vertex attributes(s).
+
     glBindVertexArray(VAO);
-
-    glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, EBO);
-    glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(fancy_indices), fancy_indices,
-                 GL_STATIC_DRAW);
-
     glBindBuffer(GL_ARRAY_BUFFER, VBO);
-    glBufferData(GL_ARRAY_BUFFER, sizeof(fancy_triangle), fancy_triangle,
+
+    glBufferData(GL_ARRAY_BUFFER,
+                 fancy_triangle.size() * sizeof(typeof(fancy_triangle.front())),
+                 &fancy_triangle[0],
                  GL_STATIC_DRAW);
 
-    glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 6 * sizeof(float), nullptr);
+    glVertexAttribPointer(0,
+                          3,
+                          GL_FLOAT,
+                          GL_FALSE,
+                          3 * sizeof(typeof(fancy_triangle.front())),
+                          nullptr);
+
     glEnableVertexAttribArray(0);
 
-    glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, 6 * sizeof(float),
-                          (void *)(3 * sizeof(float)));
-    glEnableVertexAttribArray(1);
+    glBindVertexArray(0);
 
-    glBindBuffer(GL_ARRAY_BUFFER, 0);
+
+    glBindVertexArray(VAO);
+    glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, EBO);
+
+    glBufferData(
+        GL_ELEMENT_ARRAY_BUFFER,
+        fancy_indices.size() * sizeof(typeof(fancy_indices.front())),
+        &fancy_indices[0],
+        GL_STATIC_DRAW);
 
     glBindVertexArray(0);
-    ShaderProgram fancy_shader("fancy.vertex", "fancy.fragment");
+
+
+    glBindVertexArray(VAO);
+    glBindBuffer(GL_ARRAY_BUFFER, CBO);
+
+    glBufferData(GL_ARRAY_BUFFER,
+                 ftc.size() * sizeof(typeof(ftc.front())),
+                 &ftc[0],
+                 GL_STATIC_DRAW);
+
+    glVertexAttribPointer(1,
+                          3,
+                          GL_FLOAT,
+                          GL_FALSE,
+                          3 * sizeof(typeof(ftc.front())),
+                          nullptr);
+
+    glEnableVertexAttribArray(1);
+
+    glBindVertexArray(0);
+
+    ShaderProgram fancy_shader("shaders/fancy.vertex", "shaders/fancy.fragment");
 
     // -------------------------------------------------------------------------
     Camera camera;
@@ -229,12 +268,14 @@ int main() {
     glfwSetFramebufferSizeCallback(window, framebuffer_size_callback);
 
     // -------------------------------------------------------------------------
+    Pyramid ololo;
+    // -------------------------------------------------------------------------
     do {
         controller.cursor_position_callback();
         controller.key_callback();
         controller.update_time();
 
-        glClearColor(0.0f, 0.0f, 0.4f, 0.0f);
+        glClearColor(1.0f, 1.0f, 1.0f, 0.0f);
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
         // ---------------------------------------------------------------------
 
@@ -320,6 +361,10 @@ int main() {
         glBindVertexArray(light_vertex_array_id);
         glDrawArrays(GL_TRIANGLES, 0, 36);
         glBindVertexArray(0);
+        // ---------------------------------------------------------------------
+        ololo.supply_shader(current_fancy_color);
+        ololo.draw(camera.get_projection_matrix() * camera.get_view_matrix());
+//        ololo.draw_shape(camera.get_projection_matrix() * camera.get_view_matrix());
         //----------------------------------------------------------------------
 
         glfwSwapBuffers(window);
