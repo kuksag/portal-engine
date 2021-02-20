@@ -1,6 +1,6 @@
 #include <GL/glew.h>
 #include <GLFW/glfw3.h>
-#include <SOIL.h>
+#include <SOIL/SOIL.h>
 
 #include <iostream>
 #include <string>
@@ -243,6 +243,8 @@ int main() {
         // ---------------------------------------------------------------------
         // "cube of shade" draw
         light_shader.use();
+        auto pos = camera.get_position();
+        glUniform3f(light_shader.get_uniform_id("camera_pos"), pos.x, pos.y, pos.z);
         glUniform3f(light_shader.get_uniform_id("trans"), 3.0f, 3.0f, 3.0f);
         glUniformMatrix4fv(light_shader.get_uniform_id("MVP"), 1, GL_FALSE,
                            &MVP[0][0]);
