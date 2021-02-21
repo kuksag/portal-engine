@@ -1,24 +1,24 @@
-#ifndef PORTAL_ENGINE_PYRAMID_H
-#define PORTAL_ENGINE_PYRAMID_H
+// #ifndef PORTAL_ENGINE_PYRAMID_H
+// #define PORTAL_ENGINE_PYRAMID_H
 
-#include "drawable.h"
+// #include "drawable.h"
 
-#include "mesh.h"
-#include <vector>
+// #include "mesh.h"
+// #include <vector>
 
-struct Pyramid : Drawable {
-private:
-    Mesh mesh;
+// struct Pyramid : Drawable {
+// private:
+//     Mesh mesh;
 
-public:
-    Pyramid();
+// public:
+//     Pyramid();
 
-    void supply_shader(const glm::vec3 &color);
+//     void supply_shader(const glm::vec3 &color);
 
-    void draw(const glm::mat4 &camera_projection_view) override;
-    void draw_shape(const glm::mat4 &camera_projection_view) override;
+//     void draw(const glm::mat4 &camera_projection_view) override;
+//     void draw_shape(const glm::mat4 &camera_projection_view) override;
 
-    glm::vec3 get_center() const;
-};
+//     glm::vec3 get_center() const;
+// };
 
-#endif    // PORTAL_ENGINE_PYRAMID_H
+// #endif    // PORTAL_ENGINE_PYRAMID_H

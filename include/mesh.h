@@ -6,51 +6,38 @@
 
 #include <glm/glm.hpp>
 #include <vector>
+#include <memory>
 
 #include "shader.h"
 
-struct Mesh {
+struct Vertex {
+    glm::vec3 Position;
+    glm::vec3 Normal;
+    glm::vec2 TexCoords;
+};
+
+struct Texture {
+    GLuint id;
+};
+
+class Mesh
+{
 private:
-    static const int VERTEX_LAYOUT = 0;
-    static const int COLOR_LAYOUT = 1;
 
-    GLuint vertex_array_object{};
-    GLuint vertex_buffer_object{};
-    GLuint color_buffer_object{};
-    GLuint element_buffer_object{};
+    std::vector<Vertex> vertexes;
+    std::vector<GLuint> indexes;
+    std::vector<Texture> textures;
+    
+    GLuint VAO, VBO, EBO;
 
-    std::vector<float> vertices;
-    std::vector<int> indexed_vertices;
-
-    // TODO: should be vec4 <-> RGBA
-    std::vector<float> colors;
-
-    // TODO: add struct texture; handle more attributes
-    //    std::vector<glm::vec2> UV;
-    //    std::vector<glm::vec3> normals;
-
-    void bind_vertices();
-    void bind_indexed_vertices();
-    void bind_colors();
+    std::shared_ptr<ShaderProgram> shader;
 
 public:
-    ShaderProgram shader;
 
-    Mesh(std::string vertex_shader_name,
-         std::string fragment_shader_name);
+    Mesh(std::vector<Vertex> vertexes, std::vector<GLuint> indexes, std::vector<Texture> textures, std::shared_ptr<ShaderProgram> shader);
 
-    void bind() const;
-    static void unbind();
-
-    void add_vertices(std::vector<float> data);
-    void add_indexed_vertices(std::vector<int> data);
-    void add_colors(std::vector<float> colors);
-
-    int get_number_of_vertices() const;
-
-    ~Mesh();
-
-    // TODO: load_model();
+    void draw();
+    
 };
 
 #endif    // PORTAL_ENGINE_MESH_H
