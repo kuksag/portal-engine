@@ -3,6 +3,10 @@
 #include <iostream>
 #include <vector>
 
+#include <assimp/Importer.hpp>
+#include <assimp/scene.h>
+#include <assimp/postprocess.h>
+
 Model::Model(const std::string& path, std::shared_ptr<ShaderProgram> shader) : shader(shader), directory(path.substr(0, path.find_last_of('/'))) {
 
 	Assimp::Importer importer;
@@ -17,8 +21,11 @@ Model::Model(const std::string& path, std::shared_ptr<ShaderProgram> shader) : s
 	deep_load_meshes(scene->mRootNode, scene);
 }
 
-void Model::draw() const {
-	for (const auto& i : meshes)
+void Model::draw(const Camera& camera) const {
+    auto MVP = camera.get_projection_matrix() * camera.get_view_matrix() * get_model_matrix(); //TODO: one calculation
+    glUniformMatrix4fv(shader->get_uniform_id("MVP"), 1, GL_FALSE, &MVP[0][0]);	
+
+    for (const auto& i : meshes)
 		i.draw();
 }
 
@@ -69,76 +76,52 @@ Mesh Model::load_mesh(aiMesh *ai_mesh, const aiScene *scene)
         for(GLuint j = 0; j < 3; j++)
             indexes.push_back(ai_mesh->mFaces[i].mIndices[j]);        
 
-    // aiMaterial* material = scene->mMaterials[ai_mesh->mMaterialIndex];    
+    aiMaterial* ai_material = scene->mMaterials[ai_mesh->mMaterialIndex];    
 
-    // vector<Texture> diffuseMaps = loadMaterialTextures(material, aiTextureType_DIFFUSE, "texture_diffuse");
-    // textures.insert(textures.end(), diffuseMaps.begin(), diffuseMaps.end());
+    std::vector<Texture> diffuseMaps = load_textures(ai_material, aiTextureType_DIFFUSE);
+    textures.insert(textures.end(), diffuseMaps.begin(), diffuseMaps.end());
 
     return Mesh(vertexes, indexes, textures, shader);
 }
 
-//     vector<Texture> loadMaterialTextures(aiMaterial *mat, aiTextureType type, string typeName)
-//     {
-//         vector<Texture> textures;
-//         for(GLuint i = 0; i < mat->GetTextureCount(type); i++)
-//         {
-//             aiString str;
-//             mat->GetTexture(type, i, &str);
-//             // check if texture was loaded before and if so, continue to next iteration: skip loading a new texture
-//             bool skip = false;
-//             for(GLuint j = 0; j < textures_loaded.size(); j++)
-//             {
-//                 if(std::strcmp(textures_loaded[j].path.data(), str.C_Str()) == 0)
-//                 {
-//                     textures.push_back(textures_loaded[j]);
-//                     skip = true; // a texture with the same filepath has already been loaded, continue to next one. (optimization)
-//                     break;
-//                 }
-//             }
-//             if(!skip)
-//             {   // if texture hasn't been loaded already, load it
-//                 Texture texture;
-//                 texture.id = TextureFromFile(str.C_Str(), this->directory);
-//                 texture.type = typeName;
-//                 texture.path = str.C_Str();
-//                 textures.push_back(texture);
-//                 textures_loaded.push_back(texture);  // store it as texture loaded for entire model, to ensure we won't unnecesery load duplicate textures.
-//             }
-//         }
-//         return textures;
-//     }
-// };
+std::vector<Texture> Model::load_textures(aiMaterial *ai_material, aiTextureType type) {
+    std::vector<Texture> textures; //TODO: resourse manager
+    for(unsigned int i = 0; i < ai_material->GetTextureCount(type); i++)
+    {
+        aiString ai_texture_name;
+        ai_material->GetTexture(type, i, &ai_texture_name);
+        std::string path = ai_texture_name.C_Str();
+        path = this->directory + '/' + path;
+        textures.push_back(load_texture(path.c_str()));
+    }
+
+    return textures;
+};
 
 
-// GLuint TextureFromFile(const char *path, const string &directory, bool gamma)
-// {
-//     string filename = string(path);
-//     filename = directory + '/' + filename;
+Texture Model::load_texture(const char *path)
+{
+    Texture texture;
+    glGenTextures(1, &texture.id);
 
-//     GLuint textureID;
-//     glGenTextures(1, &textureID);
+    int width, height;
+    unsigned char *data = SOIL_load_image(path, &width, &height, 0, SOIL_LOAD_RGB);
+    if (data)
+    {
+        glBindTexture(GL_TEXTURE_2D, texture.id);
+        glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, width, height, 0, GL_RGB, GL_UNSIGNED_BYTE, data);
+        glGenerateMipmap(GL_TEXTURE_2D);
 
-//     int width, height;
-//     filename = "res/textures/container.jpeg";
-//     unsigned char *data = SOIL_load_image(filename.c_str(), &width, &height, 0, SOIL_LOAD_RGB);
-//     if (data)
-//     {
-//         glBindTexture(GL_TEXTURE_2D, textureID);
-//         glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, width, height, 0, GL_RGB, GL_UNSIGNED_BYTE, data);
-//         glGenerateMipmap(GL_TEXTURE_2D);
+        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
+        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
+        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR_MIPMAP_LINEAR);
+        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+    }
+    else
+        std::cout << "Texture failed to load at path: " << path << std::endl;
 
-//         glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
-//         glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
-//         glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR_MIPMAP_LINEAR);
-//         glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
-//     }
-//     else
-//     {
-//         std::cout << "Texture failed to load at path: " << filename << std::endl;
-//     }
+    SOIL_free_image_data(data);
+    glBindTexture(GL_TEXTURE_2D, 0);
 
-//     SOIL_free_image_data(data);
-//     glBindTexture(GL_TEXTURE_2D, 0);
-
-//     return textureID;
-// }
+    return texture;
+}

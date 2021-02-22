@@ -5,11 +5,12 @@
 
 #include "entity.h"
 #include "mesh.h"
+#include "camera.h"
 
 class Drawable : public Entity {
 public:
 
-    virtual void draw() const = 0;
+    virtual void draw(const Camera& camera) const = 0;
 };
 
 #endif    // PORTAL_ENGINE_DRAWABLE_H

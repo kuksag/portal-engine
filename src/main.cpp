@@ -59,9 +59,16 @@ int main() {
     std::shared_ptr<ShaderProgram> texture_shader = std::make_shared<ShaderProgram>("shaders/temp.vertex", "shaders/temp.fragment");
     // -------------------------------------------------------------------------
     Model model("res/models/skull/12140_Skull_v3_L2.obj", texture_shader);
+    model.scale({0.1, 0.1, 0.1});
+    // model.rotate(90, {1, 0, 0});
     // -------------------------------------------------------------------------
     Camera camera;
     Controller controller(&camera, window);
+    // -------------------------------------------------------------------------
+    Piramid piramid(color);
+
+    Model piramid("path");
+
     // -------------------------------------------------------------------------
     glEnable(GL_DEPTH_TEST);
     glfwSetWindowUserPointer(window, &controller);
@@ -78,14 +85,7 @@ int main() {
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
         // ---------------------------------------------------------------------
 
-        glm::mat4 model_matrix = glm::mat4(1.0f);
-        glm::mat4 MVP = camera.get_projection_matrix() *
-                        camera.get_view_matrix() * model_matrix;
-        glUniformMatrix4fv(texture_shader->get_uniform_id("MVP"), 1, GL_FALSE,
-                           &MVP[0][0]);
-        // ---------------------------------------------------------------------
-
-        model.draw();
+        model.draw(camera);
 
 
         glfwSwapBuffers(window);
