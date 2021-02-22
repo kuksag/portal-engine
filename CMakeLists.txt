@@ -36,14 +36,8 @@ add_executable(main
         src/entity.cpp include/entity.h
         include/drawable.h
         src/mesh.cpp include/mesh.h
-<<<<<<< HEAD
-        src/SceneObjects/pyramid.cpp include/SceneObjects/pyramid.h
-        src/SceneObjects/triangle.cpp include/SceneObjects/triangle.h
         src/Texture.cpp include/Texture.h
-        src/SceneObjects/cube.cpp include/SceneObjects/cube.h)
-=======
-	src/model.cpp include/model.h)
->>>>>>> origin/mishok-architecture
+	    src/model.cpp include/model.h)
 
 target_include_directories(main PUBLIC include src)
 target_link_libraries(main ${OPENGL_LIBS})
