@@ -1,10 +1,10 @@
 #ifndef PORTAL_ENGINE_PYRAMID_H
 #define PORTAL_ENGINE_PYRAMID_H
 
-#include "drawable.h"
-
-#include "mesh.h"
 #include <vector>
+
+#include "drawable.h"
+#include "mesh.h"
 
 struct Pyramid : Drawable {
 private:

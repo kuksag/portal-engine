@@ -1,8 +1,9 @@
 #include "SceneObjects/triangle.h"
 #include "Texture.h"
 
-Triangle::Triangle(): mesh("Triangle/triangle.vertex", "Triangle/triangle.fragment"),
-                      texture("res/textures/container.jpeg") {
+Triangle::Triangle()
+    : mesh("Triangle/triangle.vertex", "Triangle/triangle.fragment"),
+      texture("res/textures/container.jpeg") {
     mesh.add_vertices({-1.0f, -1.0f, 0.0f,
                        1.0f, -1.0f, 0.0,
                        0.0f, 1.0f, 0.0f});
@@ -23,14 +24,13 @@ void Triangle::draw(const glm::mat4 &camera_projection_view) {
         &MVP[0][0]);
 
     mesh.bind();
-    glDrawElements(GL_TRIANGLES, 3, GL_UNSIGNED_INT, 0);
+    glDrawElements(GL_TRIANGLES, 3, GL_UNSIGNED_INT, nullptr);
     mesh.unbind();
 
     texture.unbind();
 }
-void Triangle::draw_shape(const glm::mat4 &camera_projection_view) {
-    //do nothing
+
+[[maybe_unused]] void Triangle::draw_shape(
+    const glm::mat4 &camera_projection_view) {
+    // do nothing
 }
-
-
-
