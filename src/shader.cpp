@@ -7,6 +7,7 @@
 #include <fstream>
 #include <iostream>
 #include <sstream>
+#include <utility>
 #include <vector>
 
 namespace {
@@ -52,18 +53,18 @@ std::string logic_error_message(const std::string &shader_name,
 
 }    // namespace
 
-ShaderProgram::ShaderProgram(const std::string &vertex_shader_name_,
-                             const std::string &fragment_shader_name_) {
-    // we suppose that shaders stored in 'res/shaders/*'
+ShaderProgram::ShaderProgram(std::string vertex_shader_name_,
+                             std::string fragment_shader_name_) {
+    const char BASE_PATH[] = "res/";
 
-    vertex_shader_name = vertex_shader_name_;
-    fragment_shader_name = fragment_shader_name_;
+    vertex_shader_name = std::move(vertex_shader_name_);
+    fragment_shader_name = std::move(fragment_shader_name_);
 
     vertex_shader_id = glCreateShader(GL_VERTEX_SHADER);
     fragment_shader_id = glCreateShader(GL_FRAGMENT_SHADER);
 
-    compile_shader(vertex_shader_id, "res/shaders/" + vertex_shader_name);
-    compile_shader(fragment_shader_id, "res/shaders/" + fragment_shader_name);
+    compile_shader(vertex_shader_id, BASE_PATH + vertex_shader_name);
+    compile_shader(fragment_shader_id, BASE_PATH + fragment_shader_name);
 
     // link the program
     program_id = glCreateProgram();
@@ -84,7 +85,11 @@ ShaderProgram::ShaderProgram(const std::string &vertex_shader_name_,
     }
 }
 
-void ShaderProgram::use() const { glUseProgram(program_id); }
+void ShaderProgram::use() const {
+    if (vertex_shader_name.empty())
+        throw std::logic_error("shader was not initialised");
+    glUseProgram(program_id);
+}
 
 GLuint ShaderProgram::get_uniform_id(const std::string &uniform_name) {
     if (uniforms.find(uniform_name) != uniforms.end()) {
