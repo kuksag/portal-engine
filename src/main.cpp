@@ -9,47 +9,11 @@
 #include "controls.h"
 #include "settings.h"
 #include "shader.h"
-using namespace Settings::Window;
-
-void window_initialise(GLFWwindow *&window) {
-    if (!glfwInit()) {
-        std::cerr << "Failed to initialize GLFW\n";
-        getchar();
-        assert(false);
-    }
-
-    glfwWindowHint(GLFW_SAMPLES, 4);
-    glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 3);
-    glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 3);
-    glfwWindowHint(GLFW_OPENGL_FORWARD_COMPAT, GL_TRUE);
-    glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
-
-    window = glfwCreateWindow(WIDTH, HEIGHT, TITLE, nullptr, nullptr);
-    if (!window) {
-        std::cerr << "Failed to open GLFW window\n";
-        glfwTerminate();
-        assert(false);
-    }
-    glfwMakeContextCurrent(window);
-    glViewport(0, 0, WIDTH, HEIGHT);
-
-    glewExperimental = true;
-    if (glewInit() != GLEW_OK) {
-        std::cerr << "Failed to initialize GLEW\n";
-        glfwTerminate();
-        assert(false);
-    }
-
-    glfwSetInputMode(window, GLFW_STICKY_KEYS, GL_TRUE);
-    glfwSetInputMode(window, GLFW_CURSOR, GLFW_CURSOR_DISABLED);
-    //    glfwSetInputMode(window, GLFW_CURSOR, GLFW_CURSOR_NORMAL);
-
-    glfwSetCursorPos(window, WIDTH, HEIGHT);
-}
 
 int main() {
     GLFWwindow *window = nullptr;
-    window_initialise(window);
+    Camera camera;
+    Controller controller(&camera, window);
     // -------------------------------------------------------------------------
 
     ShaderProgram temp_shader("temp.vertex", "temp.fragment");
@@ -205,16 +169,8 @@ int main() {
 
     glBindVertexArray(0);
     ShaderProgram fancy_shader("fancy.vertex", "fancy.fragment");
-
-    // -------------------------------------------------------------------------
-    Camera camera;
-    Controller controller(&camera, window);
     // -------------------------------------------------------------------------
     glEnable(GL_DEPTH_TEST);
-    glfwSetWindowUserPointer(window, &controller);
-    glfwSetScrollCallback(window, scroll_callback);
-    glfwSetFramebufferSizeCallback(window, framebuffer_size_callback);
-
     // -------------------------------------------------------------------------
     do {
         controller.cursor_position_callback();

@@ -9,12 +9,12 @@
 struct Controller {
 private:
     Camera *camera;
-    GLFWwindow *window;
+    GLFWwindow *&window;
     float last_time_point;
     bool is_fullscreen;
 
 public:
-    explicit Controller(Camera *camera_, GLFWwindow *window);
+    explicit Controller(Camera *camera_, GLFWwindow *&window);
 
     void scroll_callback(double y_delta);
     void cursor_position_callback();
@@ -24,13 +24,16 @@ public:
 
     void toggle_fullscreen(bool flag);
 
+    void window_initialise();
+
     // TODO:
     //    void mouse_button_callback(int button, int action, int mods);
-    //    void window_focus_callback(int focused);
 };
 
-void scroll_callback(GLFWwindow *window, double x_delta, double y_delta);
+void glfw_scroll_callback(GLFWwindow *window, double x_delta, double y_delta);
 
-void framebuffer_size_callback(GLFWwindow *window, int width, int height);
+void glfw_framebuffer_size_callback(GLFWwindow *window, int width, int height);
+
+void glfw_focus_callback(GLFWwindow* window, int focused);
 
 #endif    // PORTAL_ENGINE_CONTROLS_H

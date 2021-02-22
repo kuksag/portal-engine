@@ -3,14 +3,18 @@
 #include <GL/glew.h>
 #include <GLFW/glfw3.h>
 
+#include <iostream>
+
 #include "settings.h"
 using namespace Settings::Controls;
+using namespace Settings::Window;
 
-Controller::Controller(Camera *camera_, GLFWwindow *window_)
+Controller::Controller(Camera *camera_, GLFWwindow *&window_)
     : camera(camera_),
       window(window_),
       last_time_point(),
       is_fullscreen(false) {
+    window_initialise();
     update_time();
 }
 
@@ -102,17 +106,59 @@ void Controller::toggle_fullscreen(bool flag) {
 
         glfwSetWindowMonitor(window, glfwGetPrimaryMonitor(), 0, 0, mode->width,
                              mode->height, mode->refreshRate);
-        framebuffer_size_callback(window, mode->width, mode->height);
+        glfw_framebuffer_size_callback(window, mode->width, mode->height);
         is_fullscreen = true;
     } else {
         glfwSetWindowMonitor(window, nullptr, pos_x_last, pos_y_last,
                              width_last_size, height_last_size, 0);
-        framebuffer_size_callback(window, width_last_size, height_last_size);
+        glfw_framebuffer_size_callback(window, width_last_size,
+                                       height_last_size);
         is_fullscreen = false;
     }
 }
 
-void scroll_callback(GLFWwindow *window, double x_delta, double y_delta) {
+void Controller::window_initialise() {
+    if (!glfwInit()) {
+        std::cerr << "Failed to initialize GLFW\n";
+        getchar();
+        assert(false);
+    }
+
+    glfwWindowHint(GLFW_SAMPLES, 4);
+    glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 3);
+    glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 3);
+    glfwWindowHint(GLFW_OPENGL_FORWARD_COMPAT, GL_TRUE);
+    glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
+
+    window = glfwCreateWindow(WIDTH, HEIGHT, TITLE, nullptr, nullptr);
+    if (!window) {
+        std::cerr << "Failed to open GLFW window\n";
+        glfwTerminate();
+        assert(false);
+    }
+    glfwMakeContextCurrent(window);
+    glViewport(0, 0, WIDTH, HEIGHT);
+
+    glewExperimental = true;
+    if (glewInit() != GLEW_OK) {
+        std::cerr << "Failed to initialize GLEW\n";
+        glfwTerminate();
+        assert(false);
+    }
+
+    glfwSetInputMode(window, GLFW_STICKY_KEYS, GL_TRUE);
+    glfwSetInputMode(window, GLFW_CURSOR, GLFW_CURSOR_DISABLED);
+
+    glfwSetCursorPos(window, WIDTH, HEIGHT);
+
+    // setup functions-callback
+    glfwSetWindowUserPointer(window, this);
+    glfwSetScrollCallback(window, glfw_scroll_callback);
+    glfwSetFramebufferSizeCallback(window, glfw_framebuffer_size_callback);
+    glfwSetWindowFocusCallback(window, glfw_focus_callback);
+}
+
+void glfw_scroll_callback(GLFWwindow *window, double x_delta, double y_delta) {
     auto *controller =
         reinterpret_cast<Controller *>(glfwGetWindowUserPointer(window));
     if (controller) {
@@ -122,6 +168,14 @@ void scroll_callback(GLFWwindow *window, double x_delta, double y_delta) {
     }
 }
 
-void framebuffer_size_callback(GLFWwindow *window, int width, int height) {
+void glfw_framebuffer_size_callback(GLFWwindow *window, int width, int height) {
     glViewport(0, 0, width, height);
+}
+
+void glfw_focus_callback(GLFWwindow *window, int focused) {
+    if (focused == GLFW_TRUE) {
+        glfwSetInputMode(window, GLFW_CURSOR, GLFW_CURSOR_DISABLED);
+    } else {
+        glfwSetInputMode(window, GLFW_CURSOR, GLFW_CURSOR_NORMAL);
+    }
 }
