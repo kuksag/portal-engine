@@ -1,11 +1,16 @@
 #ifndef PORTAL_ENGINE_DRAWABLE_H
 #define PORTAL_ENGINE_DRAWABLE_H
 
-#include "entity.h"
+#include <vector>
 
-struct Drawable : Entity {
-    virtual void draw(const glm::mat4 &camera_projection_view) = 0;
-    virtual void draw_shape(const glm::mat4 &camera_projection_view) = 0;
+#include "entity.h"
+#include "mesh.h"
+#include "camera.h"
+
+class Drawable : public Entity {
+public:
+
+    virtual void draw(const Camera& camera) const = 0;
 };
 
 #endif    // PORTAL_ENGINE_DRAWABLE_H

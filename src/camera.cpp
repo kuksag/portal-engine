@@ -53,6 +53,14 @@ void Camera::move_left(float time_delta) {
     position -= move_speed * time_delta * get_right_direction();
 }
 
+void Camera::move_up(float time_delta) {
+    position += move_speed * time_delta * get_up_direction();
+}
+
+void Camera::move_down(float time_delta) {
+    position -= move_speed * time_delta * get_up_direction();
+}
+
 void Camera::process_mouse_move(float x_delta, float y_delta, float time_delta,
                                 bool constraint) {
     // 'constraint = true' means that we cannot flip the screen

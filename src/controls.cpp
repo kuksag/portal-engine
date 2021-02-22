@@ -73,6 +73,14 @@ void Controller::key_callback() {
         }
     }
 
+    if (glfwGetKey(window, GLFW_KEY_SPACE) == GLFW_PRESS) {
+        camera->move_up(time_delta);
+    }
+
+    if (glfwGetKey(window, GLFW_KEY_LEFT_ALT) == GLFW_PRESS) {
+        camera->move_down(time_delta);
+    }
+
     for (auto &key : KEY_FULLSCREEN) {
         if (glfwGetKey(window, key) == GLFW_PRESS) {
             toggle_fullscreen(true);
