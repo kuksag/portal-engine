@@ -14,33 +14,32 @@ private:
     static const int VERTEX_LAYOUT = 0;
     static const int COLOR_LAYOUT = 1;
     static const int TEXTURES_LAYOUT = 2;
+    static const int NORMALS_LAYOUT = 3;
 
     GLuint vertex_array_object{};
+
     GLuint vertex_buffer_object{};
     GLuint color_buffer_object{};
     GLuint element_buffer_object{};
     GLuint textures_buffer_object{};
+    GLuint normals_buffer_object{};
 
     std::vector<float> vertices;
-    std::vector<int> indexed_vertices;
-    std::vector <float> textures;
-    // TODO: should be vec4 <-> RGBA
     std::vector<float> colors;
-
-    // TODO: add struct texture; handle more attributes
-    //    std::vector<glm::vec2> UV;
-    //    std::vector<glm::vec3> normals;
+    std::vector<int> indexed_vertices;
+    std::vector<float> textures;
+    std::vector<float> normals;
 
     void bind_vertices();
     void bind_indexed_vertices();
     void bind_colors();
     void bind_textures();
+    void bind_normals();
 
 public:
     ShaderProgram shader;
 
-    Mesh(std::string vertex_shader_name,
-         std::string fragment_shader_name);
+    Mesh(std::string vertex_shader_name, std::string fragment_shader_name);
 
     void bind() const;
     void unbind() const;
@@ -48,7 +47,8 @@ public:
     void add_vertices(std::vector<float> data);
     void add_indexed_vertices(std::vector<int> data);
     void add_colors(std::vector<float> colors);
-    void add_textures(std::vector <float> data);
+    void add_textures(std::vector<float> data);
+    void add_normals(std::vector<float> normals);
 
     int get_number_of_vertices() const;
 

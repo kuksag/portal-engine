@@ -102,6 +102,30 @@ void Mesh::bind_textures() {
     unbind();
 }
 
+void Mesh::bind_normals() {
+    is_data_provided(normals);
+    bind();
+
+    glBindBuffer(GL_ARRAY_BUFFER, normals_buffer_object);
+
+    glBufferData(GL_ARRAY_BUFFER,
+                 normals.size() * sizeof(typeof(normals.front())),
+                 &normals[0],
+                 GL_STATIC_DRAW);
+
+    glVertexAttribPointer(NORMALS_LAYOUT,
+                          3,
+                          GL_FLOAT,
+                          GL_FALSE,
+                          3 * sizeof(typeof(normals.front())),
+                          nullptr);
+
+    glEnableVertexAttribArray(NORMALS_LAYOUT);
+
+    unbind();
+}
+
+
 Mesh::Mesh(std::string vertex_shader_name, std::string fragment_shader_name)
     : shader(std::move(vertex_shader_name), std::move(fragment_shader_name)) {
     glGenVertexArrays(1, &vertex_array_object);
@@ -109,6 +133,7 @@ Mesh::Mesh(std::string vertex_shader_name, std::string fragment_shader_name)
     glGenBuffers(1, &color_buffer_object);
     glGenBuffers(1, &element_buffer_object);
     glGenBuffers(1, &textures_buffer_object);
+    glGenBuffers(1, &normals_buffer_object);
 }
 
 void Mesh::bind() const { glBindVertexArray(vertex_array_object); }
@@ -133,6 +158,11 @@ void Mesh::add_colors(std::vector<float> data) {
 void Mesh::add_textures(std::vector<float> data) {
     textures = std::move(data);
     bind_textures();
+}
+
+void Mesh::add_normals(std::vector<float> data) {
+    normals = std::move(data);
+    bind_normals();
 }
 
 int Mesh::get_number_of_vertices() const {
