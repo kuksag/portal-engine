@@ -1,14 +1,14 @@
 #include <GL/glew.h>
 #include <GLFW/glfw3.h>
+#include <SceneObjects/cube.h>
+#include <SceneObjects/pyramid.h>
+#include <SceneObjects/triangle.h>
 
 #include <iostream>
-#include <string>
 
 #include "camera.h"
 #include "controls.h"
 #include "settings.h"
-
-#include "shader.h"
 
 int main() {
     GLFWwindow *window = nullptr;
@@ -18,9 +18,6 @@ int main() {
     Triangle textured_triangle;
     //--------------------------------------------------------------------------
     Cube cube_of_shades;
-    // -------------------------------------------------------------------------
-    Camera camera;
-    Controller controller(&camera, window);
     // -------------------------------------------------------------------------
     glEnable(GL_DEPTH_TEST);
     // -------------------------------------------------------------------------
@@ -38,8 +35,8 @@ int main() {
         glm::mat4 model_matrix = glm::mat4(1.0f);
         glm::mat4 MVP = camera.get_projection_matrix() *
                         camera.get_view_matrix() * model_matrix;
-        glm::mat4 projection_view = camera.get_projection_matrix() *
-                                    camera.get_view_matrix();
+        glm::mat4 projection_view =
+            camera.get_projection_matrix() * camera.get_view_matrix();
         // ---------------------------------------------------------------------
         textured_triangle.draw(projection_view);
         // ---------------------------------------------------------------------
@@ -49,15 +46,14 @@ int main() {
         float time_value = glfwGetTime();
         auto color_per_frame = glm::vec3(sin(time_value), 0.2, cos(time_value));
         auto rotation_per_frame = glm::vec3(6 * M_PI, M_PI, M_PI_2);
-        auto translate_per_frame = pivot + glm::vec3(cos(time_value / 2) * radius,
-                                                     sin(time_value / 2),
-                                                     sin(time_value / 2) * radius);
+        auto translate_per_frame =
+            pivot + glm::vec3(cos(time_value / 2) * radius, sin(time_value / 2),
+                              sin(time_value / 2) * radius);
         // ---------------------------------------------------------------------
         // pyramid draw
         rainbow_pyramid.supply_shader(color_per_frame);
-        rainbow_pyramid.set_rotation_matrix(glm::rotate(glm::mat4(1.0f),
-                                                        time_value,
-                                                        rotation_per_frame));
+        rainbow_pyramid.set_rotation_matrix(
+            glm::rotate(glm::mat4(1.0f), time_value, rotation_per_frame));
         rainbow_pyramid.set_translation_matrix(
             glm::translate(glm::mat4(1.0f), translate_per_frame));
         rainbow_pyramid.draw(projection_view);
