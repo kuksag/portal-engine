@@ -1,4 +1,5 @@
 #include "mesh.h"
+#include <iostream>
 
 Mesh::Mesh(const std::vector<Vertex>& vertexes, const std::vector<GLuint>& indexes, const std::vector<Texture>& textures, std::shared_ptr<ShaderProgram> shader) : vertexes(vertexes), indexes(indexes), textures(textures), shader(shader) {
     

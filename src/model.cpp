@@ -23,13 +23,15 @@ void Model::draw() const {
 }
 
 void Model::deep_load_meshes(aiNode *node, const aiScene *scene) {
-
-	for(GLuint i = 0; i < node->mNumMeshes; i++)
+	
+    for(GLuint i = 0; i < node->mNumMeshes; i++)
     {
         aiMesh* ai_mesh = scene->mMeshes[node->mMeshes[i]];
         meshes.push_back(load_mesh(ai_mesh, scene));
-        deep_load_meshes(node->mChildren[i], scene);
     }
+
+    for (GLuint i = 0; i < node->mNumChildren; i++)
+        deep_load_meshes(node->mChildren[i], scene);
 }
 
 Mesh Model::load_mesh(aiMesh *ai_mesh, const aiScene *scene)
