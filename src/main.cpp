@@ -13,7 +13,6 @@
 #include "settings.h"
 #include "shader.h"
 
-#include "SceneObjects/pyramid.h"
 using namespace Settings::Window;
 
 void window_initialise(GLFWwindow *&window) {
@@ -65,11 +64,10 @@ int main() {
     Camera camera;
     Controller controller(&camera, window);
     // -------------------------------------------------------------------------
-    Piramid piramid(color);
+    // Piramid piramid(color);
 
-    Model piramid("path");
-
-    // -------------------------------------------------------------------------
+    // Model piramid("path");
+    //-------------------------------------------------------------------------
     glEnable(GL_DEPTH_TEST);
     glfwSetWindowUserPointer(window, &controller);
     glfwSetScrollCallback(window, scroll_callback);
