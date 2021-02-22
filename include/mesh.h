@@ -34,9 +34,9 @@ private:
 
 public:
 
-    Mesh(std::vector<Vertex> vertexes, std::vector<GLuint> indexes, std::vector<Texture> textures, std::shared_ptr<ShaderProgram> shader);
+    Mesh(const std::vector<Vertex>& vertexes, const std::vector<GLuint>& indexes, const std::vector<Texture>& textures, std::shared_ptr<ShaderProgram> shader);
 
-    void draw();
+    void draw() const;
     
 };
 

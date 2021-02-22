@@ -6,8 +6,7 @@
 #include <string>
 #include <memory>
 
-#include <vector> //TODO: remove this(this is for test)
-#include "mesh.h" //this too
+#include "model.h"
 
 #include "camera.h"
 #include "controls.h"
@@ -59,31 +58,7 @@ int main() {
     // -------------------------------------------------------------------------
     std::shared_ptr<ShaderProgram> texture_shader = std::make_shared<ShaderProgram>("shaders/temp.vertex", "shaders/temp.fragment");
     // -------------------------------------------------------------------------
-    GLuint texture;
-    glGenTextures(1, &texture);
-    glBindTexture(GL_TEXTURE_2D, texture);
-
-    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
-    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
-
-    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
-    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
-
-    int width, height;
-    unsigned char *image = SOIL_load_image("res/textures/container.jpeg",
-                                           &width, &height, 0, SOIL_LOAD_RGB);
-    glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, width, height, 0, GL_RGB,
-                 GL_UNSIGNED_BYTE, image);
-    glGenerateMipmap(GL_TEXTURE_2D);
-    SOIL_free_image_data(image);
-    glBindTexture(GL_TEXTURE_2D, 0);
-
-    std::vector<Vertex> v = {{{-1, -1, 0}, {0, 0, 0}, {0, 0}}, 
-                             {{1, -1, 0}, {0, 0, 0}, {0.5, 1}},
-                             {{0, 1, 0}, {0, 0, 0}, {1, 0}}};
-    std::vector<GLuint> ind = {1, 2, 3};
-    std::vector<Texture> textures = {{texture}};
-    Mesh mesh(v, ind, textures, texture_shader);
+    Model model("res/models/skull/12140_Skull_v3_L2.obj", texture_shader);
     // -------------------------------------------------------------------------
     Camera camera;
     Controller controller(&camera, window);
@@ -110,7 +85,7 @@ int main() {
                            &MVP[0][0]);
         // ---------------------------------------------------------------------
 
-        mesh.draw();
+        model.draw();
 
 
         glfwSwapBuffers(window);
