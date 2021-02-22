@@ -7,7 +7,6 @@
 #include "camera.h"
 #include "controls.h"
 #include "settings.h"
-#include "shader.h"
 #include "SceneObjects/cube.h"
 #include "SceneObjects/triangle.h"
 
@@ -57,7 +56,6 @@ int main() {
     Triangle textured_triangle;
     //--------------------------------------------------------------------------
     Cube cube_of_shades;
-    cube_of_shades.translate({3.0f, 3.0f, 3.0f});
     // -------------------------------------------------------------------------
     Camera camera;
     Controller controller(&camera, window);
@@ -108,9 +106,11 @@ int main() {
         rainbow_pyramid.draw_shape(projection_view);
         // ---------------------------------------------------------------------
         // "cube of shade" draw
-        cube_of_shades.set_shader_model_matrix();
-        cube_of_shades.set_light_position(rainbow_pyramid.get_center());
+        cube_of_shades.set_camera_pos(camera.get_position());
+        cube_of_shades.set_translate({3.0f, 3.0f, 3.0f});
         cube_of_shades.set_light_color(color_per_frame);
+        cube_of_shades.set_light_position(rainbow_pyramid.get_center());
+
         cube_of_shades.draw(projection_view);
         // ---------------------------------------------------------------------
 
