@@ -37,7 +37,9 @@ add_executable(main
         src/entity.cpp include/entity.h
         src/drawable.cpp include/drawable.h
         src/mesh.cpp include/mesh.h
-        src/SceneObjects/pyramid.cpp include/SceneObjects/pyramid.h)
+        src/SceneObjects/pyramid.cpp include/SceneObjects/pyramid.h
+        src/SceneObjects/triangle.cpp include/SceneObjects/triangle.h
+        src/Texture.cpp include/Texture.h)
 
 target_include_directories(main PUBLIC include src)
 target_link_libraries(main ${OPENGL_LIBS})

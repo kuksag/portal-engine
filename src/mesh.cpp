@@ -1,5 +1,15 @@
 #include "mesh.h"
 
+#include <GL/glew.h>
+#include <GLFW/glfw3.h>
+
+#include <glm/glm.hpp>
+#include <vector>
+
+#include "shader.h"
+#include <utility>
+#include <iostream>
+
 namespace {
 template <typename T>
 void is_data_provided(const std::vector<T> &data) {
@@ -69,41 +79,63 @@ void Mesh::bind_colors() {
     unbind();
 }
 
+void Mesh::bind_textures() {
+    is_data_provided(textures);
+    bind();
+
+    glBindBuffer(GL_ARRAY_BUFFER, textures_buffer_object);
+
+    glBufferData(GL_ARRAY_BUFFER,
+                 textures.size() * sizeof(typeof(textures.front())),
+                 &textures[0],
+                 GL_STATIC_DRAW);
+
+    glVertexAttribPointer(TEXTURES_LAYOUT,
+                          2,
+                          GL_FLOAT,
+                          GL_FALSE,
+                          2 * sizeof(typeof(textures.front())),
+                          nullptr);
+
+    glEnableVertexAttribArray(TEXTURES_LAYOUT);
+
+    unbind();
+}
+
 Mesh::Mesh(std::string vertex_shader_name, std::string fragment_shader_name)
     : shader(std::move(vertex_shader_name), std::move(fragment_shader_name)) {
     glGenVertexArrays(1, &vertex_array_object);
     glGenBuffers(1, &vertex_buffer_object);
     glGenBuffers(1, &color_buffer_object);
     glGenBuffers(1, &element_buffer_object);
+    glGenBuffers(1, &textures_buffer_object);
 }
 
 void Mesh::bind() const { glBindVertexArray(vertex_array_object); }
 
-void Mesh::unbind() { glBindVertexArray(0); }
+void Mesh::unbind() const { glBindVertexArray(0); }
 
 void Mesh::add_vertices(std::vector<float> data) {
-    vertices.insert(vertices.end(), std::make_move_iterator(data.begin()),
-                    std::make_move_iterator(data.end()));
+    vertices = std::move(data);
     bind_vertices();
 }
 
 void Mesh::add_indexed_vertices(std::vector<int> data) {
-    indexed_vertices.insert(indexed_vertices.end(),
-                            std::make_move_iterator(data.begin()),
-                            std::make_move_iterator(data.end()));
+    indexed_vertices = std::move(data);
     bind_indexed_vertices();
 }
 
 void Mesh::add_colors(std::vector<float> data) {
-    colors.insert(colors.end(), std::make_move_iterator(data.begin()),
-                  std::make_move_iterator(data.end()));
+    colors = std::move(data);
     bind_colors();
 }
 
+void Mesh::add_textures(std::vector<float> data) {
+    textures = std::move(data);
+    bind_textures();
+}
+
 int Mesh::get_number_of_vertices() const {
-    if (vertices.size() != colors.size())
-        throw std::logic_error(
-            "number of vertices doesnt match with number of colors");
     return vertices.size();
 }
 
@@ -112,4 +144,5 @@ Mesh::~Mesh() {
     glDeleteBuffers(1, &vertex_buffer_object);
     glDeleteBuffers(1, &color_buffer_object);
     glDeleteBuffers(1, &element_buffer_object);
+    glDeleteBuffers(1, &textures_buffer_object);
 }
