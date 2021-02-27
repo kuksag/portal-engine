@@ -10,6 +10,8 @@
 #include "controls.h"
 #include "settings.h"
 #include "shader.h"
+#include "light_source.h"
+#include <vector>
 
 using namespace Settings::Window;
 
@@ -18,10 +20,22 @@ int main() {
     Camera camera;
     Controller controller(&camera, window);
     // -------------------------------------------------------------------------
-    std::shared_ptr<ShaderProgram> texture_shader = std::make_shared<ShaderProgram>("shaders/temp.vertex", "shaders/temp.fragment");
+    std::shared_ptr<ShaderProgram> texture_shader = std::make_shared<ShaderProgram>("shaders/light.vertex", "shaders/light.fragment");
     // -------------------------------------------------------------------------
     Model model("res/models/skull/12140_Skull_v3_L2.obj", texture_shader);
     model.scale({0.1, 0.1, 0.1});
+    // -------------------------------------------------------------------------
+    Model model1("res/models/skull/12140_Skull_v3_L2.obj", texture_shader);
+    model1.scale({0.1, 0.1, 0.1});
+    model1.rotate(acos(-1.0f) / 2.0f, glm::vec3(1.0f, 0.0f, 0.0f));
+    model1.translate(glm::vec3(-5.0f, -5.0f, -5.0f));
+    // -------------------------------------------------------------------------
+    std::shared_ptr<ShaderProgram> light_source_shader = std::make_shared<ShaderProgram>("shaders/light_source_shaders/light_source.vertex",
+                                                                                  "shaders/light_source_shaders/light_source.fragment");
+    LightSource light_source(glm::vec3(15.0f, 15.0f, 15.0f),
+                             glm::vec3(1.0f, 1.0f, 1.0f),
+                             light_source_shader);
+    light_source.translate(light_source.get_pos());
     // -------------------------------------------------------------------------
     glEnable(GL_DEPTH_TEST);
     // -------------------------------------------------------------------------
@@ -34,7 +48,10 @@ int main() {
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
         // ---------------------------------------------------------------------
 
-        model.draw(camera);
+
+        model.draw(camera, std::vector{light_source});
+        model1.draw(camera, std::vector{light_source});
+        //light_source.draw(camera);
 
         glfwSwapBuffers(window);
         glfwPollEvents();

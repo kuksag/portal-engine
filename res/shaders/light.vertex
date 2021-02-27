@@ -1,15 +1,20 @@
-#version 330 core
+#version 330
 layout (location = 0) in vec3 position;
-layout (location = 3) in vec3 normal;
+layout (location = 1) in vec3 normal;
+layout (location = 2) in vec2 texCoord;
 
-uniform mat4 MVP;
-uniform vec3 trans;
-
+out vec2 TexCoord;
 out vec3 Normal;
 out vec3 point_pos;
 
-void main() {
-    gl_Position = MVP * vec4(position + trans, 1.0f);
-    Normal = normal;
-    point_pos = position + trans;
+uniform mat4 MVP;
+uniform mat3 normal_transformation;
+uniform mat3 model_matrix;
+
+void main()
+{
+    gl_Position = MVP * vec4(position, 1.0f);
+    TexCoord = texCoord;
+    Normal = normal_transformation * normal;
+    point_pos = model_matrix * position;
 }

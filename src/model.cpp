@@ -6,6 +6,8 @@
 #include <assimp/Importer.hpp>
 #include <assimp/scene.h>
 #include <assimp/postprocess.h>
+#include "light_source.h"
+#include "sstream"
 
 Model::Model(const std::string& path, std::shared_ptr<ShaderProgram> shader) : shader(shader), directory(path.substr(0, path.find_last_of('/'))) {
 
@@ -21,9 +23,27 @@ Model::Model(const std::string& path, std::shared_ptr<ShaderProgram> shader) : s
 	deep_load_meshes(scene->mRootNode, scene);
 }
 
-void Model::draw(const Camera& camera) const {
+void Model::draw(const Camera& camera, const std::vector <LightSource> &light_sources) const {
     auto MVP = camera.get_projection_matrix() * camera.get_view_matrix() * get_model_matrix(); //TODO: one calculation
-    glUniformMatrix4fv(shader->get_uniform_id("MVP"), 1, GL_FALSE, &MVP[0][0]);	
+    auto normal_transformation = glm::mat3(transpose(inverse(get_model_matrix())));
+    auto model_matrix = glm::mat3(get_model_matrix());
+    glUniformMatrix4fv(shader->get_uniform_id("MVP"), 1, GL_FALSE, &MVP[0][0]);
+    glUniformMatrix3fv(shader->get_uniform_id("model_matrix"), 1, GL_FALSE, &model_matrix[0][0]);
+    glUniformMatrix3fv(shader->get_uniform_id("normal_transformation"), 1, GL_FALSE, &normal_transformation[0][0]);
+    glUniform3f(shader->get_uniform_id("camera_pos"), camera.get_position().x, camera.get_position().y, camera.get_position().z);
+
+    //Установление всех источников света
+    for (std::size_t i = 0; i < light_sources.size(); ++i) {
+        std::stringstream pos_uniform_name;
+        pos_uniform_name << "light_pos" << i;
+        glm::vec3 pos = light_sources[i].get_pos();
+        glUniform3f(shader->get_uniform_id(pos_uniform_name.str()), pos.x, pos.y, pos.z);
+
+        std::stringstream color_uniform_name;
+        color_uniform_name<< "light_color" << i;
+        glm::vec3 color = light_sources[i].get_color();
+        glUniform3f(shader->get_uniform_id(color_uniform_name.str()), color.x, color.y, color.z);
+    }
 
     for (const auto& i : meshes)
 		i.draw();

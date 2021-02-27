@@ -21,6 +21,8 @@
 #include "mesh.h"
 #include "camera.h"
 
+#include "light_source.h"
+
 class Model : public Drawable
 {
 private:
@@ -41,7 +43,7 @@ public:
 
     Model(const std::string& path, std::shared_ptr<ShaderProgram> shader);
 
-    void draw(const Camera& camera) const override;
+    void draw(const Camera& camera, const std::vector <LightSource> &light_sources) const override;
 };
 
 #endif    // PORTAL_ENGINE_MODEL_H
