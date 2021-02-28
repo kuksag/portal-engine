@@ -15,12 +15,10 @@
 #include <vector>
 #include <memory>
 #include <string>
-
 #include "drawable.h"
 #include "shader.h"
 #include "mesh.h"
 #include "camera.h"
-
 #include "light_source.h"
 
 class Model : public Drawable
@@ -28,8 +26,6 @@ class Model : public Drawable
 private:
 
     std::vector<Mesh> meshes;
-
-    std::shared_ptr<ShaderProgram> shader;
 
     std::string directory;
 
@@ -42,8 +38,9 @@ private:
 public:
 
     Model(const std::string& path, std::shared_ptr<ShaderProgram> shader);
-
     void draw(const Camera& camera, const std::vector <LightSource> &light_sources) const override;
+
+    virtual ~Model() = default;
 };
 
 #endif    // PORTAL_ENGINE_MODEL_H

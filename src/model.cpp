@@ -9,7 +9,7 @@
 #include "light_source.h"
 #include "sstream"
 
-Model::Model(const std::string& path, std::shared_ptr<ShaderProgram> shader) : shader(shader), directory(path.substr(0, path.find_last_of('/'))) {
+Model::Model(const std::string& path, std::shared_ptr<ShaderProgram> shader) : Drawable(shader), directory(path.substr(0, path.find_last_of('/'))) {
 
 	Assimp::Importer importer;
     const aiScene* scene = importer.ReadFile(path, aiProcess_Triangulate | aiProcess_GenSmoothNormals | aiProcess_FlipUVs);
@@ -28,9 +28,27 @@ void Model::draw(const Camera& camera, const std::vector <LightSource> &light_so
     auto normal_transformation = glm::mat3(transpose(inverse(get_model_matrix())));
     auto model_matrix = glm::mat3(get_model_matrix());
     glUniformMatrix4fv(shader->get_uniform_id("MVP"), 1, GL_FALSE, &MVP[0][0]);
-    glUniformMatrix3fv(shader->get_uniform_id("model_matrix"), 1, GL_FALSE, &model_matrix[0][0]);
-    glUniformMatrix3fv(shader->get_uniform_id("normal_transformation"), 1, GL_FALSE, &normal_transformation[0][0]);
-    glUniform3f(shader->get_uniform_id("camera_pos"), camera.get_position().x, camera.get_position().y, camera.get_position().z);
+
+
+    try {
+        glUniformMatrix3fv(shader->get_uniform_id("model_matrix"), 1, GL_FALSE,
+                           &model_matrix[0][0]);
+    } catch (...) {
+    }
+
+
+    try {
+        glUniformMatrix3fv(shader->get_uniform_id("normal_transformation"), 1,
+                           GL_FALSE, &normal_transformation[0][0]);
+    } catch (...) {
+    }
+
+    try {
+        glUniform3f(shader->get_uniform_id("camera_pos"),
+                    camera.get_position().x, camera.get_position().y,
+                    camera.get_position().z);
+    } catch(...) {
+    }
 
     //Установление всех источников света
     for (std::size_t i = 0; i < light_sources.size(); ++i) {

@@ -26,6 +26,8 @@ public:
     void translate(const glm::vec3 &data);
     void rotate(float angle, const glm::vec3 &data);
     void scale(const glm::vec3 &data);
+
+    virtual ~Entity() = default;
 };
 
 #endif    // PORTAL_ENGINE_ENTITY_H

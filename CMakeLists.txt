@@ -34,11 +34,12 @@ add_executable(main
         include/settings.h
         src/shader.cpp include/shader.h
         src/entity.cpp include/entity.h
-        include/drawable.h
+        src/drawable.cpp include/drawable.h
         src/mesh.cpp include/mesh.h
         src/Texture.cpp include/Texture.h
 	    src/model.cpp include/model.h
-        src/light_source.cpp include/light_source.h)
+        src/light_source.cpp include/light_source.h
+		src/primitives/cube.cpp include/primitives/cube.h)
 
-target_include_directories(main PUBLIC include src)
+target_include_directories(main PUBLIC include include/primitives src)
 target_link_libraries(main ${OPENGL_LIBS})

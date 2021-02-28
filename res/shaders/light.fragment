@@ -4,16 +4,17 @@ in vec2 TexCoord;
 in vec3 Normal;
 in vec3 point_pos;
 
-out vec4 color;
+out vec4 out_color;
 
 uniform vec3 light_pos0;
 uniform vec3 light_color0;
 uniform vec3 camera_pos;
 uniform sampler2D Texture;
+uniform vec4 color;
 
 void main()
 {
-    vec4 texture_color = texture(Texture, TexCoord);
+    vec4 texture_color = texture(Texture, TexCoord) + color;
 
     vec3 norm = normalize(Normal);
     vec3 light_dir = normalize(light_pos0 - point_pos);
@@ -31,7 +32,5 @@ void main()
     }
 
     vec3 minimal_color = vec3(0.3f, 0.3f, 0.3f);
-    color = vec4((minimal_color + diffusion + specular),1.0f) * texture_color;
-
-
+    out_color = vec4((minimal_color + diffusion + specular),1.0f) * texture_color;
 }
