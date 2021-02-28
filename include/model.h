@@ -27,8 +27,6 @@ private:
 
     std::vector<Mesh> meshes;
 
-    std::shared_ptr<ShaderProgram> shader;
-
     std::string directory;
 
     void deep_load_meshes(aiNode *node, const aiScene *scene);
@@ -42,6 +40,8 @@ public:
     Model(const std::string& path, std::shared_ptr<ShaderProgram> shader);
 
     void draw(const Camera& camera) const override;
+
+    virtual ~Model() = default;
 };
 
 #endif    // PORTAL_ENGINE_MODEL_H

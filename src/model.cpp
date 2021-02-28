@@ -7,7 +7,7 @@
 #include <assimp/scene.h>
 #include <assimp/postprocess.h>
 
-Model::Model(const std::string& path, std::shared_ptr<ShaderProgram> shader) : shader(shader), directory(path.substr(0, path.find_last_of('/'))) {
+Model::Model(const std::string& path, std::shared_ptr<ShaderProgram> shader) : Drawable(shader), directory(path.substr(0, path.find_last_of('/'))) {
 
 	Assimp::Importer importer;
     const aiScene* scene = importer.ReadFile(path, aiProcess_Triangulate | aiProcess_GenSmoothNormals | aiProcess_FlipUVs);

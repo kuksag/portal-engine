@@ -1,15 +1,12 @@
 #include <GL/glew.h>
 #include <GLFW/glfw3.h>
 
-#include <iostream>
-#include <string>
 #include <memory>
 
-#include "model.h"
+#include "cube.h"
 #include "camera.h"
 #include "controls.h"
 #include "settings.h"
-#include "shader.h"
 
 using namespace Settings::Window;
 
@@ -17,6 +14,8 @@ int main() {
     GLFWwindow *window = nullptr;
     Camera camera;
     Controller controller(&camera, window);
+    // -------------------------------------------------------------------------
+    Cube cube({10, 0, 0}, {1, 0, 0});
     // -------------------------------------------------------------------------
     glEnable(GL_DEPTH_TEST);
     // -------------------------------------------------------------------------
@@ -28,7 +27,8 @@ int main() {
         glClearColor(0.3f, 0.3f, 0.6f, 0.0f);
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
         // ---------------------------------------------------------------------
-
+        cube.draw(camera);
+        // ---------------------------------------------------------------------
         glfwSwapBuffers(window);
         glfwPollEvents();
     } while (glfwGetKey(window, GLFW_KEY_ESCAPE) != GLFW_PRESS &&
