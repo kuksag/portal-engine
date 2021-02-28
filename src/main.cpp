@@ -3,7 +3,7 @@
 
 #include <memory>
 
-#include "cube.h"
+#include "primitives.h"
 #include "camera.h"
 #include "controls.h"
 #include "settings.h"
@@ -18,7 +18,9 @@ int main() {
     Camera camera;
     Controller controller(&camera, window);
     // -------------------------------------------------------------------------
-    Cube cube;
+    std::vector<Drawable*> primitives = {new Cube({0, 0, 0}, {0.5, 0.5, 0}), new Sphere({0, 4, 0}, {0.2, 1, 0.5}),
+                                         new Plane({0, 0, 4}, {0.3, 0.1, 0.8}), new Cylinder({4, 0, 0}, {0.4, 0.2, 0.2}),
+                                         new Torus({0, 0, -4}, {0.2, 0.5, 0.5}), new Cone({0, -4, 0}, {0.4, 1, 1})};
     // -------------------------------------------------------------------------
     glEnable(GL_DEPTH_TEST);
     // -------------------------------------------------------------------------
@@ -31,8 +33,9 @@ int main() {
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
         // ---------------------------------------------------------------------
 
-        cube.draw(camera, {});
-        
+        for (int i=0; i < primitives.size(); ++i)
+            primitives[i]->draw(camera, {});
+
         glfwSwapBuffers(window);
         glfwPollEvents();
     } while (glfwGetKey(window, GLFW_KEY_ESCAPE) != GLFW_PRESS &&
