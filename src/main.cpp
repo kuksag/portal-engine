@@ -32,7 +32,7 @@ int main() {
     flat.translate(glm::vec3(0.0f, -20.0f, 0.0f));
     // -------------------------------------------------------------------------
     LightSource light_source(glm::vec3(15.0f, 15.0f, 15.0f),
-                             glm::vec3(1.0f, 1.0f, 1.0f));
+                             glm::vec3(0.5f, 1.0f, 0.5f));
     // -------------------------------------------------------------------------
     Cube cube(light_source.get_pos(), light_source.get_color());
     glEnable(GL_DEPTH_TEST);

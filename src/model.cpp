@@ -24,12 +24,11 @@ Model::Model(const std::string& path, std::shared_ptr<ShaderProgram> shader) : D
 }
 
 void Model::draw(const Camera& camera, const std::vector <LightSource> &light_sources) const {
+    shader->use();
     auto MVP = camera.get_projection_matrix() * camera.get_view_matrix() * get_model_matrix(); //TODO: one calculation
     auto normal_transformation = glm::mat3(transpose(inverse(get_model_matrix())));
     auto model_matrix = glm::mat3(get_model_matrix());
     glUniformMatrix4fv(shader->get_uniform_id("MVP"), 1, GL_FALSE, &MVP[0][0]);
-
-
     try {
         glUniformMatrix3fv(shader->get_uniform_id("model_matrix"), 1, GL_FALSE,
                            &model_matrix[0][0]);
