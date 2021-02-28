@@ -46,10 +46,11 @@ int main() {
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
         // ---------------------------------------------------------------------
 
+
         model.draw(camera, std::vector{light_source});
         model1.draw(camera, std::vector{light_source});
         flat.draw(camera, std::vector{light_source});
-        //cube.draw(camera, {});
+        cube.draw(camera, {});
         glfwSwapBuffers(window);
         glfwPollEvents();
     } while (glfwGetKey(window, GLFW_KEY_ESCAPE) != GLFW_PRESS &&
