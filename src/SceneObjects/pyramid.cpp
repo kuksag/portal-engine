@@ -10,6 +10,8 @@ Pyramid::Pyramid() : mesh() {
                      0.0f, 1.0f});
 
     mesh.add_indexed_vertices({0, 2, 1, 0, 2, 3, 0, 1, 3, 1, 2, 3});
+
+    set_center({0.5, 0.5, 0.5});
 }
 
 void Pyramid::supply_shader(ShaderProgram &shader, const glm::vec3 &color) {
@@ -41,9 +43,4 @@ void Pyramid::draw_shape(ShaderProgram &shader,
     glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
     draw(shader, camera_projection_view);
     glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
-}
-
-glm::vec3 Pyramid::get_center() const {
-    auto result = get_model_matrix() * glm::vec4(0.5f, 0.5f, 0.5f, 1.0f);
-    return glm::vec3(result[0], result[1], result[2]);
 }

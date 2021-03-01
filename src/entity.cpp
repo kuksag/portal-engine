@@ -42,3 +42,12 @@ void Entity::scale(const glm::vec3 &data) {
     scale_matrix = glm::scale(scale_matrix, data);
     update();
 }
+
+glm::vec3 Entity::get_center() const {
+    auto result = get_model_matrix() * glm::vec4(center, 1.0f);
+    return glm::vec3(result[0], result[1], result[2]);
+}
+
+void Entity::set_center(glm::vec3 center_) {
+    center = center_;
+}

@@ -20,7 +20,6 @@ public:
     void draw_shape(ShaderProgram &shader,
                     const glm::mat4 &camera_projection_view) override;
 
-    [[nodiscard]] glm::vec3 get_center() const;
 };
 
 #endif    // PORTAL_ENGINE_PYRAMID_H

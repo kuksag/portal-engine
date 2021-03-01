@@ -3,6 +3,7 @@
 #include <SceneObjects/cube.h>
 #include <SceneObjects/pyramid.h>
 #include <SceneObjects/triangle.h>
+#include <SceneObjects/portal.h>
 
 #include <iostream>
 
@@ -21,12 +22,22 @@ int main() {
                                "shaders/light.fragment");
     ShaderProgram pyramid_shader("Pyramid/pyramid.vertex",
                                  "Pyramid/pyramid.fragment");
+    ShaderProgram portal_shader("Portal/portal.vertex",
+                                "Portal/portal.fragment");
     // -------------------------------------------------------------------------
     Triangle textured_triangle;
-    //--------------------------------------------------------------------------
     Cube cube_of_shades;
-    // -------------------------------------------------------------------------
     Pyramid rainbow_pyramid;
+    // -------------------------------------------------------------------------
+    Portal portal_a;
+    portal_a.translate({-2.5, 1.0, 2.0});
+    portal_a.rotate(M_PI_2, {0.0, 1.0, 0.0});
+    portal_a.scale({1.5, 1.5, 1.5});
+    // -------------------------------------------------------------------------
+    Portal portal_b;
+    portal_b.translate({0, 2.0, 6.0});
+//    portal_a.rotate(M_PI_2, {0.0, 1.0, 0.0});
+    portal_b.scale({1.5, 1.5, 1.5});
     // -------------------------------------------------------------------------
     glEnable(GL_DEPTH_TEST);
     // -------------------------------------------------------------------------
@@ -76,6 +87,10 @@ int main() {
                                           rainbow_pyramid.get_center());
 
         cube_of_shades.draw(light_shader, projection_view);
+        // ---------------------------------------------------------------------
+        portal_a.draw(portal_shader, projection_view);
+        // ---------------------------------------------------------------------
+        portal_b.draw(portal_shader, projection_view);
         // ---------------------------------------------------------------------
 
         glfwSwapBuffers(window);
