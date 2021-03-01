@@ -37,9 +37,7 @@ private:
     void bind_normals();
 
 public:
-    ShaderProgram shader;
-
-    Mesh(std::string vertex_shader_name, std::string fragment_shader_name);
+    Mesh();
 
     void bind() const;
     void unbind() const;

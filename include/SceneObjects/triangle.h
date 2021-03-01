@@ -15,8 +15,10 @@ private:
 public:
     Triangle();
 
-    void draw(const glm::mat4 &camera_projection_view) override;
-    void draw_shape(const glm::mat4 &camera_projection_view) override;
+    void draw(ShaderProgram &shader,
+              const glm::mat4 &camera_projection_view) override;
+    void draw_shape(ShaderProgram &shader,
+                    const glm::mat4 &camera_projection_view) override;
 };
 
 #endif    // PORTAL_ENGINE_TRIANGLE_H

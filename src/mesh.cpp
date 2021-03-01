@@ -4,11 +4,11 @@
 #include <GLFW/glfw3.h>
 
 #include <glm/glm.hpp>
+#include <iostream>
+#include <utility>
 #include <vector>
 
 #include "shader.h"
-#include <utility>
-#include <iostream>
 
 namespace {
 template <typename T>
@@ -26,15 +26,10 @@ void Mesh::bind_vertices() {
 
     glBufferData(GL_ARRAY_BUFFER,
                  vertices.size() * sizeof(typeof(vertices.front())),
-                 &vertices[0],
-                 GL_STATIC_DRAW);
+                 &vertices[0], GL_STATIC_DRAW);
 
-    glVertexAttribPointer(VERTEX_LAYOUT,
-                          3,
-                          GL_FLOAT,
-                          GL_FALSE,
-                          3 * sizeof(typeof(vertices.front())),
-                          nullptr);
+    glVertexAttribPointer(VERTEX_LAYOUT, 3, GL_FLOAT, GL_FALSE,
+                          3 * sizeof(typeof(vertices.front())), nullptr);
 
     glEnableVertexAttribArray(VERTEX_LAYOUT);
 
@@ -50,8 +45,7 @@ void Mesh::bind_indexed_vertices() {
     glBufferData(
         GL_ELEMENT_ARRAY_BUFFER,
         indexed_vertices.size() * sizeof(typeof(indexed_vertices.front())),
-        &indexed_vertices[0],
-        GL_STATIC_DRAW);
+        &indexed_vertices[0], GL_STATIC_DRAW);
 
     unbind();
 }
@@ -63,16 +57,11 @@ void Mesh::bind_colors() {
     glBindBuffer(GL_ARRAY_BUFFER, color_buffer_object);
 
     glBufferData(GL_ARRAY_BUFFER,
-                 colors.size() * sizeof(typeof(colors.front())),
-                 &colors[0],
+                 colors.size() * sizeof(typeof(colors.front())), &colors[0],
                  GL_STATIC_DRAW);
 
-    glVertexAttribPointer(COLOR_LAYOUT,
-                          3,
-                          GL_FLOAT,
-                          GL_FALSE,
-                          3 * sizeof(typeof(colors.front())),
-                          nullptr);
+    glVertexAttribPointer(COLOR_LAYOUT, 3, GL_FLOAT, GL_FALSE,
+                          3 * sizeof(typeof(colors.front())), nullptr);
 
     glEnableVertexAttribArray(COLOR_LAYOUT);
 
@@ -87,15 +76,10 @@ void Mesh::bind_textures() {
 
     glBufferData(GL_ARRAY_BUFFER,
                  textures.size() * sizeof(typeof(textures.front())),
-                 &textures[0],
-                 GL_STATIC_DRAW);
+                 &textures[0], GL_STATIC_DRAW);
 
-    glVertexAttribPointer(TEXTURES_LAYOUT,
-                          2,
-                          GL_FLOAT,
-                          GL_FALSE,
-                          2 * sizeof(typeof(textures.front())),
-                          nullptr);
+    glVertexAttribPointer(TEXTURES_LAYOUT, 2, GL_FLOAT, GL_FALSE,
+                          2 * sizeof(typeof(textures.front())), nullptr);
 
     glEnableVertexAttribArray(TEXTURES_LAYOUT);
 
@@ -109,25 +93,18 @@ void Mesh::bind_normals() {
     glBindBuffer(GL_ARRAY_BUFFER, normals_buffer_object);
 
     glBufferData(GL_ARRAY_BUFFER,
-                 normals.size() * sizeof(typeof(normals.front())),
-                 &normals[0],
+                 normals.size() * sizeof(typeof(normals.front())), &normals[0],
                  GL_STATIC_DRAW);
 
-    glVertexAttribPointer(NORMALS_LAYOUT,
-                          3,
-                          GL_FLOAT,
-                          GL_FALSE,
-                          3 * sizeof(typeof(normals.front())),
-                          nullptr);
+    glVertexAttribPointer(NORMALS_LAYOUT, 3, GL_FLOAT, GL_FALSE,
+                          3 * sizeof(typeof(normals.front())), nullptr);
 
     glEnableVertexAttribArray(NORMALS_LAYOUT);
 
     unbind();
 }
 
-
-Mesh::Mesh(std::string vertex_shader_name, std::string fragment_shader_name)
-    : shader(std::move(vertex_shader_name), std::move(fragment_shader_name)) {
+Mesh::Mesh() {
     glGenVertexArrays(1, &vertex_array_object);
     glGenBuffers(1, &vertex_buffer_object);
     glGenBuffers(1, &color_buffer_object);
@@ -165,9 +142,7 @@ void Mesh::add_normals(std::vector<float> data) {
     bind_normals();
 }
 
-int Mesh::get_number_of_vertices() const {
-    return vertices.size();
-}
+int Mesh::get_number_of_vertices() const { return vertices.size(); }
 
 Mesh::~Mesh() {
     glDeleteVertexArrays(1, &vertex_array_object);

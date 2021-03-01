@@ -15,13 +15,20 @@ int main() {
     Camera camera;
     Controller controller(&camera, window);
     // -------------------------------------------------------------------------
+    ShaderProgram triangle_shader("Triangle/triangle.vertex",
+                                  "Triangle/triangle.fragment");
+    ShaderProgram light_shader("shaders/light.vertex",
+                               "shaders/light.fragment");
+    ShaderProgram pyramid_shader("Pyramid/pyramid.vertex",
+                                 "Pyramid/pyramid.fragment");
+    // -------------------------------------------------------------------------
     Triangle textured_triangle;
     //--------------------------------------------------------------------------
     Cube cube_of_shades;
     // -------------------------------------------------------------------------
-    glEnable(GL_DEPTH_TEST);
-    // -------------------------------------------------------------------------
     Pyramid rainbow_pyramid;
+    // -------------------------------------------------------------------------
+    glEnable(GL_DEPTH_TEST);
     // -------------------------------------------------------------------------
     do {
         controller.cursor_position_callback();
@@ -38,9 +45,9 @@ int main() {
         glm::mat4 projection_view =
             camera.get_projection_matrix() * camera.get_view_matrix();
         // ---------------------------------------------------------------------
-        textured_triangle.draw(projection_view);
+        textured_triangle.draw(triangle_shader, projection_view);
         // ---------------------------------------------------------------------
-        // calculation for rainbow-pyramid
+        //         calculation for rainbow-pyramid
         float radius = 3.0f;
         glm::vec3 pivot = {3.0f, 3.0f, 3.0f};
         float time_value = glfwGetTime();
@@ -49,23 +56,26 @@ int main() {
         auto translate_per_frame =
             pivot + glm::vec3(cos(time_value / 2) * radius, sin(time_value / 2),
                               sin(time_value / 2) * radius);
+
         // ---------------------------------------------------------------------
         // pyramid draw
-        rainbow_pyramid.supply_shader(color_per_frame);
+        Pyramid::supply_shader(pyramid_shader, color_per_frame);
         rainbow_pyramid.set_rotation_matrix(
             glm::rotate(glm::mat4(1.0f), time_value, rotation_per_frame));
         rainbow_pyramid.set_translation_matrix(
             glm::translate(glm::mat4(1.0f), translate_per_frame));
-        rainbow_pyramid.draw(projection_view);
-        rainbow_pyramid.draw_shape(projection_view);
+        rainbow_pyramid.draw(pyramid_shader, projection_view);
+        rainbow_pyramid.draw_shape(pyramid_shader, projection_view);
+        //
         // ---------------------------------------------------------------------
         // "cube of shade" draw
-        cube_of_shades.set_camera_pos(camera.get_position());
-        cube_of_shades.set_translate({3.0f, 3.0f, 3.0f});
-        cube_of_shades.set_light_color(color_per_frame);
-        cube_of_shades.set_light_position(rainbow_pyramid.get_center());
+        cube_of_shades.set_camera_pos(light_shader, camera.get_position());
+        cube_of_shades.set_translate(light_shader, {3.0f, 3.0f, 3.0f});
+        cube_of_shades.set_light_color(light_shader, color_per_frame);
+        cube_of_shades.set_light_position(light_shader,
+                                          rainbow_pyramid.get_center());
 
-        cube_of_shades.draw(projection_view);
+        cube_of_shades.draw(light_shader, projection_view);
         // ---------------------------------------------------------------------
 
         glfwSwapBuffers(window);
