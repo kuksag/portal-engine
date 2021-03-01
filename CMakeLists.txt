@@ -40,7 +40,9 @@ add_executable(main
         src/SceneObjects/pyramid.cpp include/SceneObjects/pyramid.h
         src/SceneObjects/triangle.cpp include/SceneObjects/triangle.h
         src/Texture.cpp include/Texture.h
-        src/SceneObjects/cube.cpp include/SceneObjects/cube.h)
+        src/SceneObjects/cube.cpp include/SceneObjects/cube.h
+        src/SceneObjects/portal.cpp include/SceneObjects/portal.h
+        )
 
 target_include_directories(main PUBLIC include src)
 target_link_libraries(main ${OPENGL_LIBS})
