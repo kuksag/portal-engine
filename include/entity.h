@@ -17,15 +17,18 @@ private:
 
 protected:
     Entity();
-    glm::mat4 get_translation_matrix() const;
-    [[nodiscard]] glm::mat4 get_model_matrix() const;
-
 public:
     void set_center(glm::vec3 center_);
+
+    [[nodiscard]] glm::mat4 get_translation_matrix() const;
+    [[nodiscard]] glm::mat4 get_rotation_matrix() const;
+    [[nodiscard]] glm::mat4 get_model_matrix() const;
+    [[nodiscard]] glm::quat get_quaternion_rotation_matrix() const;
 
     void set_translation_matrix(const glm::mat4 &data);
     void set_rotation_matrix(const glm::mat4 &data);
     void set_scale_matrix(const glm::mat4 &data);
+    void set_model_matrix(const glm::mat4 &data);
 
     void translate(const glm::vec3 &data);
     void rotate(float angle, const glm::vec3 &data);

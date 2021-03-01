@@ -42,6 +42,7 @@ add_executable(main
         src/Texture.cpp include/Texture.h
         src/SceneObjects/cube.cpp include/SceneObjects/cube.h
         src/SceneObjects/portal.cpp include/SceneObjects/portal.h
+        src/portals-draw-temp.cpp include/portals-draw-temp.h
         )
 
 target_include_directories(main PUBLIC include src)

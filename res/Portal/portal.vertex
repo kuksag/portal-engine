@@ -6,9 +6,10 @@ layout (location = 1) in vec3 color;
 out vec3 fragColor;
 
 uniform mat4 MVP;
+uniform vec3 extra_color;
 
 void main()
 {
-	fragColor = color;
+	fragColor = color + extra_color;
 	gl_Position = MVP * vec4(position, 1.0);
 }

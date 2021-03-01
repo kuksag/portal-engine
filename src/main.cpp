@@ -1,15 +1,24 @@
 #include <GL/glew.h>
 #include <GLFW/glfw3.h>
 #include <SceneObjects/cube.h>
+#include <SceneObjects/portal.h>
 #include <SceneObjects/pyramid.h>
 #include <SceneObjects/triangle.h>
-#include <SceneObjects/portal.h>
 
 #include <iostream>
 
 #include "camera.h"
 #include "controls.h"
+#include "portals-draw-temp.h"
 #include "settings.h"
+
+void draw_non_portals(
+    std::vector<std::pair<Drawable *, ShaderProgram *>> &elements,
+    glm::mat4 projection_view) {
+    for (auto &element : elements) {
+        element.first->draw(*element.second, projection_view);
+    }
+}
 
 int main() {
     GLFWwindow *window = nullptr;
@@ -24,22 +33,33 @@ int main() {
                                  "Pyramid/pyramid.fragment");
     ShaderProgram portal_shader("Portal/portal.vertex",
                                 "Portal/portal.fragment");
+    ShaderProgram beacon_shader("Portal/portal.vertex",
+                                "Portal/portal.fragment");
     // -------------------------------------------------------------------------
     Triangle textured_triangle;
     Cube cube_of_shades;
     Pyramid rainbow_pyramid;
+    Portal portal_a, portal_b;
+    Cube beacon_a, beacon_b; // маячок
     // -------------------------------------------------------------------------
-    Portal portal_a;
     portal_a.translate({-2.5, 1.0, 2.0});
-    portal_a.rotate(M_PI_2, {0.0, 1.0, 0.0});
-    portal_a.scale({1.5, 1.5, 1.5});
-    // -------------------------------------------------------------------------
-    Portal portal_b;
+    portal_a.rotate(-M_PI_2, {0.0, 1.0, 0.0});
+    float SIZE = 10;
+    portal_a.scale({SIZE, SIZE, SIZE});
+    // ---------------------------------
     portal_b.translate({0, 2.0, 6.0});
-//    portal_a.rotate(M_PI_2, {0.0, 1.0, 0.0});
-    portal_b.scale({1.5, 1.5, 1.5});
+    portal_b.scale({SIZE, SIZE, SIZE});
+    // ---------------------------------
+    portal_a.set_destination(&portal_b);
+    portal_b.set_destination(&portal_a);
     // -------------------------------------------------------------------------
     glEnable(GL_DEPTH_TEST);
+    // -------------------------------------------------------------------------
+    std::vector<std::pair<Drawable *, ShaderProgram *>> elements;
+    elements.emplace_back(&textured_triangle, &triangle_shader);
+    elements.emplace_back(&rainbow_pyramid, &pyramid_shader);
+    elements.emplace_back(&cube_of_shades, &light_shader);
+    elements.emplace_back(&beacon_a, &beacon_shader);
     // -------------------------------------------------------------------------
     do {
         controller.cursor_position_callback();
@@ -48,15 +68,6 @@ int main() {
 
         glClearColor(0.3f, 0.3f, 0.6f, 0.0f);
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-        // ---------------------------------------------------------------------
-
-        glm::mat4 model_matrix = glm::mat4(1.0f);
-        glm::mat4 MVP = camera.get_projection_matrix() *
-                        camera.get_view_matrix() * model_matrix;
-        glm::mat4 projection_view =
-            camera.get_projection_matrix() * camera.get_view_matrix();
-        // ---------------------------------------------------------------------
-        textured_triangle.draw(triangle_shader, projection_view);
         // ---------------------------------------------------------------------
         //         calculation for rainbow-pyramid
         float radius = 3.0f;
@@ -75,8 +86,6 @@ int main() {
             glm::rotate(glm::mat4(1.0f), time_value, rotation_per_frame));
         rainbow_pyramid.set_translation_matrix(
             glm::translate(glm::mat4(1.0f), translate_per_frame));
-        rainbow_pyramid.draw(pyramid_shader, projection_view);
-        rainbow_pyramid.draw_shape(pyramid_shader, projection_view);
         //
         // ---------------------------------------------------------------------
         // "cube of shade" draw
@@ -85,12 +94,33 @@ int main() {
         cube_of_shades.set_light_color(light_shader, color_per_frame);
         cube_of_shades.set_light_position(light_shader,
                                           rainbow_pyramid.get_center());
+        // ---------------------------------------------------------------------
+        //        portal_a.draw(portal_shader, camera.get_projection_matrix() *
+        //                                         camera.get_view_matrix());
+        // ---------------------------------------------------------------------
+        //        portal_b.draw(portal_shader, camera.get_projection_matrix() *
+        //                                         camera.get_view_matrix());
+        // ---------------------------------------------------------------------
+        //        draw_non_portals(elements, camera.get_projection_matrix() *
+        //                                       camera.get_view_matrix());
+        // ---------------------------------------------------------------------
+        magic(elements, portal_shader, camera, portal_a);
+        // ---------------------------------------------------------------------
+        // check center of object
+        glUniform3f(beacon_shader.get_uniform_id("extra_color"), 1.0f, 0.0f,
+                    0.0f);
+        beacon_a.set_translation_matrix(portal_a.get_translation_matrix());
+        beacon_a.set_scale_matrix(glm::scale(glm::mat4(1.0), {0.1, 0.1, 0.1}));
+        beacon_a.draw(beacon_shader,
+                      camera.get_projection_matrix() * camera.get_view_matrix());
+        // ----------------------------------
+        glUniform3f(beacon_shader.get_uniform_id("extra_color"), 1.0f, 0.0f,
+                    0.0f);
+        beacon_a.set_translation_matrix(portal_b.get_translation_matrix());
+        beacon_a.set_scale_matrix(glm::scale(glm::mat4(1.0), {0.1, 0.1, 0.1}));
+        beacon_a.draw(beacon_shader,
+                      camera.get_projection_matrix() * camera.get_view_matrix());
 
-        cube_of_shades.draw(light_shader, projection_view);
-        // ---------------------------------------------------------------------
-        portal_a.draw(portal_shader, projection_view);
-        // ---------------------------------------------------------------------
-        portal_b.draw(portal_shader, projection_view);
         // ---------------------------------------------------------------------
 
         glfwSwapBuffers(window);
