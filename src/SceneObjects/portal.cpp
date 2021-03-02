@@ -27,7 +27,7 @@ Portal::Portal() : bound(4), destination(this) {
     // ---------------------
     // задняя стенка
 
-    back_plane.translate({0.0, 0.0, 0.01});
+    back_plane.translate({0.0, 0.0, 0.09});
 }
 
 void Portal::draw(ShaderProgram& shader,
