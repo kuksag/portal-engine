@@ -43,6 +43,7 @@ add_executable(main
         src/SceneObjects/cube.cpp include/SceneObjects/cube.h
         src/SceneObjects/portal.cpp include/SceneObjects/portal.h
         src/portals-draw-temp.cpp include/portals-draw-temp.h
+        src/SceneObjects/plane.cpp include/SceneObjects/plane.h
         )
 
 target_include_directories(main PUBLIC include src)
