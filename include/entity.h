@@ -22,6 +22,8 @@ public:
 
     [[nodiscard]] glm::mat4 get_translation_matrix() const;
     [[nodiscard]] glm::mat4 get_rotation_matrix() const;
+    [[nodiscard]] glm::mat4 get_scale_matrix() const;
+
     [[nodiscard]] glm::mat4 get_model_matrix() const;
     [[nodiscard]] glm::quat get_quaternion_rotation_matrix() const;
 
@@ -35,6 +37,8 @@ public:
     void scale(const glm::vec3 &data);
 
     [[nodiscard]] glm::vec3 get_center() const;
+
+    void copy_data(Entity other);
 };
 
 #endif    // PORTAL_ENGINE_ENTITY_H

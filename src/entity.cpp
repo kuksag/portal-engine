@@ -56,11 +56,20 @@ void Entity::set_center(glm::vec3 center_) { center = center_; }
 
 void Entity::set_model_matrix(const glm::mat4 &data) {
     model_matrix = data;
-    update();
+//    update();
 }
 
 glm::mat4 Entity::get_rotation_matrix() const { return rotation_matrix; }
 glm::quat Entity::get_quaternion_rotation_matrix() const {
     auto wtf = get_rotation_matrix();
     return glm::quat_cast(wtf);
+}
+glm::mat4 Entity::get_scale_matrix() const { return scale_matrix; }
+
+void Entity::copy_data(Entity other) {
+    using std::swap;
+    swap(translation_matrix, other.translation_matrix);
+    swap(scale_matrix, other.scale_matrix);
+    swap(rotation_matrix, other.rotation_matrix);
+    update();
 }
