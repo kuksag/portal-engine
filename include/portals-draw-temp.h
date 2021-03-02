@@ -13,7 +13,7 @@ void draw_non_portals(
     glm::mat4 projection_view);
 
 void magic(std::vector<std::pair<Drawable *, ShaderProgram *>> &elements,
-           ShaderProgram &shader, Camera &camera, Portal &portal);
+           ShaderProgram &shader, Camera &camera, std::vector<Portal*> &portals);
 glm::mat4 clipped_projection_matrix(Portal &portal,
                                     glm::mat4 const &view_matrix,
                                     glm::mat4 const &projection_matrix);

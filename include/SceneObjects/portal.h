@@ -4,17 +4,23 @@
 #include "camera.h"
 #include "drawable.h"
 #include "mesh.h"
+#include "SceneObjects/cube.h"
+#include "SceneObjects/plane.h"
 
 struct Portal : Drawable {
 private:
-    Mesh mesh;
+    std::vector<Cube> bound;
+    Cube beacon;
     Portal *destination;
+    Plane plane, back_plane;
 
 public:
     Portal();
-    void draw(ShaderProgram &shader, const glm::mat4 &camera_projection_view);
+
+
+    void draw(ShaderProgram &shader, const glm::mat4 &camera_projection_view) override;
     void draw_shape(ShaderProgram &shader,
-                    const glm::mat4 &camera_projection_view);
+                    const glm::mat4 &camera_projection_view) override;
     void set_destination(Portal *destination_);
     Portal *get_destination();
 };

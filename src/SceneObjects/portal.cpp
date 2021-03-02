@@ -1,47 +1,56 @@
 #include "SceneObjects/portal.h"
 
-
 #include "camera.h"
 
-Portal::Portal() : mesh() {
-    std::vector<float> data = {-0.5f, -0.5f, 0.0f, 0.5f,  -0.5f, 0.0f,
-                               0.5f,  0.5f,  0.0f, 0.5f,  0.5f,  0.0f,
-                               -0.5f, 0.5f,  0.0f, -0.5f, -0.5f, 0.0f};
+Portal::Portal() : bound(4), destination(this) {
+    // ---------------------
+    // обводка
 
-    mesh.add_vertices(data);
-
-    mesh.add_colors({0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f,
-                     0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f});
-
-    mesh.add_indexed_vertices({0, 1, 2, 3, 4, 5});
-
-    glm::vec3 center;
-    for (int i = 0; i < data.size(); i += 3) {
-        for (int j = 0; j < 3; j++) center[j] += data[i + j];
+    for (auto& line : bound) {
+        line.scale({1.1, 0.1, 0.1});
     }
-    for (int i = 0; i < 3; i++) center[i] /= 1.0 * data.size();
-    set_center(center);
+    bound[0].translate({0.0, -0.5, 0.0});
+    bound[1].translate({0.0, 0.5, 0.0});
+
+    bound[2].translate({-0.5, 0.0, 0.0});
+    bound[2].rotate(M_PI_2, {0.0, 0.0, 1.0});
+
+    bound[3].translate({0.5, 0.0, 0.0});
+    bound[3].rotate(M_PI_2, {0.0, 0.0, 1.0});
+
+    // ---------------------
+    // маячок
+
+    beacon.scale({0.1, 0.1, 0.1});
+    beacon.translate({0.0, 0.0, -0.2});
+
+    // ---------------------
+    // задняя стенка
+
+    back_plane.translate({0.0, 0.0, 0.01});
 }
 
 void Portal::draw(ShaderProgram& shader,
                   const glm::mat4& camera_projection_view) {
-    shader.use();
-    mesh.bind();
-
-    auto MVP = camera_projection_view * get_model_matrix();
-
-    glUniformMatrix4fv(shader.get_uniform_id("MVP"), 1, GL_FALSE, &MVP[0][0]);
-
-    glDrawElements(GL_TRIANGLES, mesh.get_number_of_vertices(), GL_UNSIGNED_INT,
-                   nullptr);
-
-    mesh.unbind();
+    plane.draw(shader, camera_projection_view * get_model_matrix());
 }
 
-
-
 void Portal::draw_shape(ShaderProgram& shader,
-                        const glm::mat4& camera_projection_view) {}
+                        const glm::mat4& camera_projection_view) {
+    shader.use();
+
+    for (auto& line : bound) {
+        glUniform3f(shader.get_uniform_id("extra_color"), 0.3, 0.6, 0.5);
+        line.draw(shader, camera_projection_view * get_model_matrix());
+        glUniform3f(shader.get_uniform_id("extra_color"), 0.0, 0.0, 0.0);
+    }
+
+//    glUniform3f(shader.get_uniform_id("extra_color"), 1.0f, 0.0f, 0.0f);
+//    beacon.draw(shader, camera_projection_view * get_model_matrix());
+//    glUniform3f(shader.get_uniform_id("extra_color"), 0.0, 0.0, 0.0);
+
+    back_plane.draw(shader, camera_projection_view * get_model_matrix());
+}
 
 void Portal::set_destination(Portal* destination_) {
     destination = destination_;

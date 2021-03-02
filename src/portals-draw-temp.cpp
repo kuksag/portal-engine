@@ -1,97 +1,102 @@
 #include "portals-draw-temp.h"
 
 void magic(std::vector<std::pair<Drawable*, ShaderProgram*>>& elements,
-           ShaderProgram& shader, Camera& camera, Portal& portal) {
+           ShaderProgram& shader, Camera& camera,
+           std::vector<Portal*>& portals) {
     int recursionLevel = 0;
 
-    // Disable color and depth drawing
-    glColorMask(GL_FALSE, GL_FALSE, GL_FALSE, GL_FALSE);
-    glDepthMask(GL_FALSE);
+    for (auto& portal_ptr : portals) {
+        auto& portal = *portal_ptr;
 
-    // Disable depth test
-    glDisable(GL_DEPTH_TEST);
+        // Disable color and depth drawing
+        glColorMask(GL_FALSE, GL_FALSE, GL_FALSE, GL_FALSE);
+        glDepthMask(GL_FALSE);
 
-    // Enable stencil test, to prevent drawing outside
-    // region of current portal depth
-    glEnable(GL_STENCIL_TEST);
+        // Disable depth test
+        glDisable(GL_DEPTH_TEST);
 
-    // Fail stencil test when inside of outer portal
-    // (fail where we should be drawing the inner portal)
-    glStencilFunc(GL_NOTEQUAL, recursionLevel, 0xFF);
+        // Enable stencil test, to prevent drawing outside
+        // region of current portal depth
+        glEnable(GL_STENCIL_TEST);
 
-    // Increment stencil value on stencil fail
-    // (on area of inner portal)
-    glStencilOp(GL_INCR, GL_KEEP, GL_KEEP);
+        // Fail stencil test when inside of outer portal
+        // (fail where we should be drawing the inner portal)
+        glStencilFunc(GL_NOTEQUAL, recursionLevel, 0xFF);
 
-    // Enable (writing into) all stencil bits
-    glStencilMask(0xFF);
+        // Increment stencil value on stencil fail
+        // (on area of inner portal)
+        glStencilOp(GL_INCR, GL_KEEP, GL_KEEP);
 
-    // Draw portal into stencil buffer
-    portal.draw(shader,
-                camera.get_projection_matrix() * camera.get_view_matrix());
+        // Enable (writing into) all stencil bits
+        glStencilMask(0xFF);
 
-    // Calculate view matrix as if the player was already teleported
-    glm::mat4 destination_view =
-        camera.get_view_matrix() * portal.get_model_matrix() *
-        glm::rotate(glm::mat4(1.0f), 180.0f,
-                    glm::vec3(0.0f, 1.0f, 0.0f) *
-                        portal.get_quaternion_rotation_matrix()) *
-        glm::inverse(portal.get_destination()->get_model_matrix());
+        // Draw portal into stencil buffer
+        portal.draw(shader,
+                    camera.get_projection_matrix() * camera.get_view_matrix());
 
-    // Base case, render inside of inner portal
-    // Enable color and depth drawing
-    glColorMask(GL_TRUE, GL_TRUE, GL_TRUE, GL_TRUE);
-    glDepthMask(GL_TRUE);
+        // Calculate view matrix as if the player was already teleported
+        glm::mat4 destination_view =
+            camera.get_view_matrix() * portal.get_model_matrix() *
+            glm::rotate(glm::mat4(1.0f), static_cast<float>(M_PI),
+                        glm::vec3(0.0f, 1.0f, 0.0f) *
+                            portal.get_quaternion_rotation_matrix()) *
+            glm::inverse(portal.get_destination()->get_model_matrix());
 
-    // Clear the depth buffer so we don't interfere with stuff
-    // outside of this inner portal
-    glClear(GL_DEPTH_BUFFER_BIT);
+        // Base case, render inside of inner portal
+        // Enable color and depth drawing
+        glColorMask(GL_TRUE, GL_TRUE, GL_TRUE, GL_TRUE);
+        glDepthMask(GL_TRUE);
 
-    // Enable the depth test
-    // So the stuff we render here is rendered correctly
-    glEnable(GL_DEPTH_TEST);
+        // Clear the depth buffer so we don't interfere with stuff
+        // outside of this inner portal
+        glClear(GL_DEPTH_BUFFER_BIT);
 
-    // Enable stencil test
-    // So we can limit drawing inside of the inner portal
-    glEnable(GL_STENCIL_TEST);
+        // Enable the depth test
+        // So the stuff we render here is rendered correctly
+        glEnable(GL_DEPTH_TEST);
 
-    // Disable drawing into stencil buffer
-    glStencilMask(0x00);
+        // Enable stencil test
+        // So we can limit drawing inside of the inner portal
+        glEnable(GL_STENCIL_TEST);
 
-    // Draw only where stencil value == recursionLevel + 1
-    // which is where we just drew the new portal
-    glStencilFunc(GL_EQUAL, recursionLevel + 1, 0xFF);
+        // Disable drawing into stencil buffer
+        glStencilMask(0x00);
 
-    // Draw scene objects with destView, limited to stencil buffer
-    // use an edited projection matrix to set the near plane to the portal
-    // plane
-    draw_non_portals(elements,
-                     clipped_projection_matrix(portal, destination_view,
-                                               camera.get_projection_matrix()) *
-                         destination_view);
-    // drawNonPortals(destView, projMat);
+        // Draw only where stencil value == recursionLevel + 1
+        // which is where we just drew the new portal
+        glStencilFunc(GL_EQUAL, recursionLevel + 1, 0xFF);
 
-    // Disable color and depth drawing
-    glColorMask(GL_FALSE, GL_FALSE, GL_FALSE, GL_FALSE);
-    glDepthMask(GL_FALSE);
+        // Draw scene objects with destView, limited to stencil buffer
+        // use an edited projection matrix to set the near plane to the portal
+        // plane
+        draw_non_portals(elements, clipped_projection_matrix(
+                                       portal, destination_view,
+                                       camera.get_projection_matrix()) *
+                                       destination_view);
+        // drawNonPortals(destView, projMat);
 
-    // Enable stencil test and stencil drawing
-    glEnable(GL_STENCIL_TEST);
-    glStencilMask(0xFF);
+        // Disable color and depth drawing
+        glColorMask(GL_FALSE, GL_FALSE, GL_FALSE, GL_FALSE);
+        glDepthMask(GL_FALSE);
 
-    // Fail stencil test when inside of our newly rendered
-    // inner portal
-    glStencilFunc(GL_NOTEQUAL, recursionLevel + 1, 0xFF);
+        // Enable stencil test and stencil drawing
+        glEnable(GL_STENCIL_TEST);
+        glStencilMask(0xFF);
 
-    // Decrement stencil value on stencil fail
-    // This resets the incremented values to what they were before,
-    // eventually ending up with a stencil buffer full of zero's again
-    // after the last (outer) step.
-    glStencilOp(GL_DECR, GL_KEEP, GL_KEEP);
+        // Fail stencil test when inside of our newly rendered
+        // inner portal
+        glStencilFunc(GL_NOTEQUAL, recursionLevel + 1, 0xFF);
 
-    // Draw portal into stencil buffer
-    portal.draw(shader,
-                camera.get_projection_matrix() * camera.get_view_matrix());
+        // Decrement stencil value on stencil fail
+        // This resets the incremented values to what they were before,
+        // eventually ending up with a stencil buffer full of zero's again
+        // after the last (outer) step.
+        glStencilOp(GL_DECR, GL_KEEP, GL_KEEP);
+
+        // Draw portal into stencil buffer
+        portal.draw(shader,
+                    camera.get_projection_matrix() * camera.get_view_matrix());
+    }
 
     // Disable the stencil test and stencil writing
     glDisable(GL_STENCIL_TEST);
@@ -111,8 +116,11 @@ void magic(std::vector<std::pair<Drawable*, ShaderProgram*>>& elements,
     glClear(GL_DEPTH_BUFFER_BIT);
 
     // Draw portals into depth buffer
-    portal.draw(shader,
-                camera.get_projection_matrix() * camera.get_view_matrix());
+    for (auto& portal_ptr : portals) {
+        auto& portal = *portal_ptr;
+        portal.draw(shader,
+                    camera.get_projection_matrix() * camera.get_view_matrix());
+    }
 
     // Reset the depth function to the default
     glDepthFunc(GL_LESS);
@@ -136,6 +144,12 @@ void magic(std::vector<std::pair<Drawable*, ShaderProgram*>>& elements,
     // Draw scene objects normally, only at recursionLevel
     draw_non_portals(elements,
                      camera.get_projection_matrix() * camera.get_view_matrix());
+
+    for (auto& portal_ptr : portals) {
+        auto& portal = *portal_ptr;
+        portal.draw_shape(
+            shader, camera.get_projection_matrix() * camera.get_view_matrix());
+    }
 }
 
 glm::mat4 clipped_projection_matrix(Portal& portal,
