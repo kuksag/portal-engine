@@ -16,7 +16,9 @@ int main() {
     Camera camera;
     Controller controller(&camera, window);
     std::vector<LightSource> light_sources{LightSource(glm::vec3(10.0f, 10.0f, 10.0f),
-                             glm::vec3(1.0f, 1.0f, 1.0f))};
+                             glm::vec3(1.0f, 1.0f, 1.0f)),
+                                           LightSource(glm::vec3(-10.0f, 10.0f, -10.0f),
+                                                       glm::vec3(1.0f, 1.0f, 1.0f))};
     // -------------------------------------------------------------------------
     std::vector<Drawable *> primitives = {
         new Cube({0, 0, 0}, {0.5, 0.5, 0}),

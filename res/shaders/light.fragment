@@ -4,36 +4,59 @@ in vec2 TexCoord;
 in vec3 Normal;
 in vec3 point_pos;
 
-out vec4 out_color;
+struct LightSource {
+    vec3 position;
+    vec3 color;
+};
 
-uniform vec3 light_pos0;
-uniform vec3 light_color0; //TODO: выделить источники света в структуры и передавать их как массив
+uniform LightSource light_source0;
+uniform LightSource light_source1; //TODO: Make uniform array of LightSource
+
 uniform vec3 camera_pos;
 uniform sampler2D Texture;
 uniform vec4 color;
 
-void main()
-{
-    vec4 texture_color = texture(Texture, TexCoord) + color;
+out vec4 out_color;
 
-    vec3 norm = normalize(Normal);
-    vec3 light_dir = normalize(light_pos0 - point_pos);
+vec3 calc_diffusion(LightSource light_source, vec3 light_dir, vec3 norm) {
     float diff = max(dot(norm, light_dir), 0.0);
-    vec3 diffusion = diff * light_color0;
+    vec3 diffusion = diff * light_source.color;
+    return diffusion;
+}
 
+vec3 calc_specular(LightSource light_source, vec3 light_dir, vec3 norm) {
     vec3 view_dir = normalize(camera_pos - point_pos);
     vec3 reflect_dir = reflect(-light_dir, norm);
 
     float spec = pow(max(dot(view_dir, reflect_dir), 0.0), 16);
-    vec3 specular = 0.5f * spec * light_color0;
+    vec3 specular = 0.2f * spec * light_source.color;
+    return specular;
+}
 
-    if (diff == 0.0) {
+float calc_attenuation(float dist) {
+    return  1.0f / (1.0f + 0.007f * dist + 0.0002f * dist * dist);
+}
+
+vec3 calc_light_effect(LightSource light_source, vec3 norm) {
+    vec3 light_dir = normalize(light_source.position - point_pos);
+
+    vec3 diffusion = calc_diffusion(light_source, light_dir, norm);
+    vec3 specular = calc_specular(light_source, light_dir, norm);
+
+    if (diffusion == vec3(0.0, 0.0, 0.0)) {
         specular = vec3(0.0f, 0.0f, 0.0f);
     }
 
-    float dist = distance(light_pos0, point_pos);
-    float K = 1.0f / (1.0f + 0.007f * dist + 0.0002f * dist * dist); //Коэффициент затухания, подбор констант
+    float attenuation = calc_attenuation(distance(light_source.position, point_pos));
 
-    vec3 minimal_color = vec3(0.3f, 0.3f, 0.3f);
-    out_color =  K * (vec4((minimal_color + diffusion + specular),1.0f) * texture_color);
+    return attenuation * (diffusion + specular);
+}
+
+void main()
+{
+    vec4 preliminary_color = texture(Texture, TexCoord) + color;
+    vec3 norm = normalize(Normal);
+    vec3 summary_effects = calc_light_effect(light_source0, norm) + calc_light_effect(light_source1, norm);
+    vec3 min_color = vec3(0.3f, 0.3f, 0.3f);
+    out_color = vec4((summary_effects + min_color),1.0f) * preliminary_color;
 }

@@ -32,6 +32,10 @@ Model::Model(const std::string &path, std::shared_ptr<ShaderProgram> shader)
 void Model::draw(const Camera &camera) const {
     shader->use();
 
+    auto set_vec3 = [](GLuint id, glm::vec3 data) { //TODO: make ShaderProgram method
+        glUniform3f(id, data.x, data.y, data.z);
+    };
+
     auto MVP = camera.get_projection_matrix() * camera.get_view_matrix() *
                get_model_matrix();    // TODO: one calculation
 
@@ -44,23 +48,17 @@ void Model::draw(const Camera &camera) const {
                            &model_matrix[0][0]);
     glUniformMatrix3fv(shader->get_uniform_id("normal_transformation"), 1,
                            GL_FALSE, &normal_transformation[0][0]);
-    glUniform3f(shader->get_uniform_id("camera_pos"),
-                    camera.get_position().x, camera.get_position().y,
-                    camera.get_position().z);
+    set_vec3(shader->get_uniform_id("camera_pos"), camera.get_position());
 
-    //Установление всех источников света
+
     for (std::size_t i = 0; light_sources && i < light_sources->size(); ++i) {
-        std::stringstream pos_uniform_name;
-        pos_uniform_name << "light_pos" << i;
-        glm::vec3 pos = (*light_sources)[i].get_pos();
-        glUniform3f(shader->get_uniform_id(pos_uniform_name.str()), pos.x,
-                    pos.y, pos.z);
+        std::stringstream position_uniform_name;
+        position_uniform_name << "light_source" << i << ".position";
+        set_vec3(shader->get_uniform_id(position_uniform_name.str()),(*light_sources)[i].get_position());
 
         std::stringstream color_uniform_name;
-        color_uniform_name << "light_color" << i;
-        glm::vec3 color = (*light_sources)[i].get_color();
-        glUniform3f(shader->get_uniform_id(color_uniform_name.str()), color.x,
-                    color.y, color.z);
+        color_uniform_name << "light_source" << i << ".color";
+        set_vec3(shader->get_uniform_id(color_uniform_name.str()),(*light_sources)[i].get_color());
     }
 
     for (const auto &i : meshes) i.draw();
