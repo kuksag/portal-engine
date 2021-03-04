@@ -1,15 +1,13 @@
 #include <GL/glew.h>
 #include <GLFW/glfw3.h>
 
-#include <memory>
 #include <vector>
 
 #include "camera.h"
 #include "controls.h"
 #include "light_source.h"
 #include "primitives.h"
-#include "settings.h"
-#include "shader.h"
+#include "portal.h"
 
 using namespace Settings::Window;
 
@@ -25,6 +23,14 @@ int main() {
         new Cylinder({4, 0, 0}, {0.4, 0.2, 0.2}),
         new Torus({0, 0, -4}, {0.2, 0.5, 0.5}),
         new Cone({0, -4, 0}, {0.4, 1, 1})};
+    // -------------------------------------------------------------------------
+    Portal portal_a, portal_b;
+    portal_a.translate({2.5, 2.5, 2.5});
+
+    portal_b.translate({5, 4, 4});
+    portal_b.rotate(M_PI / 3, {1.0, 0.0, 0.0});
+    portal_b.rotate(-M_PI / 3, {0.0, 1.0, 0.0});
+    portal_b.rotate(M_PI / 3, {0.0, 0.0, 1.0});
     // -------------------------------------------------------------------------
     glEnable(GL_DEPTH_TEST);
     // -------------------------------------------------------------------------
@@ -42,6 +48,11 @@ int main() {
             // primitive->set_light_sources({...});
             primitive->draw(camera);
         }
+        // ---------------------------------------------------------------------
+        portal_a.draw(camera);
+        portal_b.draw(camera);
+        // ---------------------------------------------------------------------
+
 
         glfwSwapBuffers(window);
         glfwPollEvents();
