@@ -15,6 +15,8 @@ int main() {
     GLFWwindow *window = nullptr;
     Camera camera;
     Controller controller(&camera, window);
+    std::vector<LightSource> light_sources{LightSource(glm::vec3(20.0f, 20.0f, 20.0f),
+                             glm::vec3(1.0f, 1.0f, 1.0f))};
     // -------------------------------------------------------------------------
     std::vector<Drawable *> primitives = {
         new Cube({0, 0, 0}, {0.5, 0.5, 0}),
@@ -45,7 +47,7 @@ int main() {
 
         for (auto &primitive : primitives) {
             // if you want to set light source; by default {} is set
-            // primitive->set_light_sources({...});
+            primitive->set_light_sources(&light_sources);
             primitive->draw(camera);
         }
         // ---------------------------------------------------------------------
