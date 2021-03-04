@@ -31,6 +31,9 @@ void main()
         specular = vec3(0.0f, 0.0f, 0.0f);
     }
 
+    float dist = distance(light_pos0, point_pos);
+    float K = 1.0f / (1.0f + 0.007f * dist + 0.0002f * dist * dist); //Коэффициент затухания, подбор констант
+
     vec3 minimal_color = vec3(0.3f, 0.3f, 0.3f);
-    out_color = vec4((minimal_color + diffusion + specular),1.0f) * texture_color;
+    out_color =  K * (vec4((minimal_color + diffusion + specular),1.0f) * texture_color);
 }

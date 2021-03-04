@@ -15,16 +15,19 @@ int main() {
     GLFWwindow *window = nullptr;
     Camera camera;
     Controller controller(&camera, window);
-    std::vector<LightSource> light_sources{LightSource(glm::vec3(20.0f, 20.0f, 20.0f),
+    std::vector<LightSource> light_sources{LightSource(glm::vec3(10.0f, 10.0f, 10.0f),
                              glm::vec3(1.0f, 1.0f, 1.0f))};
     // -------------------------------------------------------------------------
     std::vector<Drawable *> primitives = {
         new Cube({0, 0, 0}, {0.5, 0.5, 0}),
         new Sphere({0, 4, 0}, {0.2, 1, 0.5}),
-        new Plane({0, 0, 4}, {0.3, 0.1, 0.8}),
+        new Plane({3, 7, 8}, {0.3, 0.1, 0.8}),
         new Cylinder({4, 0, 0}, {0.4, 0.2, 0.2}),
         new Torus({0, 0, -4}, {0.2, 0.5, 0.5}),
         new Cone({0, -4, 0}, {0.4, 1, 1})};
+    // -------------------------------------------------------------------------
+    //Big Plane
+        primitives[2]->scale(glm::vec3(10.0f, 10.0f, 10.0f));
     // -------------------------------------------------------------------------
     Portal portal_a, portal_b;
     portal_a.translate({2.5, 2.5, 2.5});
