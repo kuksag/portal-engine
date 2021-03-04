@@ -6,7 +6,6 @@
 
 #include <cmath>
 #include <glm/glm.hpp>
-
 #include <glm/gtc/matrix_transform.hpp>
 
 #include "settings.h"
@@ -25,6 +24,12 @@ private:
     float ratio;
     float display_range_near;
     float display_range_far;
+
+    bool custom_state_view_matrix{false};
+    glm::mat4 custom_view_matrix{};
+
+    bool custom_state_projection_matrix{false};
+    glm::mat4 custom_projection_matrix{};
 
 public:
     explicit Camera(glm::vec3 position_ = glm::vec3(POS_X, POS_Y, POS_Z),
@@ -59,6 +64,17 @@ public:
     void process_mouse_move(float x_delta, float y_delta, float time_delta,
                             bool constraint = true);
     void process_mouse_scroll(float y_delta);
+
+    // -------------------------------------------------------------------------
+    // This is used for easy transfer of view\projection matrix, when calling
+    // Drawable::draw(); also because we might apply additional model-matrix.
+    //
+    // When its called, all following calls of any function, except
+    // get_projection_matrix or get_view_matrix,
+    // will do or return nonsense (but not UB)
+    void set_view_matrix(glm::mat4 data);
+    void set_projection_matrix(glm::mat4 data);
+    // -------------------------------------------------------------------------
 };
 
 #endif    // PORTAL_ENGINE_CAMERA_H
