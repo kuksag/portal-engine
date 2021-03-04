@@ -12,8 +12,8 @@ Primitive::Primitive(const glm::vec3& position, const glm::vec3& color,
     set_color(color);
 }
 
-void Primitive::set_color(const glm::vec3& color) {
-    this->color = color;
+void Primitive::set_color(glm::vec3 color_) {
+    color = color_;
     shader->use();
     glUniform4f(shader->get_uniform_id("color"), color.x, color.y, color.z, 1);
 }

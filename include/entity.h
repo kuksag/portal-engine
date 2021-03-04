@@ -15,7 +15,7 @@ private:
 
 protected:
     Entity();
-    glm::mat4 get_translation_matrix() const;
+    [[nodiscard]] glm::mat4 get_translation_matrix() const;
     [[nodiscard]] glm::mat4 get_model_matrix() const;
 
 public:

@@ -2,14 +2,14 @@
 #include <GLFW/glfw3.h>
 
 #include <memory>
+#include <vector>
 
-#include "primitives.h"
 #include "camera.h"
 #include "controls.h"
+#include "light_source.h"
+#include "primitives.h"
 #include "settings.h"
 #include "shader.h"
-#include "light_source.h"
-#include <vector>
 
 using namespace Settings::Window;
 
@@ -18,9 +18,13 @@ int main() {
     Camera camera;
     Controller controller(&camera, window);
     // -------------------------------------------------------------------------
-    std::vector<Drawable*> primitives = {new Cube({0, 0, 0}, {0.5, 0.5, 0}), new Sphere({0, 4, 0}, {0.2, 1, 0.5}),
-                                         new Plane({0, 0, 4}, {0.3, 0.1, 0.8}), new Cylinder({4, 0, 0}, {0.4, 0.2, 0.2}),
-                                         new Torus({0, 0, -4}, {0.2, 0.5, 0.5}), new Cone({0, -4, 0}, {0.4, 1, 1})};
+    std::vector<Drawable *> primitives = {
+        new Cube({0, 0, 0}, {0.5, 0.5, 0}),
+        new Sphere({0, 4, 0}, {0.2, 1, 0.5}),
+        new Plane({0, 0, 4}, {0.3, 0.1, 0.8}),
+        new Cylinder({4, 0, 0}, {0.4, 0.2, 0.2}),
+        new Torus({0, 0, -4}, {0.2, 0.5, 0.5}),
+        new Cone({0, -4, 0}, {0.4, 1, 1})};
     // -------------------------------------------------------------------------
     glEnable(GL_DEPTH_TEST);
     // -------------------------------------------------------------------------
@@ -33,8 +37,11 @@ int main() {
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
         // ---------------------------------------------------------------------
 
-        for (int i=0; i < primitives.size(); ++i)
-            primitives[i]->draw(camera, {});
+        for (auto &primitive : primitives) {
+            // if you want to set light source; by default {} is set
+            // primitive->set_light_sources({...});
+            primitive->draw(camera);
+        }
 
         glfwSwapBuffers(window);
         glfwPollEvents();

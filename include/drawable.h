@@ -1,27 +1,26 @@
 #ifndef PORTAL_ENGINE_DRAWABLE_H
 #define PORTAL_ENGINE_DRAWABLE_H
 
-#include "light_source.h"
-#include <vector>
 #include <memory>
+#include <vector>
 
-#include "entity.h"
-#include "mesh.h"
 #include "camera.h"
-
-
+#include "entity.h"
+#include "light_source.h"
+#include "mesh.h"
 
 class Drawable : public Entity {
 protected:
-
-	std::shared_ptr<ShaderProgram> shader;
+    std::shared_ptr<ShaderProgram> shader;
+    const std::vector<LightSource> *light_sources{};
 
 public:
+    virtual void draw(const Camera& camera) const = 0;
+    explicit Drawable(std::shared_ptr<ShaderProgram> shader);
 
-    virtual void draw(const Camera& camera, const std::vector<LightSource> &light_sources) const = 0;
-    Drawable(std::shared_ptr<ShaderProgram> shader);
+    void set_light_sources(const std::vector<LightSource> *data);
 
-    virtual ~Drawable() = default;
+    ~Drawable() override = default;
 };
 
 #endif    // PORTAL_ENGINE_DRAWABLE_H

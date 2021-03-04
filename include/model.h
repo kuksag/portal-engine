@@ -3,44 +3,41 @@
 
 #include <GL/glew.h>
 #include <GLFW/glfw3.h>
-
-#include <glm/glm.hpp>
-
 #include <SOIL/SOIL.h>
+#include <assimp/postprocess.h>
+#include <assimp/scene.h>
 
 #include <assimp/Importer.hpp>
-#include <assimp/scene.h>
-#include <assimp/postprocess.h>
-
-#include <vector>
+#include <glm/glm.hpp>
 #include <memory>
 #include <string>
-#include "drawable.h"
-#include "shader.h"
-#include "mesh.h"
+#include <vector>
+
 #include "camera.h"
+#include "drawable.h"
 #include "light_source.h"
+#include "mesh.h"
+#include "shader.h"
 
-class Model : public Drawable
-{
+class Model : public Drawable {
 private:
-
     std::vector<Mesh> meshes;
 
     std::string directory;
 
     void deep_load_meshes(aiNode *node, const aiScene *scene);
     Mesh load_mesh(aiMesh *ai_mesh, const aiScene *scene);
-    std::vector<Texture> load_textures(aiMaterial *ai_material, aiTextureType type);
+    std::vector<Texture> load_textures(aiMaterial *ai_material,
+                                       aiTextureType type);
 
-    Texture load_texture(const char *path); //TODO: move this to resource manager
+    // TODO: move this to resource manager
+    Texture load_texture(const char *path);
 
 public:
+    Model(const std::string &path, std::shared_ptr<ShaderProgram> shader);
+    void draw(const Camera &camera) const override;
 
-    Model(const std::string& path, std::shared_ptr<ShaderProgram> shader);
-    void draw(const Camera& camera, const std::vector <LightSource> &light_sources) const override;
-
-    virtual ~Model() = default;
+    ~Model() override = default;
 };
 
 #endif    // PORTAL_ENGINE_MODEL_H
