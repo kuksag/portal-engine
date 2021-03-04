@@ -37,9 +37,10 @@ add_executable(main
         src/drawable.cpp include/drawable.h
         src/mesh.cpp include/mesh.h
         src/Texture.cpp include/Texture.h
-	src/model.cpp include/model.h
-	src/primitives.cpp include/primitives.h
-        src/light_source.cpp include/light_source.h)
+        src/model.cpp include/model.h
+        src/primitives.cpp include/primitives.h
+        src/light_source.cpp include/light_source.h
+        src/portal.cpp include/portal.h)
 
 target_include_directories(main PUBLIC include include/primitives src)
 target_link_libraries(main ${OPENGL_LIBS})
