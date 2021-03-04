@@ -7,7 +7,7 @@ in vec3 point_pos;
 out vec4 out_color;
 
 uniform vec3 light_pos0;
-uniform vec3 light_color0;
+uniform vec3 light_color0; //TODO: выделить источники света в структуры и передавать их как массив
 uniform vec3 camera_pos;
 uniform sampler2D Texture;
 uniform vec4 color;
@@ -24,7 +24,7 @@ void main()
     vec3 view_dir = normalize(camera_pos - point_pos);
     vec3 reflect_dir = reflect(-light_dir, norm);
 
-    float spec = pow(max(dot(view_dir, reflect_dir), 0.0), 32);
+    float spec = pow(max(dot(view_dir, reflect_dir), 0.0), 16);
     vec3 specular = 0.5f * spec * light_color0;
 
     if (diff == 0.0) {

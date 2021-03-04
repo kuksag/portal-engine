@@ -6,8 +6,8 @@
 
 Primitive::Primitive(const glm::vec3& position, const glm::vec3& color,
                      const std::string& path)
-    : Model(path, std::make_shared<ShaderProgram>("shaders/color.vertex",
-                                                  "shaders/color.fragment")) {
+    : Model(path, std::make_shared<ShaderProgram>("shaders/light.vertex",
+                                                  "shaders/light.fragment")) {
     translate(position);
     set_color(color);
 }
