@@ -7,13 +7,13 @@
 
 struct LightSource : public Entity {
 private:
-    glm::vec3 pos;
+    glm::vec3 position;
     glm::vec3 color;
 
 public:
-    LightSource(glm::vec3 pos, glm::vec3 color);
-    glm::vec3 get_pos() const;
-    glm::vec3 get_color() const;
+    LightSource(glm::vec3 position_, glm::vec3 color_);
+    [[nodiscard]] glm::vec3 get_position() const;
+    [[nodiscard]] glm::vec3 get_color() const;
 };
 
 #endif    // PORTAL_ENGINE_LIGHT_SOURCE_H

@@ -14,6 +14,9 @@ _deps
 .idea/
 cmake-build-debug/
 
+# Code Blocks Project
+*.cbp
+
 # Prerequisites
 *.d
 

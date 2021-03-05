@@ -27,14 +27,22 @@ using namespace Settings::Camera;
         glm::cross(get_right_direction(), get_forward_direction()));
 }
 
-[[nodiscard]] glm::mat4 Camera::get_projection_matrix() const {
-    return glm::perspective(glm::radians(fov), ratio, display_range_near,
-                            display_range_far);
+[[nodiscard]] glm::mat4 Camera::get_view_matrix() const {
+    if (custom_state_view_matrix) {
+        return custom_view_matrix;
+    } else {
+        return glm::lookAt(position, position + get_forward_direction(),
+                           get_up_direction());
+    }
 }
 
-[[nodiscard]] glm::mat4 Camera::get_view_matrix() const {
-    return glm::lookAt(position, position + get_forward_direction(),
-                       get_up_direction());
+[[nodiscard]] glm::mat4 Camera::get_projection_matrix() const {
+    if (custom_state_projection_matrix) {
+        return custom_projection_matrix;
+    } else {
+        return glm::perspective(glm::radians(fov), ratio, display_range_near,
+                                display_range_far);
+    }
 }
 
 void Camera::move_forward(float time_delta) {
@@ -80,4 +88,13 @@ void Camera::process_mouse_scroll(float y_delta) {
     fov += scroll_sensitivity * y_delta;
     if (fov < FOV_MIN) fov = FOV_MIN;
     if (fov > FOV_MAX) fov = FOV_MAX;
+}
+
+void Camera::set_view_matrix(glm::mat4 data) {
+    custom_state_view_matrix = true;
+    custom_view_matrix = data;
+}
+void Camera::set_projection_matrix(glm::mat4 data) {
+    custom_state_projection_matrix = true;
+    custom_projection_matrix = data;
 }
