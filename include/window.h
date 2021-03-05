@@ -16,6 +16,8 @@ public:
 	Window();
 
 	GLFWwindow* glfw_window();
+
+	bool is_open();
 };
 
 

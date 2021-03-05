@@ -29,8 +29,7 @@ int main() {
 
         glfwSwapBuffers(window.glfw_window());
         glfwPollEvents();
-    } while (glfwGetKey(window.glfw_window(), GLFW_KEY_ESCAPE) != GLFW_PRESS &&
-             glfwWindowShouldClose(window.glfw_window()) == 0);
+    } while (window.is_open());
 
     glfwTerminate();
 }

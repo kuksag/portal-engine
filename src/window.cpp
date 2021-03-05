@@ -4,7 +4,7 @@
 #include <iostream>
 #include <cassert>
 
-using namespace Settings::Window;//TODO: move to class
+using namespace Settings::Window;
 
 Window::Window() {
 	if (!glfwInit()) {
@@ -43,7 +43,10 @@ Window::Window() {
 	glEnable(GL_DEPTH_TEST);
 }
 
-
+bool Window::is_open() {
+	return glfwGetKey(window, GLFW_KEY_ESCAPE) != GLFW_PRESS &&
+             glfwWindowShouldClose(window) == 0;
+}
 
 GLFWwindow* Window::glfw_window() {
 	return window;
