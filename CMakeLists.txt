@@ -40,7 +40,9 @@ add_executable(main
         src/model.cpp include/model.h
         src/primitives.cpp include/primitives.h
         src/light_source.cpp include/light_source.h
-        src/portal.cpp include/portal.h)
+        src/portal.cpp include/portal.h
+	src/window.cpp include/window.h
+	src/scene.cpp include/scene.h)
 
 target_include_directories(main PUBLIC include include/primitives src)
 target_link_libraries(main ${OPENGL_LIBS})

@@ -5,16 +5,18 @@
 #include <GLFW/glfw3.h>
 
 #include "camera.h"
+#include "window.h"
 
 struct Controller {
 private:
-    Camera *camera;
-    GLFWwindow *&window;
+    Camera& camera;
+    Window& window;
+    
     float last_time_point;
     bool is_fullscreen;
 
 public:
-    explicit Controller(Camera *camera_, GLFWwindow *&window);
+    explicit Controller(Camera& camera_, Window& window);
 
     void scroll_callback(double y_delta);
     void cursor_position_callback();
@@ -23,8 +25,6 @@ public:
     void update_time();
 
     void toggle_fullscreen(bool flag);
-
-    void window_initialise();
 
     // TODO:
     //    void mouse_button_callback(int button, int action, int mods);
