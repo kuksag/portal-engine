@@ -49,15 +49,15 @@ void Model::draw(const Camera &camera) const {
     glUniformMatrix3fv(shader->get_uniform_id("normal_transformation"), 1,
                            GL_FALSE, &normal_transformation[0][0]);
     set_vec3(shader->get_uniform_id("camera_pos"), camera.get_position());
-
+    glUniform1i(shader->get_uniform_id("count_of_light_sources"), light_sources ? (*light_sources).size() : 0);
 
     for (std::size_t i = 0; light_sources && i < light_sources->size(); ++i) {
         std::stringstream position_uniform_name;
-        position_uniform_name << "light_source" << i << ".position";
-        set_vec3(shader->get_uniform_id(position_uniform_name.str()),(*light_sources)[i].get_position());
+        position_uniform_name << "light_sources[" << i << "].position";
+       set_vec3(shader->get_uniform_id(position_uniform_name.str()),(*light_sources)[i].get_position());
 
         std::stringstream color_uniform_name;
-        color_uniform_name << "light_source" << i << ".color";
+        color_uniform_name << "light_sources[" << i << "].color";
         set_vec3(shader->get_uniform_id(color_uniform_name.str()),(*light_sources)[i].get_color());
     }
 

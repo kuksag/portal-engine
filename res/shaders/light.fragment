@@ -9,8 +9,9 @@ struct LightSource {
     vec3 color;
 };
 
-uniform LightSource light_source0;
-uniform LightSource light_source1; //TODO: Make uniform array of LightSource
+const int MAX_COUNT_OF_LIGHT_SOURCES = 5;
+uniform LightSource light_sources[MAX_COUNT_OF_LIGHT_SOURCES];
+uniform int count_of_light_sources;
 
 uniform vec3 camera_pos;
 uniform sampler2D Texture;
@@ -56,7 +57,10 @@ void main()
 {
     vec4 preliminary_color = texture(Texture, TexCoord) + color;
     vec3 norm = normalize(Normal);
-    vec3 summary_effects = calc_light_effect(light_source0, norm) + calc_light_effect(light_source1, norm);
+    vec3 summary_effects = vec3(0.0, 0.0, 0.0);
+    for (int i = 0; i < count_of_light_sources; ++i) {
+        summary_effects += calc_light_effect(light_sources[i], norm);
+    }
     vec3 min_color = vec3(0.3f, 0.3f, 0.3f);
     out_color = vec4((summary_effects + min_color),1.0f) * preliminary_color;
 }
