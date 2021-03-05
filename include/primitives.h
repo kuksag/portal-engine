@@ -8,7 +8,7 @@
 #include "model.h"
 #include "shader.h"
 
-class Primitive : public Model {
+class Primitive : public Model {//TODO: don't let user create this
 private:
     glm::vec3 color;
 

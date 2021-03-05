@@ -19,7 +19,7 @@
 #include "mesh.h"
 #include "shader.h"
 
-class Model : public Drawable {
+class Model : public Drawable {//TODO: don't let user create this
 private:
     std::vector<Mesh> meshes;
 
@@ -35,7 +35,7 @@ private:
 
 public:
     Model(const std::string &path, std::shared_ptr<ShaderProgram> shader);
-    void draw(const Camera &camera) const override;
+    void draw(const Camera &camera, const std::vector<LightSource>& light_sources) const override;
 
     ~Model() override = default;
 };

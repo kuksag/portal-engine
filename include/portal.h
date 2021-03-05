@@ -21,7 +21,7 @@ private:
 public:
     Portal();
 
-    void draw(const Camera &camera) const override;
+    void draw(const Camera &camera, const std::vector<LightSource>& light_sources) const override;
 };
 
 #endif    // PORTAL_ENGINE_PORTAL_H

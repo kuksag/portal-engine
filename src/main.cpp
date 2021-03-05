@@ -6,28 +6,24 @@
 #include "camera.h"
 #include "controls.h"
 #include "window.h"
-
-#include "primitives.h"
+#include "scene.h"
 
 int main() {
     Window window;
     Camera camera;
-    Controller controller(camera, window);
+    Controller controller(camera, window);//TODO: camera from scene
+                                         //TODO: swap(camera, window)
 
-    Cube cube;
-
+    Scene scene(window, camera); //TODO: own camera
+    scene.add_primitive();//TODO: prim type
 
     do {
-        controller.cursor_position_callback();
-        controller.key_callback();
-        controller.update_time();
+        controller.cursor_position_callback(); //TODO: make one method
+        controller.key_callback();//TODO: make one method
+        controller.update_time();//TODO: make one method
 
-        glClearColor(0.3f, 0.3f, 0.6f, 0.0f);
-        glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+        scene.draw();
 
-        cube.draw(camera);
-
-        glfwSwapBuffers(window.glfw_window());
         glfwPollEvents();
     } while (window.is_open());
 

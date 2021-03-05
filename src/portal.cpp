@@ -29,11 +29,11 @@ Portal::Portal()
     // -------------------------------------------------------------------------
 }
 
-void Portal::draw(const Camera& camera) const {
+void Portal::draw(const Camera& camera, const std::vector<LightSource>& light_sources) const {
     auto custom_camera = camera;
     custom_camera.set_view_matrix(camera.get_view_matrix() *
                                   get_model_matrix());
-    shape.draw(custom_camera);
-    beacon.draw(custom_camera);
-    for (auto& bound : bounds) bound.draw(custom_camera);
+    shape.draw(custom_camera, light_sources);
+    beacon.draw(custom_camera, light_sources);
+    for (auto& bound : bounds) bound.draw(custom_camera, light_sources);
 }
