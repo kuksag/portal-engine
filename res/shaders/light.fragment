@@ -62,5 +62,8 @@ void main()
         summary_effects += calc_light_effect(light_sources[i], norm);
     }
     vec3 min_color = vec3(0.3f, 0.3f, 0.3f);
+    if (count_of_light_sources == 0) {
+        min_color = vec3(1.0f, 1.0f, 1.0f);
+    }
     out_color = vec4((summary_effects + min_color),1.0f) * preliminary_color;
 }
