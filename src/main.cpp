@@ -8,6 +8,7 @@
 #include "light_source.h"
 #include "primitives.h"
 #include "portal.h"
+#include <memory>
 
 using namespace Settings::Window;
 
@@ -18,7 +19,12 @@ int main() {
     std::vector<LightSource> light_sources{LightSource(glm::vec3(10.0f, 10.0f, 10.0f),
                              glm::vec3(1.0f, 1.0f, 1.0f)),
                                            LightSource(glm::vec3(-10.0f, 10.0f, -10.0f),
-                                                       glm::vec3(1.0f, 1.0f, 1.0f))};
+                                                       glm::vec3(1.0f, 0.0f, 0.0f))};
+    // -------------------------------------------------------------------------
+    std::shared_ptr<ShaderProgram> lighted_shader(new ShaderProgram("shaders/light.vertex", "shaders/light.fragment"));
+    Model skull("res/models/skull/12140_Skull_v3_L2.obj", lighted_shader);
+    skull.translate(glm::vec3(00.0f, 8.0f, 0.0f));
+    skull.scale(glm::vec3(0.15f, 0.15f, 0.15f));
     // -------------------------------------------------------------------------
     std::vector<Drawable *> primitives = {
         new Cube({0, 0, 0}, {0.5, 0.5, 0}),
@@ -55,6 +61,8 @@ int main() {
             primitive->set_light_sources(&light_sources);
             primitive->draw(camera);
         }
+        skull.set_light_sources(&light_sources);
+        skull.draw(camera);
         // ---------------------------------------------------------------------
         portal_a.draw(camera);
         portal_b.draw(camera);

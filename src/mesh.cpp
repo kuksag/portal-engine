@@ -40,5 +40,5 @@ void Mesh::draw() const {
     glDrawElements(GL_TRIANGLES, indexes.size(), GL_UNSIGNED_INT, 0);
     glBindVertexArray(0);
 
-    glActiveTexture(GL_TEXTURE0);
+    glBindTexture(GL_TEXTURE_2D, 0);
 }

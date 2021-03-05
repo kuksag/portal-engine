@@ -12,8 +12,8 @@ private:
 
 public:
     LightSource(glm::vec3 position_, glm::vec3 color_);
-    glm::vec3 get_position() const;
-    glm::vec3 get_color() const;
+    [[nodiscard]] glm::vec3 get_position() const;
+    [[nodiscard]] glm::vec3 get_color() const;
 };
 
 #endif    // PORTAL_ENGINE_LIGHT_SOURCE_H
