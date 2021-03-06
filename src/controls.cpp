@@ -157,7 +157,7 @@ void Controller::window_initialise() {
     glfwSetInputMode(window, GLFW_STICKY_KEYS, GL_TRUE);
     glfwSetInputMode(window, GLFW_CURSOR, GLFW_CURSOR_DISABLED);
 
-    glfwSetCursorPos(window, WIDTH, HEIGHT);
+    glfwSetCursorPos(window, WIDTH / 2.0, HEIGHT / 2.0);
 
     // setup functions-callback
     glfwSetWindowUserPointer(window, this);
