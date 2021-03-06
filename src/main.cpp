@@ -6,8 +6,8 @@
 #include "camera.h"
 #include "controls.h"
 #include "light_source.h"
-#include "primitives.h"
 #include "portal.h"
+#include "primitives.h"
 
 using namespace Settings::Window;
 
@@ -15,31 +15,41 @@ int main() {
     GLFWwindow *window = nullptr;
     Camera camera;
     Controller controller(&camera, window);
-    std::vector<LightSource> light_sources{LightSource(glm::vec3(10.0f, 10.0f, 10.0f),
-                             glm::vec3(1.0f, 1.0f, 1.0f)),
-                                           LightSource(glm::vec3(-10.0f, 10.0f, -10.0f),
-                                                       glm::vec3(1.0f, 1.0f, 1.0f))};
     // -------------------------------------------------------------------------
-    std::vector<Drawable *> primitives = {
-        new Cube({0, 0, 0}, {0.5, 0.5, 0}),
-        new Sphere({0, 4, 0}, {0.2, 1, 0.5}),
-        new Plane({3, 7, 8}, {0.3, 0.1, 0.8}),
-        new Cylinder({4, 0, 0}, {0.4, 0.2, 0.2}),
-        new Torus({0, 0, -4}, {0.2, 0.5, 0.5}),
-        new Cone({0, -4, 0}, {0.4, 1, 1})};
+    std::vector<LightSource> light_sources{
+        LightSource(glm::vec3(10.0f, 10.0f, 10.0f),
+                    glm::vec3(1.0f, 1.0f, 1.0f)),
+        LightSource(glm::vec3(-10.0f, 10.0f, -10.0f),
+                    glm::vec3(1.0f, 1.0f, 1.0f))};
     // -------------------------------------------------------------------------
-    //Big Plane
-        primitives[2]->scale(glm::vec3(10.0f, 10.0f, 10.0f));
+    std::vector<Drawable *> objects = {new Cube({0, 0, 0}, {0.5, 0.5, 0}),
+                                       new Sphere({0, 4, 0}, {0.2, 1, 0.5}),
+                                       new Plane({3, 7, 8}, {0.3, 0.1, 0.8}),
+                                       new Cylinder({4, 0, 0}, {0.4, 0.2, 0.2}),
+                                       new Torus({0, 0, -4}, {0.2, 0.5, 0.5}),
+                                       new Cone({0, -4, 0}, {0.4, 1, 1})};
+    // -------------------------------------------------------------------------
+    // Big Plane
+    objects[2]->scale(glm::vec3(10.0f, 10.0f, 10.0f));
+    // -------------------------------------------------------------------------
+    for (auto &primitive : objects) {
+        primitive->set_light_sources(&light_sources);
+    }
     // -------------------------------------------------------------------------
     Portal portal_a, portal_b;
-    portal_a.translate({2.5, 2.5, 2.5});
+    portal_a.translate({-2.5, 2.5, 2.5});
+    portal_a.rotate(-M_PI_4, {0.0, 1.0, 0.0});
 
-    portal_b.translate({5, 4, 4});
-    portal_b.rotate(M_PI / 3, {1.0, 0.0, 0.0});
-    portal_b.rotate(-M_PI / 3, {0.0, 1.0, 0.0});
-    portal_b.rotate(M_PI / 3, {0.0, 0.0, 1.0});
-    // -------------------------------------------------------------------------
-    glEnable(GL_DEPTH_TEST);
+    portal_b.translate({2.5, 2.5, -2.5});
+    portal_b.rotate(-M_PI_4, {0.0, 1.0, 0.0});
+    portal_b.rotate(M_PI, {0.0, 1.0, 0.0});
+//    portal_b.rotate(-M_PI / 16, {1.0, 0.0, 0.0});
+//    portal_b.rotate(-M_PI / 16, {0.0, 1.0, 0.0});
+
+    portal_a.set_destination(&portal_b);
+    portal_b.set_destination(&portal_a);
+
+    std::vector<Portal *> portals = {&portal_a, &portal_b};
     // -------------------------------------------------------------------------
     do {
         controller.cursor_position_callback();
@@ -47,19 +57,11 @@ int main() {
         controller.update_time();
 
         glClearColor(0.3f, 0.3f, 0.6f, 0.0f);
-        glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+        glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT |
+                GL_STENCIL_BUFFER_BIT);
         // ---------------------------------------------------------------------
-
-        for (auto &primitive : primitives) {
-            // if you want to set light source; by default {} is set
-            primitive->set_light_sources(&light_sources);
-            primitive->draw(camera);
-        }
+        render_scene(camera, objects, portals, 0);
         // ---------------------------------------------------------------------
-        portal_a.draw(camera);
-        portal_b.draw(camera);
-        // ---------------------------------------------------------------------
-
 
         glfwSwapBuffers(window);
         glfwPollEvents();
