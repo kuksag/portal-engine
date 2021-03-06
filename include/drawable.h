@@ -22,5 +22,4 @@ public:
 
     ~Drawable() override = default;
 };
-
 #endif    // PORTAL_ENGINE_DRAWABLE_H

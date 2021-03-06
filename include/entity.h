@@ -16,6 +16,8 @@ private:
 protected:
     Entity();
     [[nodiscard]] glm::mat4 get_translation_matrix() const;
+    [[nodiscard]] glm::mat4 get_rotation_matrix() const;
+    [[nodiscard]] glm::mat4 get_scale_matrix() const;
     [[nodiscard]] glm::mat4 get_model_matrix() const;
 
     void set_translation_matrix(const glm::mat4 &data);

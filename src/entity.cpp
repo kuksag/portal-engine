@@ -42,3 +42,7 @@ void Entity::scale(const glm::vec3 &data) {
     scale_matrix = glm::scale(scale_matrix, data);
     update();
 }
+
+glm::mat4 Entity::get_rotation_matrix() const { return rotation_matrix; }
+
+glm::mat4 Entity::get_scale_matrix() const { return scale_matrix; }
