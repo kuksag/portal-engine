@@ -15,10 +15,6 @@ int main() {
     GLFWwindow *window = nullptr;
     Camera camera;
     Controller controller(&camera, window);
-    std::vector<LightSource> light_sources{LightSource(glm::vec3(10.0f, 10.0f, 10.0f),
-                             glm::vec3(1.0f, 1.0f, 1.0f)),
-                                           LightSource(glm::vec3(-10.0f, 10.0f, -10.0f),
-                                                       glm::vec3(1.0f, 0.0f, 0.0f))};
     // -------------------------------------------------------------------------
     std::vector<LightSource> light_sources{
         LightSource(glm::vec3(10.0f, 10.0f, 10.0f),
