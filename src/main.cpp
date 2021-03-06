@@ -68,7 +68,6 @@ int main() {
     glReadBuffer(GL_NONE);
     glBindFramebuffer(GL_FRAMEBUFFER, 0);
     // -------------------------------------------------------------------------
-    glEnable(GL_CULL_FACE);
     glEnable(GL_DEPTH_TEST);
     glDepthFunc(GL_LEQUAL);
     do {
@@ -79,7 +78,11 @@ int main() {
         glViewport(0, 0, SHADOW_WIDTH, SHADOW_HEIGHT);
         glBindFramebuffer(GL_FRAMEBUFFER, depth_map_fbo);
         glClear(GL_DEPTH_BUFFER_BIT);
-        render_scene(drawables, camera);
+        Camera light_source_camera;
+        light_source_camera.set_view_matrix(glm::lookAt(light_sources[0].get_position(),
+                                                        glm::vec3(0.0f, 0.0f, 0.0f) - light_sources[0].get_position(),
+                                                        glm::vec3(0.0f, 1.0f, 0.0f)));
+        render_scene(drawables, light_source_camera);
         glBindFramebuffer(GL_FRAMEBUFFER, 0);
 
 
@@ -88,6 +91,7 @@ int main() {
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
         // ---------------------------------------------------------------------
         render_scene(drawables, camera);
+
 
         glfwSwapBuffers(window);
         glfwPollEvents();

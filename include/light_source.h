@@ -7,7 +7,6 @@
 
 struct LightSource : public Entity {
 private:
-    glm::vec3 position;
     glm::vec3 color;
 
 public:
