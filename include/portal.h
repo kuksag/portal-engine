@@ -36,12 +36,12 @@ public:
 
     friend void render_scene(const Camera &camera,
                              const std::vector<Drawable *> &objects,
-                             const std::vector<Portal *> &portals,
-                             int recursion_level);
+                             const std::vector<Portal *> &portals);
 
-    friend void draw_portals(const Camera &camera,
-                             const std::vector<Portal *> &portals,
-                             bool draw_bounds);
+    friend void render_portal(const Camera &camera,
+                              const std::vector<Drawable *> &objects,
+                              const Portal &portal,
+                              std::size_t recursion_level);
 };
 
 void render_scene(const Camera &camera, const std::vector<Drawable *> &objects,

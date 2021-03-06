@@ -40,29 +40,31 @@ int main() {
     const int SIZE = 3;
     portal_a.translate({-3, 1.5, 3.0});
     portal_a.rotate(-M_PI_4, {0.0, 1.0, 0.0});
-    portal_a.scale({SIZE, SIZE, 1});
+    portal_a.scale({3 * SIZE, SIZE, 1});
 
     portal_b.translate({3, 1.5, -3.0});
     portal_b.rotate(-M_PI_4, {0.0, 1.0, 0.0});
-    portal_b.rotate(M_PI, {0.0, 1.0, 0.0});
-    portal_b.scale({SIZE, SIZE, 1});
+    portal_b.rotate(M_PI - M_PI / 100, {0.0, 1.0, 0.0});
+    portal_b.scale({3 * SIZE, SIZE, 1});
 
     portal_a.set_destination(&portal_b);
     portal_b.set_destination(&portal_a);
 
     std::vector<Portal *> portals = {&portal_a, &portal_b};
     // -------------------------------------------------------------------------
+    glEnable(GL_CULL_FACE);
+    glEnable(GL_DEPTH_TEST);
+    glDepthFunc(GL_LEQUAL);
     do {
         controller.cursor_position_callback();
         controller.key_callback();
         controller.update_time();
 
         glClearColor(0.3f, 0.3f, 0.6f, 0.0f);
-        glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT
-                | GL_STENCIL_BUFFER_BIT
-                );
+        glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT |
+                GL_STENCIL_BUFFER_BIT);
         // ---------------------------------------------------------------------
-        render_scene(camera, objects, portals, 0);
+        render_scene(camera, objects, portals);
         // ---------------------------------------------------------------------
 
         glfwSwapBuffers(window);
