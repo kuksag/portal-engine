@@ -14,7 +14,7 @@ void draw_non_portals(const Camera &camera,
                       const std::vector<Drawable *> &objects,
                       const std::vector<Portal *> &portals) {
     for (auto &object : objects) object->draw(camera);
-    draw_portals(camera, portals, true);
+//    draw_portals(camera, portals, true);
 }
 }    // namespace
 
@@ -69,7 +69,7 @@ void Portal::draw_bounds(const Camera &camera) const {
     auto custom_camera = camera;
     custom_camera.set_view_matrix(camera.get_view_matrix() *
                                   get_model_matrix());
-    beacon.draw(custom_camera);
+    //    beacon.draw(custom_camera);
     for (auto &bound : bounds) bound.draw(custom_camera);
 }
 
@@ -89,7 +89,8 @@ Camera get_portal_destination_camera(const Camera &camera,
         camera.get_view_matrix() * portal.get_model_matrix() *
         // 2. Object is front-facing, the camera is facing the other way:
         glm::rotate(glm::mat4(1.0), static_cast<float>(M_PI),
-                    glm::vec3(0.0, 1.0, 0.0)) *
+                    glm::quat_cast(portal.get_rotation_matrix()) *
+                        glm::vec3(0.0, 1.0, 0.0)) *
         // 1. Go the destination portal; using inverse, because camera
         //    transformations are reversed compared to object
         //    transformations:
@@ -208,7 +209,7 @@ void render_scene(const Camera &camera, const std::vector<Drawable *> &objects,
     glClear(GL_DEPTH_BUFFER_BIT);
 
     // Draw portals into depth buffer
-    draw_portals(camera, portals);
+//    draw_portals(camera, portals, true);
 
     // Reset the depth function to the default
     glDepthFunc(GL_LESS);
@@ -231,4 +232,6 @@ void render_scene(const Camera &camera, const std::vector<Drawable *> &objects,
 
     // Draw scene objects normally, only at recursionLevel
     draw_non_portals(camera, objects, portals);
+    draw_portals(camera, portals, true);
+
 }
