@@ -39,28 +39,40 @@ void Model::depth_test_draw(const Camera &camera, std::shared_ptr<ShaderProgram>
     for (const auto &i : meshes) i.depth_test_draw(depth_shader);
 }
 
+void Model::set_matrices(const Camera &camera) const {
+    shader->use();
+    auto model_matrix = get_model_matrix();
+    auto MVP = camera.get_projection_matrix() * camera.get_view_matrix() *
+               model_matrix;    // TODO: one calculation
+    auto normal_transformation =
+        glm::mat3(transpose(inverse(model_matrix)));
+
+
+    glUniformMatrix4fv(shader->get_uniform_id("MVP"), 1, GL_FALSE, &MVP[0][0]);
+    glUniformMatrix4fv(shader->get_uniform_id("model_matrix"), 1, GL_FALSE,
+                       &model_matrix[0][0]);
+    glUniformMatrix3fv(shader->get_uniform_id("normal_transformation"), 1,
+                       GL_FALSE, &normal_transformation[0][0]);
+    auto light_matrix = (*light_sources)[0].get_camera().get_projection_matrix() *
+                        (*light_sources)[0].get_camera().get_view_matrix() * model_matrix;
+    glUniformMatrix4fv(shader->get_uniform_id("light_matrix"), 1, GL_FALSE, &light_matrix[0][0]);
+}
+
+
 void Model::draw(const Camera &camera) const {
     shader->use();
+    set_matrices(camera);
 
-    auto set_vec3 = [](GLuint id, glm::vec3 data) { //TODO: make ShaderProgram method
+    auto set_vec3 = [](GLuint id, glm::vec3 data) {//TODO: make ShaderProgram method
         glUniform3f(id, data.x, data.y, data.z);
     };
-
-    auto MVP = camera.get_projection_matrix() * camera.get_view_matrix() *
-               get_model_matrix();    // TODO: one calculation
-
-    auto normal_transformation =
-        glm::mat3(transpose(inverse(get_model_matrix())));
-
-    auto model_matrix = glm::mat3(get_model_matrix());
-    glUniformMatrix4fv(shader->get_uniform_id("MVP"), 1, GL_FALSE, &MVP[0][0]);
-    glUniformMatrix3fv(shader->get_uniform_id("model_matrix"), 1, GL_FALSE,
-                           &model_matrix[0][0]);
-    glUniformMatrix3fv(shader->get_uniform_id("normal_transformation"), 1,
-                           GL_FALSE, &normal_transformation[0][0]);
     set_vec3(shader->get_uniform_id("camera_pos"), camera.get_position());
-    glUniform1i(shader->get_uniform_id("count_of_light_sources"), light_sources ? (*light_sources).size() : 0);
 
+
+    glUniform1i(shader->get_uniform_id("count_of_light_sources"), light_sources ? (*light_sources).size() : 0);
+    glUniform1i(shader->get_uniform_id("depth_map"), 1);
+    glActiveTexture(GL_TEXTURE1);
+    glBindTexture(GL_TEXTURE_2D, (*light_sources)[0].get_depth_map());
     for (std::size_t i = 0; light_sources && i < light_sources->size(); ++i) {
         std::stringstream position_uniform_name;
         position_uniform_name << "light_sources[" << i << "].position";

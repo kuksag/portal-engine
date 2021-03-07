@@ -29,9 +29,10 @@ int main() {
     std::vector<LightSource> light_sources{LightSource(glm::vec3(10.0f, 10.0f, 10.0f),
                              glm::vec3(1.0f, 1.0f, 1.0f))};
     // -------------------------------------------------------------------------
+    // -------------------------------------------------------------------------
     std::vector<Drawable *> drawables = {
         new Cube({0, 0, 0}, {0.5, 0.5, 0}),
-        new Sphere({0, 4, 0}, {0.2, 1, 0.5}),
+        new Sphere({0, 2, 0}, {0.2, 1, 0.5}),
         new Plane({0, -6, 0}, {0.3, 0.1, 0.8}),
         new Cylinder({4, 0, 0}, {0.4, 0.2, 0.2}),
         new Torus({0, 0, -4}, {0.2, 0.5, 0.5}),
@@ -56,14 +57,18 @@ int main() {
                  SHADOW_WIDTH, SHADOW_HEIGHT, 0, GL_DEPTH_COMPONENT, GL_FLOAT, nullptr);
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
-    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
-    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_BORDER);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_BORDER);
+    float border_color[] = {0.3f, 0.3f, 0.3f, 0.3f};
+    glTexParameterfv(GL_TEXTURE_2D, GL_CONVOLUTION_BORDER_COLOR, border_color);
 
     glBindFramebuffer(GL_FRAMEBUFFER, depth_map_fbo);
     glFramebufferTexture2D(GL_FRAMEBUFFER, GL_DEPTH_ATTACHMENT, GL_TEXTURE_2D, depth_map, 0);
     glDrawBuffer(GL_NONE);
     glReadBuffer(GL_NONE);
     glBindFramebuffer(GL_FRAMEBUFFER, 0);
+    // -------------------------------------------------------------------------
+    light_sources[0].set_depth_map(depth_map);
     // -------------------------------------------------------------------------
     glEnable(GL_DEPTH_TEST);
     glDepthFunc(GL_LEQUAL);
@@ -83,8 +88,9 @@ int main() {
         glClearColor(0.3f, 0.3f, 0.6f, 0.0f);
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
         // ---------------------------------------------------------------------
-        //render_scene(drawables, camera);
-        depth_test_render_scene(drawables, light_sources[0].get_camera(), depth_shader);
+        render_scene(drawables, camera);
+
+        //depth_test_render_scene(drawables, light_sources[0].get_camera(), depth_shader);
 
 
         glfwSwapBuffers(window);

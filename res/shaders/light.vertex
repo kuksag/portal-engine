@@ -5,16 +5,19 @@ layout (location = 2) in vec2 texCoord;
 
 out vec2 TexCoord;
 out vec3 Normal;
-out vec3 point_pos;
+out vec4 point_pos;
+out vec4 point_pos_light_space;
 
 uniform mat4 MVP;
 uniform mat3 normal_transformation;
-uniform mat3 model_matrix;
+uniform mat4 model_matrix;
+uniform mat4 light_matrix;
 
 void main()
 {
     gl_Position = MVP * vec4(position, 1.0f);
     TexCoord = texCoord;
     Normal = normal_transformation * normal;
-    point_pos = model_matrix * position;
+    point_pos = model_matrix * vec4(position, 1.0f);
+    point_pos_light_space = light_matrix * vec4(position, 1.0f);
 }

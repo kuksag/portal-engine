@@ -19,3 +19,11 @@ LightSource::LightSource(glm::vec3 position_, glm::vec3 color_):
 const Camera &LightSource::get_camera() const {
     return camera;
 }
+
+void LightSource::set_depth_map(GLuint id) {
+    depth_map = id;
+}
+
+GLuint LightSource::get_depth_map() const {
+    return  depth_map;
+}
