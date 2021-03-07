@@ -27,7 +27,7 @@ int main() {
     Camera camera;
     Controller controller(&camera, window);
     std::vector<LightSource> light_sources{LightSource(glm::vec3(10.0f, 10.0f, 10.0f),
-                             glm::vec3(1.0f, 1.0f, 1.0f))};
+                             glm::vec3(1.0f, 0.5f, 1.0f))};
     // -------------------------------------------------------------------------
     std::shared_ptr<ShaderProgram> lighted_shader(new ShaderProgram("shaders/light.vertex", "shaders/light.fragment"));
     Model skull("res/models/skull/12140_Skull_v3_L2.obj", lighted_shader);
@@ -39,7 +39,7 @@ int main() {
         new Sphere({0, 2, 0}, {0.2, 1, 0.5}),
         new Plane({0, -6, 0}, {0.3, 0.1, 0.8}),
         new Cylinder({4, 0, 0}, {0.4, 0.2, 0.2}),
-        new Torus({0, 0, -4}, {0.2, 0.5, 0.5}),
+        new Torus({2, 2, 2}, {0.2, 0.5, 0.5}),
         new Cone({0, -4, 0}, {0.4, 1, 1}),
         &skull};
     // -------------------------------------------------------------------------
@@ -48,18 +48,17 @@ int main() {
     }
     // -------------------------------------------------------------------------
     //Big Plane
-        drawables[2]->scale(glm::vec3(10.0f, 10.0f, 10.0f));
+        drawables[2]->scale(glm::vec3(100.0f, 100.0f, 100.0f));
     // -------------------------------------------------------------------------
         std::shared_ptr<ShaderProgram> depth_shader(new ShaderProgram("shaders/depth.vertex", "shaders/depth.fragment"));
     // -------------------------------------------------------------------------
+    const int SHADOW_WIDTH = 3000, SHADOW_HEIGHT = 3000;
     GLuint depth_map_fbo;
     glGenFramebuffers(1, &depth_map_fbo);
-    const unsigned int SHADOW_WIDTH = 1024, SHADOW_HEIGHT = 1024;
     GLuint depth_map;
     glGenTextures(1, &depth_map);
     glBindTexture(GL_TEXTURE_2D, depth_map);
-    glTexImage2D(GL_TEXTURE_2D, 0, GL_DEPTH_COMPONENT,
-                 SHADOW_WIDTH, SHADOW_HEIGHT, 0, GL_DEPTH_COMPONENT, GL_FLOAT, nullptr);
+    glTexImage2D(GL_TEXTURE_2D, 0, GL_DEPTH_COMPONENT, SHADOW_WIDTH, SHADOW_HEIGHT, 0, GL_DEPTH_COMPONENT, GL_FLOAT, nullptr);
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_BORDER);
