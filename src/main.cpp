@@ -29,6 +29,10 @@ int main() {
     std::vector<LightSource> light_sources{LightSource(glm::vec3(10.0f, 10.0f, 10.0f),
                              glm::vec3(1.0f, 1.0f, 1.0f))};
     // -------------------------------------------------------------------------
+    std::shared_ptr<ShaderProgram> lighted_shader(new ShaderProgram("shaders/light.vertex", "shaders/light.fragment"));
+    Model skull("res/models/skull/12140_Skull_v3_L2.obj", lighted_shader);
+    skull.translate(glm::vec3(0.0f, 5.0f, 0.0f));
+    skull.scale(glm::vec3(0.15f, 0.15f, 0.15f));
     // -------------------------------------------------------------------------
     std::vector<Drawable *> drawables = {
         new Cube({0, 0, 0}, {0.5, 0.5, 0}),
@@ -36,7 +40,8 @@ int main() {
         new Plane({0, -6, 0}, {0.3, 0.1, 0.8}),
         new Cylinder({4, 0, 0}, {0.4, 0.2, 0.2}),
         new Torus({0, 0, -4}, {0.2, 0.5, 0.5}),
-        new Cone({0, -4, 0}, {0.4, 1, 1})};
+        new Cone({0, -4, 0}, {0.4, 1, 1}),
+        &skull};
     // -------------------------------------------------------------------------
     for (auto &primitive : drawables) {
         primitive->set_light_sources(&light_sources);
