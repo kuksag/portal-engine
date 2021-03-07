@@ -11,5 +11,11 @@ glm::vec3 LightSource::get_position() const {
 LightSource::LightSource(glm::vec3 position_, glm::vec3 color_):
                                                             color(color_) {
     translate(position_);
+    camera.set_view_matrix(glm::lookAt(position_,
+                                       glm::vec3(0.0f, 0.0f, 0.0f) - position_,
+                                       glm::vec3(0.0f, 1.0f, 0.0f)));
 }
 
+const Camera &LightSource::get_camera() const {
+    return camera;
+}

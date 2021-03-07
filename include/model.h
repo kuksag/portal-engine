@@ -36,6 +36,7 @@ private:
 public:
     Model(const std::string &path, std::shared_ptr<ShaderProgram> shader);
     void draw(const Camera &camera) const override;
+    void depth_test_draw(const Camera &camera, std::shared_ptr<ShaderProgram> depth_sahder) const override;
 
     ~Model() override = default;
 };

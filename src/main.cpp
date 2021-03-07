@@ -10,12 +10,17 @@
 
 using namespace Settings::Window;
 
-void render_scene(const std::vector<Drawable*> drawables, const Camera &camera) {
+void render_scene(const std::vector<Drawable*> &drawables, const Camera &camera) {
     for (auto &primitive : drawables) {
         primitive->draw(camera);
     }
 }
 
+void depth_test_render_scene(const std::vector<Drawable*> &drawables, const Camera &camera, std::shared_ptr<ShaderProgram> depth_shader) {
+    for (auto &primitive : drawables) {
+        primitive->depth_test_draw(camera, depth_shader);
+    }
+}
 
 int main() {
     GLFWwindow *window = nullptr;
@@ -23,13 +28,6 @@ int main() {
     Controller controller(&camera, window);
     std::vector<LightSource> light_sources{LightSource(glm::vec3(10.0f, 10.0f, 10.0f),
                              glm::vec3(1.0f, 1.0f, 1.0f))};
-    // -------------------------------------------------------------------------
-    std::vector<Drawable *> objects = {new Cube({0, 0, 0}, {0.5, 0.5, 0}),
-                                       new Sphere({0, 4, 0}, {0.2, 1, 0.5}),
-                                       new Plane({3, 7, 8}, {0.3, 0.1, 0.8}),
-                                       new Cylinder({4, 0, 0}, {0.4, 0.2, 0.2}),
-                                       new Torus({0, 0, -4}, {0.2, 0.5, 0.5}),
-                                       new Cone({0, -4, 0}, {0.4, 1, 1})};
     // -------------------------------------------------------------------------
     std::vector<Drawable *> drawables = {
         new Cube({0, 0, 0}, {0.5, 0.5, 0}),
@@ -46,9 +44,8 @@ int main() {
     //Big Plane
         drawables[2]->scale(glm::vec3(10.0f, 10.0f, 10.0f));
     // -------------------------------------------------------------------------
-    for (auto &primitive : objects) {
-        primitive->set_light_sources(&light_sources);
-    }
+        std::shared_ptr<ShaderProgram> depth_shader(new ShaderProgram("shaders/depth.vertex", "shaders/depth.fragment"));
+    // -------------------------------------------------------------------------
     GLuint depth_map_fbo;
     glGenFramebuffers(1, &depth_map_fbo);
     const unsigned int SHADOW_WIDTH = 1024, SHADOW_HEIGHT = 1024;
@@ -78,11 +75,7 @@ int main() {
         glViewport(0, 0, SHADOW_WIDTH, SHADOW_HEIGHT);
         glBindFramebuffer(GL_FRAMEBUFFER, depth_map_fbo);
         glClear(GL_DEPTH_BUFFER_BIT);
-        Camera light_source_camera;
-        light_source_camera.set_view_matrix(glm::lookAt(light_sources[0].get_position(),
-                                                        glm::vec3(0.0f, 0.0f, 0.0f) - light_sources[0].get_position(),
-                                                        glm::vec3(0.0f, 1.0f, 0.0f)));
-        render_scene(drawables, light_source_camera);
+        depth_test_render_scene(drawables, light_sources[0].get_camera(), depth_shader);
         glBindFramebuffer(GL_FRAMEBUFFER, 0);
 
 
@@ -90,7 +83,8 @@ int main() {
         glClearColor(0.3f, 0.3f, 0.6f, 0.0f);
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
         // ---------------------------------------------------------------------
-        render_scene(drawables, camera);
+        //render_scene(drawables, camera);
+        depth_test_render_scene(drawables, light_sources[0].get_camera(), depth_shader);
 
 
         glfwSwapBuffers(window);
