@@ -5,6 +5,7 @@ before_install:
   - sudo apt-get update -qq
 
 install: 
+  - make get-deps
   # clang-format
   - sudo apt-get install -y clang-format
 
