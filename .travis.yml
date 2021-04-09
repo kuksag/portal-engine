@@ -1,11 +1,14 @@
 language: cpp
 
-dist: trusty
+dist: bionic
 
 addons:
   apt:
+    sources:
+      - deb http://apt.llvm.org/bionic/ llvm-toolchain-bionic-12 main
+      - deb-src http://apt.llvm.org/bionic/ llvm-toolchain-bionic-12 main
     packages:
-      - "clang-format"
+      - clang-format
 
 on:
   pull_request:
