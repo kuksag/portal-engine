@@ -1,0 +1,44 @@
+language: cpp
+compiler: gcc
+dist: trusty
+
+before_install:
+  - sudo add-apt-repository -y ppa:ubuntu-toolchain-r/test
+  - sudo apt-get update -qq
+
+install: 
+  # c++, CMake ...
+  - sudo apt install -y build-essential
+  # OpenGL
+  - sudo apt-get install -y libglu1-mesa-dev freeglut3-dev mesa-common-dev 
+  # GLFW
+  - sudo apt-get install -y libglfw3-dev
+  # GLM 
+  - sudo apt-get install -y libglm-dev
+  # GLEW
+  - sudo apt-get install -y glew-utils
+  # SOIL 
+  - sudo apt-get install -y libsoil-dev
+  # cppheck
+  - sudo apt-get install -y cppcheck
+  # clang-format
+  - sudo apt-get install -y clang-format
+  # clang-tidy
+  sudo apt-get install -y clang-tidy
+
+on:
+  pull_request:
+    branches:
+    - main
+
+notifications:
+  email: false
+
+jobs:
+  clang-format:
+    timeout-minutes: 2
+    steps:
+      - uses: actions/checkout@v2
+      - run: clang-format --version
+      - run: for file in $(find . -iname '*.cpp' -or -iname '*.h' -and -not -iname 'doctest.h' ); do diff -u <(cat "$file") <(clang-format "$file") || exit 1; done
+
