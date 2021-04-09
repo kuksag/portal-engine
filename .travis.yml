@@ -6,6 +6,8 @@ addons:
   apt:
     packages:
       - clang-format
+      - clang-tidy
+      - cppcheck
 
 on:
   pull_request:
@@ -14,3 +16,5 @@ on:
 
 script: 
   - clang-format for file in $(find . -iname '*.cpp' -or -iname '*.h' -and -not -iname 'doctest.h' ); do diff -u <(cat "$file") <(clang-format "$file") || exit 1; done
+  - clang-tidy -extra-arg=-Iinclude  -extra-arg=-Idoctest $(find . -path '*/CMakeFiles/*' -prune -or \( -iname '*.cpp' -or -iname '*.h' -and -not -iname 'doctest.h' \) -print)
+  - cppcheck -Iinclude -Idoctest --language=c++ -DSOME_DEFINE_TO_FIX_CONFIG --enable=all --suppress=*:doctest/doctest.h --suppress=unusedFunction --error-exitcode=1 --inline-suppr $(find . -iname '*.cpp' -or -iname '*.h' -and -not -iname 'doctest.h')
