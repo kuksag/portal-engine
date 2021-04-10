@@ -5,7 +5,9 @@ dist: focal
 addons:
   apt:
     packages:
+      - aptitude
       - assimp-utils
+      - build-essential
       - clang
       - clang-format
       - clang-tidy
@@ -26,6 +28,7 @@ addons:
       - libglm-dev
       - libglu1-mesa-dev
       - libsoil-dev
+      - libstdc++6
       - libxi-dev
       - libxmu-dev
       - mesa-common-dev
@@ -44,6 +47,6 @@ jobs:
     - name: clang++-10
       script: cmake . -DCMAKE_CXX_COMPILER="clang++-10" -DCMAKE_RUNTIME_OUTPUT_DIRECTORY_DEBUG=.  && cmake --build .
     - name: clang-format
-      script: clang-format for file in $(find . -iname '*.cpp' -or -iname '*.h' -and -not -iname 'doctest.h' ); do diff -u <(cat "$file") <(clang-format "$file") || exit 1; done
+      script: for file in $(find . -iname '*.cpp' -or -iname '*.h' -and -not -iname 'doctest.h'); do diff -u <(cat "$file") <(clang-format "$file") || exit 1; done
     - name: clang-tidy
       script: cmake . -DCMAKE_CXX_CLANG_TIDY='clang-tidy;-header-filter=.;-checks=*;' -DCMAKE_CXX_FLAGS="-Werror -Wall -Wextra" && cmake --build .
