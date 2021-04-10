@@ -6,15 +6,13 @@ addons:
   apt:
     packages:
       - assimp-utils
-      - build-dep
       - clang-format
       - clang-tidy
       - cmake
       - cppcheck
+      - freeglut3
       - freeglut3-dev
       - glew-utils
-      - glfw
-      - glfw3
       - libassimp-dev
       - libglew-dev
       - libglfw3
