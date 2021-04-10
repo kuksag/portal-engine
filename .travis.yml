@@ -6,12 +6,15 @@ addons:
   apt:
     packages:
       - assimp-utils
+      - clang
       - clang-format
+      - clang-tools
       - clang-tidy
       - cmake
       - cppcheck
       - freeglut3
       - freeglut3-dev
+      - gcc-10
       - glew-utils
       - libassimp-dev
       - libglew-dev
@@ -39,20 +42,9 @@ jobs:
       script: clang-format for file in $(find . -iname '*.cpp' -or -iname '*.h' -and -not -iname 'doctest.h' ); do diff -u <(cat "$file") <(clang-format "$file") || exit 1; done
     - name: clang-tidy, cppcheck
       script: cmake . -DCMAKE_CXX_FLAGS="-Werror -Wall -Wextra" && cmake --build .
-    - name: compile-run
-      matrix:
-        compiler:
-          - command: g++-10
-            flags:
-          - command: clang++-10
-            flags: -stdlib=libstdc++
-          - command: clang++-10
-            flags: -stdlib=libc++
-          sanitize:
-            - flags: -fsanitize=undefined
-              run-prefix: valgrind --quiet --leak-check=full --error-exitcode=123
-            - flags: -fsanitize=undefined -fsanitize=address
-              run-prefix:
-      steps:
-        - script: cmake . -DCMAKE_CXX_COMPILER="${{matrix.compiler.command}}" -DCMAKE_CXX_FLAGS="${{matrix.compiler.flags}} ${{matrix.sanitize.flags}}" -DCMAKE_RUNTIME_OUTPUT_DIRECTORY_DEBUG=. ${{matrix.compiler.cmake-flags}}
-        - script: cmake --build .
+    - name: g++-10 sanitizer
+      script: cmake . -DCMAKE_CXX_COMPILER="g++-10" -DCMAKE_CXX_FLAGS="-fsanitize=undefined -fsanitize=address" -DCMAKE_RUNTIME_OUTPUT_DIRECTORY_DEBUG=.
+    - name: clang++-10, libc
+        script: cmake . -DCMAKE_CXX_COMPILER="clang++-10" -DCMAKE_CXX_FLAGS="-stdlib=libc++" -DCMAKE_RUNTIME_OUTPUT_DIRECTORY_DEBUG=.  && cmake --build .
+    - name: clang++-10, libstdc
+      script: cmake . -DCMAKE_CXX_COMPILER="clang++-10" -DCMAKE_CXX_FLAGS="-stdlib=libstdc++" -DCMAKE_RUNTIME_OUTPUT_DIRECTORY_DEBUG=. && cmake --build .
