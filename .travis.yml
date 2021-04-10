@@ -9,6 +9,14 @@ addons:
       - clang-tidy
       - cppcheck
       - cmake
+      - libglu1-mesa-dev
+      - freeglut3-dev
+      - mesa-common-dev
+      - mesa-utils
+      - glew-utils
+      - libglew-dev
+      - libglm-dev
+      - libsoil-dev
 
 on:
   pull_request:
