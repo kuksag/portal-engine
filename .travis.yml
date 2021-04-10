@@ -8,15 +8,18 @@ addons:
       - assimp-utils
       - clang
       - clang-format
-      - clang-tools
       - clang-tidy
+      - clang-tools
       - cmake
       - cppcheck
       - freeglut3
       - freeglut3-dev
+      - g++
       - gcc-10
       - glew-utils
       - libassimp-dev
+      - libc++-10-dev
+      - libc++abi-10-dev
       - libglew-dev
       - libglfw3
       - libglfw3-dev
