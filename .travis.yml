@@ -35,17 +35,17 @@ addons:
       - mesa-utils
       - xorg-dev
 
-pull_request:
-  branches:
-    - main
+branches:
+  only:
+    - master
 
 notifications:
   email: false
 
 jobs:
   include:
-    - name: clang++-10
-      script: cmake . -DCMAKE_CXX_COMPILER="clang++-10" -DCMAKE_RUNTIME_OUTPUT_DIRECTORY_DEBUG=.  && cmake --build .
+    - name: build
+      script: cmake . && cmake --build .
     - name: clang-format
       script: for file in $(find . -iname '*.cpp' -or -iname '*.h' -and -not -iname 'doctest.h'); do diff -u <(cat "$file") <(clang-format "$file") || exit 1; done
     - name: clang-tidy
