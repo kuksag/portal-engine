@@ -5,30 +5,36 @@ dist: bionic
 addons:
   apt:
     packages:
+      - assimp-utils
+      - build-dep
       - clang-format
       - clang-tidy
-      - cppcheck
       - cmake
-      - libglu1-mesa-dev
+      - cppcheck
       - freeglut3-dev
-      - mesa-common-dev
-      - mesa-utils
       - glew-utils
+      - glfw
+      - glfw3
+      - libassimp-dev
       - libglew-dev
-      - libglm-dev
-      - libsoil-dev
       - libglfw3
       - libglfw3-dev
-      - libassimp-dev
-      - assimp-utils
-      - libxmu-dev
+      - libglm-dev
+      - libglu1-mesa-dev
+      - libsoil-dev
       - libxi-dev
-
+      - libxmu-dev
+      - mesa-common-dev
+      - mesa-utils
+      - xorg-dev
 
 pull_request:
   branches:
     - main
 
-script: 
+notifications:
+  email: false
+
+script:
   - clang-format for file in $(find . -iname '*.cpp' -or -iname '*.h' -and -not -iname 'doctest.h' ); do diff -u <(cat "$file") <(clang-format "$file") || exit 1; done
   - cmake . -DCMAKE_CXX_FLAGS="-Werror -Wall -Wextra" && cmake --build .
