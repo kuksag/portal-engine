@@ -1,7 +1,14 @@
-cmake_minimum_required(VERSION 3.17)
+cmake_minimum_required(VERSION 3.16)
 project(portal_engine)
 
 set(CMAKE_CXX_STANDARD 17)
+
+set(CMAKE_CXX_CLANG_TIDY
+        clang-tidy;
+        -header-filter=.;
+        -checks=*;)
+
+set(CMAKE_CXX_CPPCHECK "cppcheck")
 
 set(CMAKE_MODULE_PATH "${CMAKE_SOURCE_DIR}/CMake/" ${CMAKE_MODULE_PATH})
 
