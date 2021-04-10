@@ -42,9 +42,9 @@ jobs:
       script: clang-format for file in $(find . -iname '*.cpp' -or -iname '*.h' -and -not -iname 'doctest.h' ); do diff -u <(cat "$file") <(clang-format "$file") || exit 1; done
     - name: clang-tidy, cppcheck
       script: cmake . -DCMAKE_CXX_FLAGS="-Werror -Wall -Wextra" && cmake --build .
-    - name: g++-10 sanitizer
-      script: cmake . -DCMAKE_CXX_COMPILER="g++-10" -DCMAKE_CXX_FLAGS="-fsanitize=undefined -fsanitize=address" -DCMAKE_RUNTIME_OUTPUT_DIRECTORY_DEBUG=.
+    - name: g++-10, sanitizer
+      script: cmake . -DCMAKE_CXX_COMPILER="g++-10" -DCMAKE_CXX_FLAGS="-fsanitize=undefined -fsanitize=address" -DCMAKE_RUNTIME_OUTPUT_DIRECTORY_DEBUG=. && cmake --build .
     - name: clang++-10, libc
-        script: cmake . -DCMAKE_CXX_COMPILER="clang++-10" -DCMAKE_CXX_FLAGS="-stdlib=libc++" -DCMAKE_RUNTIME_OUTPUT_DIRECTORY_DEBUG=.  && cmake --build .
+      script: cmake . -DCMAKE_CXX_COMPILER="clang++-10" -DCMAKE_CXX_FLAGS="-stdlib=libc++" -DCMAKE_RUNTIME_OUTPUT_DIRECTORY_DEBUG=.  && cmake --build .
     - name: clang++-10, libstdc
       script: cmake . -DCMAKE_CXX_COMPILER="clang++-10" -DCMAKE_CXX_FLAGS="-stdlib=libstdc++" -DCMAKE_RUNTIME_OUTPUT_DIRECTORY_DEBUG=. && cmake --build .
