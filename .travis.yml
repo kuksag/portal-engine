@@ -1,5 +1,5 @@
 language: cpp
-
+os: linux
 dist: bionic
 
 addons:
@@ -17,10 +17,16 @@ addons:
       - libglew-dev
       - libglm-dev
       - libsoil-dev
+      - libglfw3
+      - libglfw3-dev
+      - libassimp-dev
+      - assimp-utils
+      - libxmu-dev
+      - libxi-dev
 
-on:
-  pull_request:
-    branches:
+
+pull_request:
+  branches:
     - main
 
 script: 
