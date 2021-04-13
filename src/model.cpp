@@ -67,20 +67,21 @@ void Model::draw(const Camera &camera) const {
         glUniform3f(id, data.x, data.y, data.z);
     };
     set_vec3(shader->get_uniform_id("camera_pos"), camera.get_position());
-
-
     glUniform1i(shader->get_uniform_id("count_of_light_sources"), light_sources ? (*light_sources).size() : 0);
-    glUniform1i(shader->get_uniform_id("depth_map"), 1);
-    glActiveTexture(GL_TEXTURE1);
-    glBindTexture(GL_TEXTURE_2D, (*light_sources)[0].get_depth_map());
     for (std::size_t i = 0; light_sources && i < light_sources->size(); ++i) {
         std::stringstream position_uniform_name;
         position_uniform_name << "light_sources[" << i << "].position";
-       set_vec3(shader->get_uniform_id(position_uniform_name.str()),(*light_sources)[i].get_position());
+        set_vec3(shader->get_uniform_id(position_uniform_name.str()),(*light_sources)[i].get_position());
 
         std::stringstream color_uniform_name;
         color_uniform_name << "light_sources[" << i << "].color";
         set_vec3(shader->get_uniform_id(color_uniform_name.str()),(*light_sources)[i].get_color());
+
+        std::stringstream depth_map_uniform_name;
+        depth_map_uniform_name << "depth_map" << i << "";
+        glUniform1i(shader->get_uniform_id(depth_map_uniform_name.str()), i + 1);
+        glActiveTexture(GL_TEXTURE1 + i);
+        glBindTexture(GL_TEXTURE_2D, (*light_sources)[i].get_depth_map());
     }
 
     for (const auto &i : meshes) i.draw();
