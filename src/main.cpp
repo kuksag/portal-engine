@@ -21,7 +21,10 @@ int main() {
     Camera camera;
     Controller controller(&camera, window);
     std::vector<LightSource> light_sources{LightSource(glm::vec3(10.0f, 10.0f, 10.0f),
-                             glm::vec3(1.0f, 0.5f, 1.0f))};
+                             glm::vec3(1.0f, 0.5f, 1.0f)),
+                                           LightSource(glm::vec3(-10.0f, 10.0f, -10.0f),
+                                                       glm::vec3(1.0f, 0.5f, 1.0f))
+    };
     // -------------------------------------------------------------------------
     std::shared_ptr<ShaderProgram> lighted_shader(new ShaderProgram("shaders/light.vertex", "shaders/light.fragment"));
     Model skull("res/models/skull/12140_Skull_v3_L2.obj", lighted_shader);
@@ -52,8 +55,9 @@ int main() {
         controller.cursor_position_callback();
         controller.key_callback();
         controller.update_time();
-        light_sources[0].gen_depth_map(drawables);
-
+        for (auto &light_source : light_sources) {
+            light_source.gen_depth_map(drawables);
+        }
 
         glViewport(0, 0, WIDTH, HEIGHT);
         glClearColor(0.3f, 0.3f, 0.6f, 0.0f);

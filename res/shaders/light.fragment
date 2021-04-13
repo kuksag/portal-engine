@@ -1,19 +1,21 @@
 #version 330 core
 
+const int MAX_COUNT_OF_LIGHT_SOURCES = 5;
+
 in vec2 TexCoord;
 in vec3 Normal;
 in vec4 point_pos;
-in vec4 point_pos_light_space;
+in vec4 point_pos_light_space[MAX_COUNT_OF_LIGHT_SOURCES];
+
 
 struct LightSource {
     vec3 position;
     vec3 color;
 };
 
-const int MAX_COUNT_OF_LIGHT_SOURCES = 5;
 uniform LightSource light_sources[MAX_COUNT_OF_LIGHT_SOURCES];
-uniform int count_of_light_sources;
 
+uniform int count_of_light_sources;
 uniform vec3 camera_pos;
 uniform sampler2D Texture;
 uniform sampler2D depth_map0;
@@ -88,7 +90,7 @@ ivec2 get_texture_size(int i) {
 }
 
 float calc_shadow(int i) {
-    vec3 pos = point_pos_light_space.xyz / point_pos_light_space.w * 0.5 + 0.5;
+    vec3 pos = point_pos_light_space[i].xyz / point_pos_light_space[i].w * 0.5 + 0.5;
     float depth = get_depth(i, pos.xy);
     vec3 light_dir = normalize(light_sources[i].position - vec3(point_pos));
     vec3 norm = normalize(Normal);

@@ -2,14 +2,13 @@
 
 #include <assimp/postprocess.h>
 #include <assimp/scene.h>
-
 #include <assimp/Importer.hpp>
 #include <iostream>
 #include <utility>
 #include <vector>
-
 #include "light_source.h"
-#include "sstream"
+#include <sstream>
+#include <string>
 
 Model::Model(const std::string &path, std::shared_ptr<ShaderProgram> shader)
     : Drawable(std::move(shader)),
@@ -44,20 +43,21 @@ void Model::set_matrices(const Camera &camera) const {
     auto model_matrix = get_model_matrix();
     auto MVP = camera.get_projection_matrix() * camera.get_view_matrix() *
                model_matrix;    // TODO: one calculation
-    auto normal_transformation =
-        glm::mat3(transpose(inverse(model_matrix)));
-
+    auto normal_transformation = glm::mat3(transpose(inverse(model_matrix)));
 
     glUniformMatrix4fv(shader->get_uniform_id("MVP"), 1, GL_FALSE, &MVP[0][0]);
     glUniformMatrix4fv(shader->get_uniform_id("model_matrix"), 1, GL_FALSE,
                        &model_matrix[0][0]);
     glUniformMatrix3fv(shader->get_uniform_id("normal_transformation"), 1,
                        GL_FALSE, &normal_transformation[0][0]);
-    auto light_matrix = (*light_sources)[0].get_camera().get_projection_matrix() *
-                        (*light_sources)[0].get_camera().get_view_matrix() * model_matrix;
-    glUniformMatrix4fv(shader->get_uniform_id("light_matrix"), 1, GL_FALSE, &light_matrix[0][0]);
+    for (std::size_t i = 0; light_sources && i < light_sources->size(); ++i) {
+        auto light_matrix =
+            (*light_sources)[i].get_camera().get_projection_matrix() *
+            (*light_sources)[i].get_camera().get_view_matrix() * model_matrix;
+        glUniformMatrix4fv(shader->get_uniform_id("light_matrix[" + std::to_string(i) + "]"), 1,
+                           GL_FALSE, &light_matrix[0][0]);
+    }
 }
-
 
 void Model::draw(const Camera &camera) const {
     shader->use();

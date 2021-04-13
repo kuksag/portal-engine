@@ -3,15 +3,17 @@ layout (location = 0) in vec3 position;
 layout (location = 1) in vec3 normal;
 layout (location = 2) in vec2 texCoord;
 
+const int MAX_COUNT_OF_LIGHT_SOURCES = 5;
+
 out vec2 TexCoord;
 out vec3 Normal;
 out vec4 point_pos;
-out vec4 point_pos_light_space;
+out vec4 point_pos_light_space[MAX_COUNT_OF_LIGHT_SOURCES];
 
 uniform mat4 MVP;
 uniform mat3 normal_transformation;
 uniform mat4 model_matrix;
-uniform mat4 light_matrix;
+uniform mat4 light_matrix[MAX_COUNT_OF_LIGHT_SOURCES];
 
 void main()
 {
@@ -19,5 +21,7 @@ void main()
     TexCoord = texCoord;
     Normal = normal_transformation * normal;
     point_pos = model_matrix * vec4(position, 1.0f);
-    point_pos_light_space = light_matrix * vec4(position, 1.0f);
+    for (int i = 0; i < MAX_COUNT_OF_LIGHT_SOURCES; ++i) {
+        point_pos_light_space[i] = light_matrix[i] * vec4(position, 1.0f);
+    }
 }
