@@ -54,7 +54,7 @@ const float DISPLAY_RANGE_FAR = 100.0f;
 }    // namespace Camera
 
 namespace Portal {
-const int MAX_RECURSION_LEVEL = 3;
+const int MAX_RECURSION_LEVEL = 0;
 }
 
 }    // namespace Settings

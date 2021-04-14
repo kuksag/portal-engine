@@ -47,4 +47,5 @@ public:
 void render_scene(const Camera &camera, const std::vector<Drawable *> &objects,
                   const std::vector<Portal *> &portals);
 
+
 #endif    // PORTAL_ENGINE_PORTAL_H

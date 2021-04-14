@@ -8,6 +8,7 @@
 #include "light_source.h"
 #include "portal.h"
 #include "primitives.h"
+#include "puzzle.h"
 
 using namespace Settings::Window;
 
@@ -22,45 +23,33 @@ int main() {
         LightSource(glm::vec3(-10.0f, 10.0f, -10.0f),
                     glm::vec3(1.0f, 1.0f, 1.0f))};
     // -------------------------------------------------------------------------
-    std::vector<Drawable *> objects = {new Cube({0, 0, 0}, {0.5, 0.5, 0}),
-                                       new Sphere({0, 4, 0}, {0.2, 1, 0.5}),
-                                       new Plane({3, 7, 8}, {0.3, 0.1, 0.8}),
-                                       new Cylinder({4, 0, 0}, {0.4, 0.2, 0.2}),
-                                       new Torus({0, 0, -4}, {0.2, 0.5, 0.5}),
-                                       new Cone({0, -4, 0}, {0.4, 1, 1})};
     // -------------------------------------------------------------------------
-    // Big Plane
-    objects[2]->scale(glm::vec3(10.0f, 10.0f, 10.0f));
+    std::vector<Portal *> portals;
+    std::vector<Drawable *> objects;
     // -------------------------------------------------------------------------
-    for (auto &primitive : objects) {
+    JokersTrap JT;
+
+    for (auto &i : JT.portals)
+        for (Portal *portal : i) portals.push_back(portal);
+
+    for (Drawable *object : JT.objects)
+        objects.push_back(object);
+    // -------------------------------------------------------------------------
+    for (auto &primitive : objects)
         primitive->set_light_sources(&light_sources);
-    }
     // -------------------------------------------------------------------------
-    Portal portal_a, portal_b;
-    const int SIZE = 3;
-    portal_a.translate({-3, 1.5, 3.0});
-    portal_a.rotate(-M_PI_4, {0.0, 1.0, 0.0});
-    portal_a.scale({SIZE, SIZE, 1});
-
-    portal_b.translate({3, 1.5, -3.0});
-    portal_b.rotate(-M_PI_4, {0.0, 1.0, 0.0});
-    portal_b.rotate(M_PI, {0.0, 1.0, 0.0});
-    portal_b.scale({SIZE, SIZE, 1});
-
-    portal_a.set_destination(&portal_b);
-    portal_b.set_destination(&portal_a);
-
-    std::vector<Portal *> portals = {&portal_a, &portal_b};
-    // -------------------------------------------------------------------------
+    glEnable(GL_CULL_FACE);
     do {
         controller.cursor_position_callback();
         controller.key_callback();
         controller.update_time();
 
         glClearColor(0.3f, 0.3f, 0.6f, 0.0f);
-        glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT
-                | GL_STENCIL_BUFFER_BIT
-                );
+        glColorMask(GL_TRUE, GL_TRUE, GL_TRUE, GL_TRUE);
+        glDepthMask(GL_TRUE);
+        glStencilMask(0xFF);
+        glClear(GL_STENCIL_BUFFER_BIT | GL_DEPTH_BUFFER_BIT |
+                GL_COLOR_BUFFER_BIT);
         // ---------------------------------------------------------------------
         render_scene(camera, objects, portals, 0);
         // ---------------------------------------------------------------------
