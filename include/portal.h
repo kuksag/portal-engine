@@ -5,6 +5,10 @@
 #include "primitives.h"
 
 struct Portal : Drawable {
+    // -------------------------------------------------------------------------
+    // because we dont want to write bounds into stencil buffer
+    void draw_bounds(const Camera &camera) const;
+
 private:
     Plane shape;
     Portal *destination;
@@ -17,14 +21,15 @@ private:
     Cone beacon;
     std::vector<Cube> bounds;
     // -------------------------------------------------------------------------
-    // because we dont want to write bounds into stencil buffer
-    void draw_bounds(const Camera &camera) const;
-    // -------------------------------------------------------------------------
 
     [[nodiscard]] glm::vec3 get_center() const;
 
 public:
+    bool is_draw_bounds = false;
+
     Portal();
+
+    void toggle_draw_bounds();
 
     // TODO: make protected
     void draw(const Camera &camera) const override;

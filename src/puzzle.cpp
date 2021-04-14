@@ -1,62 +1,73 @@
 #include "puzzle.h"
 
-void JokersTrap::init_portals() {
-    const float BOUND_MATCH = 0.9;
+JokersTrap::JokersTrap() {
+    const float SCALE_OBJECT = 0.8;
 
-    for (std::size_t i = 0; i < 2; i++) {
-        for (std::size_t j = 0; j < EDGE_NUMBER; j++)
-            portals[i][j] = new Portal;
+    patterns.resize(EDGE_NUMBER);
+
+    patterns[0].centroid = new Sphere(glm::vec3(0.0), {0.44, 0.12, 0.78});
+
+    patterns[1].centroid = new Torus(glm::vec3(0.0), {0.16, 0.95, 0.04});
+    patterns[2].centroid = new Cone(glm::vec3(0.0), {0.88, 0.57, 0.52});
+    patterns[3].centroid = new Cylinder(glm::vec3(0.0), {0.2, 0.03, 0.92});
+    patterns[4].centroid = new Cone(glm::vec3(0.0), {0.92, 0.48, 0.16});
+    patterns[5].centroid = new Cube(glm::vec3(0.0), {0.2, 0.66, 0.66});
+
+    patterns[3].centroid->scale(glm::vec3(0.6));
+    patterns[5].centroid->scale(glm::vec3(0.6));
+
+    for (std::size_t i = 0; i < EDGE_NUMBER; i++) {
+        patterns[i].centroid->scale(glm::vec3(SCALE_OBJECT));
+        patterns[i].translate(glm::vec3((i + 1) * MOVE_DISTANCE));
+        patterns[i].inverse_rotate();
+        base.portals[i].set_destination(&patterns[i].portals[i]);
     }
+    patterns[4].portals[4].rotate(M_PI, {1.0, 0.0, 0.0});
+    patterns[5].portals[5].rotate(M_PI, {1.0, 0.0, 0.0});
+    base.portals[4].set_destination(&patterns[4].portals[4]);
+    base.portals[5].set_destination(&patterns[5].portals[5]);
+}
+
+PortalsCube::PortalsCube() : centroid(nullptr) {
+    const std::size_t EDGE_NUMBER = 6;
+    const float BOUND_MATCH = 0.9;
 
     static const float x_offset[] = {0, 0, 1, -1, 0, 0};
     static const float y_offset[] = {0, 0, 0, 0, 1, -1};
     static const float z_offset[] = {1, -1, 0, 0, 0, 0};
 
+    portals.resize(EDGE_NUMBER);
+    for (std::size_t i = 0; i < EDGE_NUMBER; i++)
+        portals[i].toggle_draw_bounds();
+
     for (std::size_t j = 0; j < EDGE_NUMBER; j++) {
-        portals[0][j]->translate({x_offset[j], y_offset[j], z_offset[j]});
-        portals[0][j]->scale({glm::vec3(BOUND_MATCH)});
+        portals[j].translate({x_offset[j], y_offset[j], z_offset[j]});
+        portals[j].scale({glm::vec3(BOUND_MATCH)});
         // This scale is needed in order to have a perfect cube
     }
 
-    portals[0][0]->rotate(M_PI, {0.0, 1.0, 0.0});
-    portals[0][2]->rotate(-M_PI_2, {0.0, 1.0, 0.0});
-    portals[0][3]->rotate(M_PI_2, {0.0, 1.0, 0.0});
-    portals[0][4]->rotate(M_PI_2, {1.0, 0.0, 0.0});
-    portals[0][5]->rotate(-M_PI_2, {1.0, 0.0, 0.0});
-
-    for (std::size_t i = 0; i < EDGE_NUMBER; i++)
-        portals[1][i]->translate(glm::vec3((i + 1) * MOVE_DISTANCE));
-
-
-    for (std::size_t i = 0; i < EDGE_NUMBER; i++)
-        portals[0][i]->set_destination(portals[1][i]);
-    portals[0][2]->set_destination(portals[1][3]);
-    portals[1][3]->set_destination(portals[0][2]);
-    portals[0][3]->set_destination(portals[1][2]);
-    portals[1][2]->set_destination(portals[0][3]);
+    portals[0].rotate(M_PI, {0.0, 1.0, 0.0});
+    portals[2].rotate(-M_PI_2, {0.0, 1.0, 0.0});
+    portals[3].rotate(M_PI_2, {0.0, 1.0, 0.0});
+    portals[4].rotate(M_PI_2, {1.0, 0.0, 0.0});
+    portals[5].rotate(-M_PI_2, {1.0, 0.0, 0.0});
 }
 
-void JokersTrap::init_objects() {
-    const float SIZE = 1.0;
-    const float OFFSET = 1.5;
-
-    objects[0] = new Sphere;
-    objects[1] = new Cube;
-    objects[2] = new Torus;
-    objects[3] = new Cylinder;
-    objects[4] = new Cone;
-    objects[5] = new Cube;
-
-    for (std::size_t i = 0; i < EDGE_NUMBER; i++) {
-        objects[i]->scale(glm::vec3(SIZE));
-        objects[i]->translate(glm::vec3((i + 1) * MOVE_DISTANCE));
-        objects[i]->translate({0.0, 0.0, -OFFSET});
-    }
-    objects[1]->scale(glm::vec3(0.7));
+void PortalsCube::inverse_rotate() {
+    portals[0].rotate(M_PI, {0.0, 1.0, 0.0});
+    portals[1].rotate(M_PI, {0.0, 1.0, 0.0});
+    portals[2].rotate(M_PI, {0.0, 1.0, 0.0});
+    portals[3].rotate(M_PI, {0.0, 1.0, 0.0});
+    portals[4].rotate(M_PI, {1.0, 0.0, 0.0});
+    portals[5].rotate(M_PI, {1.0, 0.0, 0.0});
 }
 
-JokersTrap::JokersTrap()
-    : portals(2, std::vector<Portal *>(EDGE_NUMBER)), objects(EDGE_NUMBER) {
-    init_portals();
-    init_objects();
+void PortalsCube::translate(glm::vec3 data) {
+    for (auto &i : portals) i.translate(data);
+    centroid->translate(data);
+}
+
+void PortalsCube::scale(glm::vec3 data) {
+    for (auto &i : portals) i.scale(data);
+    centroid->scale(data);
 }

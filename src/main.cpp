@@ -23,17 +23,18 @@ int main() {
         LightSource(glm::vec3(-10.0f, 10.0f, -10.0f),
                     glm::vec3(1.0f, 1.0f, 1.0f))};
     // -------------------------------------------------------------------------
-    // -------------------------------------------------------------------------
     std::vector<Portal *> portals;
     std::vector<Drawable *> objects;
     // -------------------------------------------------------------------------
-    JokersTrap JT;
-
-    for (auto &i : JT.portals)
-        for (Portal *portal : i) portals.push_back(portal);
-
-    for (Drawable *object : JT.objects)
-        objects.push_back(object);
+    JokersTrap JS;
+    for (std::size_t i = 0; i < JS.EDGE_NUMBER; i++) {
+        objects.push_back(JS.patterns[i].centroid);
+        for (std::size_t j = 0; j < JS.EDGE_NUMBER; j++) {
+            if (i != j)
+                objects.push_back(&JS.patterns[i].portals[j]);
+        }
+    }
+    for (auto &i : JS.base.portals) portals.push_back(&i);
     // -------------------------------------------------------------------------
     for (auto &primitive : objects)
         primitive->set_light_sources(&light_sources);

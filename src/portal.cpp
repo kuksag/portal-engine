@@ -13,8 +13,13 @@ namespace {
 void draw_non_portals(const Camera &camera,
                       const std::vector<Drawable *> &objects,
                       const std::vector<Portal *> &portals) {
-    for (auto &object : objects) object->draw(camera);
-//    draw_portals(camera, portals, true);
+    for (auto &object : objects) {
+        object->draw(camera);
+        if (auto dc = dynamic_cast<Portal *>(object);
+            dc != nullptr && dc->is_draw_bounds) {
+            dc->draw_bounds(camera);
+        }
+    }
 }
 }    // namespace
 
@@ -46,7 +51,7 @@ Portal::Portal()
     bounds.resize(4);
     for (auto &bound : bounds) {
         bound.scale({1.2, 0.1, 0.1});
-        bound.set_color({0.0, 0.0, 1.0});
+        bound.set_color({0.06, 0.06, 0.06});
     }
     bounds[0].translate({0.0, -1.1, 0.0});
     bounds[1].translate({0.0, 1.1, 0.0});
@@ -70,7 +75,7 @@ void Portal::draw_bounds(const Camera &camera) const {
     auto custom_camera = camera;
     custom_camera.set_view_matrix(camera.get_view_matrix() *
                                   get_model_matrix());
-    beacon.draw(custom_camera);
+    //    beacon.draw(custom_camera);
     for (auto &bound : bounds) bound.draw(custom_camera);
 }
 
@@ -236,3 +241,5 @@ void render_scene(const Camera &camera, const std::vector<Drawable *> &objects,
     draw_non_portals(camera, objects, portals);
     draw_portals(camera, portals, true);
 }
+
+void Portal::toggle_draw_bounds() { is_draw_bounds ^= true; }
