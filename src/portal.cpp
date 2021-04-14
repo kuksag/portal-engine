@@ -34,7 +34,8 @@ Portal::Portal()
                                                "shaders/color.fragment")),
       destination(this) {
     // -------------------------------------------------------------------------
-    shape.scale({1.0, 1.0, 0.1});
+    shape.rotate(M_PI_2, {1.0, 0.0, 0.0});
+    shape.rotate(M_PI, {0.0, 0.0, 1.0});
     // -------------------------------------------------------------------------
     beacon.scale({0.2, 0.2, 0.2});
     beacon.set_color({0.0, 1.0, 0.0});
@@ -69,7 +70,7 @@ void Portal::draw_bounds(const Camera &camera) const {
     auto custom_camera = camera;
     custom_camera.set_view_matrix(camera.get_view_matrix() *
                                   get_model_matrix());
-    //    beacon.draw(custom_camera);
+    beacon.draw(custom_camera);
     for (auto &bound : bounds) bound.draw(custom_camera);
 }
 
@@ -209,7 +210,7 @@ void render_scene(const Camera &camera, const std::vector<Drawable *> &objects,
     glClear(GL_DEPTH_BUFFER_BIT);
 
     // Draw portals into depth buffer
-//    draw_portals(camera, portals, true);
+    draw_portals(camera, portals);
 
     // Reset the depth function to the default
     glDepthFunc(GL_LESS);
@@ -231,7 +232,7 @@ void render_scene(const Camera &camera, const std::vector<Drawable *> &objects,
     glEnable(GL_DEPTH_TEST);
 
     // Draw scene objects normally, only at recursionLevel
+
     draw_non_portals(camera, objects, portals);
     draw_portals(camera, portals, true);
-
 }

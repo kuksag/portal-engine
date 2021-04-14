@@ -6,7 +6,7 @@
 
 struct Portal : Drawable {
 private:
-    Cube shape;
+    Plane shape;
     Portal *destination;
 
     // -------------------------------------------------------------------------
