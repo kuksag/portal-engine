@@ -2,7 +2,7 @@
 
 Portal::Portal()
     : Drawable(std::make_shared<ShaderProgram>("shaders/color.vertex",
-                                               "shaders/color.fragment")),
+                                               "shaders/color.fragment")), shape(true), beacon(true), bounds(4, {true}), 
       destination(this) {
     // -------------------------------------------------------------------------
     shape.scale({1.0, 1.0, 0.1});
@@ -13,7 +13,7 @@ Portal::Portal()
     beacon.rotate(M_PI_2, {0.0, 0.0, 1.0});
     beacon.translate({0.0, 0.0, 0.5});
     // -------------------------------------------------------------------------
-    bounds.resize(4);
+    // bounds.resize(4);
     for (auto& bound : bounds) {
         bound.scale({1.2, 0.1, 0.1});
         bound.set_color({0.0, 0.0, 1.0});

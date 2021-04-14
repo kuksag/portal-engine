@@ -14,39 +14,41 @@ private:
 
 public:
     Primitive(const glm::vec3& position, const glm::vec3& color,
-              const std::string& path);
+              const std::string& path, bool need_load);
+
+    void move_to(std::shared_ptr<Primitive> to);
 
     void set_color(glm::vec3 color);
     [[nodiscard]] glm::vec3 get_color() const;
 };
 
 struct Sphere : public Primitive {
-    explicit Sphere(const glm::vec3& position = {0, 0, 0},
+    explicit Sphere(bool need_load, const glm::vec3& position = {0, 0, 0},
                     const glm::vec3& color = {1, 1, 1});
 };
 
 struct Cube : public Primitive {
-    Cube(const glm::vec3& position = {0, 0, 0},
+    Cube(bool need_load, const glm::vec3& position = {0, 0, 0},
          const glm::vec3& color = {1, 1, 1});
 };
 
 struct Plane : public Primitive {
-    Plane(const glm::vec3& position = {0, 0, 0},
+    Plane(bool need_load, const glm::vec3& position = {0, 0, 0},
           const glm::vec3& color = {1, 1, 1});
 };
 
 struct Cylinder : public Primitive {
-    Cylinder(const glm::vec3& position = {0, 0, 0},
+    Cylinder(bool need_load, const glm::vec3& position = {0, 0, 0},
              const glm::vec3& color = {1, 1, 1});
 };
 
 struct Torus : public Primitive {
-    Torus(const glm::vec3& position = {0, 0, 0},
+    Torus(bool need_load, const glm::vec3& position = {0, 0, 0},
           const glm::vec3& color = {1, 1, 1});
 };
 
 struct Cone : public Primitive {
-    Cone(const glm::vec3& position = {0, 0, 0},
+    Cone(bool need_load, const glm::vec3& position = {0, 0, 0},
          const glm::vec3& color = {1, 1, 1});
 };
 

@@ -8,12 +8,16 @@
 #include <utility>
 #include <vector>
 
+#include <iostream> // TODO: remove
+
 #include "light_source.h"
 #include "sstream"
 
-Model::Model(const std::string &path, std::shared_ptr<ShaderProgram> shader)
+Model::Model(const std::string &path, std::shared_ptr<ShaderProgram> shader, bool need_load)
     : Drawable(std::move(shader)),
-      directory(path.substr(0, path.find_last_of('/'))) {
+      directory(path.substr(0, path.find_last_of('/'))), name(path) {
+    if (!need_load)
+        return;
     Assimp::Importer importer;
     const aiScene *scene = importer.ReadFile(
         path,
@@ -27,6 +31,8 @@ Model::Model(const std::string &path, std::shared_ptr<ShaderProgram> shader)
     }
 
     deep_load_meshes(scene->mRootNode, scene);
+
+    std::cout << "Model Loaded!!!\n";//TODO: remove
 }
 
 void Model::draw(const Camera &camera, const std::vector<LightSource>& light_sources) const {

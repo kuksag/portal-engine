@@ -44,5 +44,5 @@ add_executable(main
 	src/window.cpp include/window.h
 	src/scene.cpp include/scene.h)
 
-target_include_directories(main PUBLIC include include/primitives src)
+target_include_directories(main PUBLIC include src)
 target_link_libraries(main ${OPENGL_LIBS})

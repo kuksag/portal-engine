@@ -24,6 +24,7 @@ private:
     std::vector<Mesh> meshes;
 
     std::string directory;
+    std::string name;
 
     void deep_load_meshes(aiNode *node, const aiScene *scene);
     Mesh load_mesh(aiMesh *ai_mesh, const aiScene *scene);
@@ -34,7 +35,7 @@ private:
     Texture load_texture(const char *path);
 
 public:
-    Model(const std::string &path, std::shared_ptr<ShaderProgram> shader);
+    Model(const std::string &path, std::shared_ptr<ShaderProgram> shader, bool need_load);
     void draw(const Camera &camera, const std::vector<LightSource>& light_sources) const override;
 
     ~Model() override = default;

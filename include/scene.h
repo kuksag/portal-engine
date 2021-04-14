@@ -20,7 +20,7 @@ private:
 	Window& window;
 	Camera& camera;//TODO: make own camera
 
-	std::vector<prim_ptr> primitives;
+	std::vector<prim_ptr> cubes;
 	std::vector<model_ptr> models;
 	std::vector<LightSource> lights; //TODO: light_ptr
 
@@ -30,7 +30,7 @@ public:
 
 	void draw() const;
 
-	prim_ptr add_primitive(const glm::vec3& position = {0, 0, 0}, const glm::vec3& color = {1, 1, 1});
+	prim_ptr add_cube(const glm::vec3& position = {0, 0, 0}, const glm::vec3& color = {1, 1, 1});
 	// model_ptr add_model(const std::string& path, const glm::vec3& position = {0, 0, 0});
 
 };

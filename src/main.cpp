@@ -15,7 +15,10 @@ int main() {
                                          //TODO: swap(camera, window)
 
     Scene scene(window, camera); //TODO: own camera
-    scene.add_primitive();//TODO: prim type
+    std::shared_ptr<Primitive> cube = scene.add_cube({10, 0, 0});
+    scene.add_cube({10, 10, 0}, {255, 0, 0});
+    scene.add_cube({10, 0, 4}, {0, 255, 0});
+
 
     do {
         controller.cursor_position_callback(); //TODO: make one method

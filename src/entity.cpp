@@ -21,6 +21,10 @@ void Entity::set_translation_matrix(const glm::mat4 &data) {
     update();
 }
 
+void Entity::set_model_matrix(const glm::mat4 &data) {
+    model_matrix = data;
+}
+
 void Entity::set_rotation_matrix(const glm::mat4 &data) {
     rotation_matrix = data;
     update();

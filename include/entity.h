@@ -4,7 +4,7 @@
 #include <glm/glm.hpp>
 
 struct Entity {
-private:
+private: //TODO: Primitive::move_to
     glm::mat4 translation_matrix;
     glm::mat4 rotation_matrix;
     glm::mat4 scale_matrix;
@@ -22,6 +22,7 @@ public:
     void set_translation_matrix(const glm::mat4 &data);
     void set_rotation_matrix(const glm::mat4 &data);
     void set_scale_matrix(const glm::mat4 &data);
+    void set_model_matrix(const glm::mat4 &data);
 
     void translate(const glm::vec3 &data);
     void rotate(float angle, const glm::vec3 &data);
