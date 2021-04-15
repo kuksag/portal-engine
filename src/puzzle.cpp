@@ -10,7 +10,6 @@ JokersTrap::JokersTrap()
     patterns.resize(EDGE_NUMBER);
 
     patterns[0].centroid = new Sphere(glm::vec3(0.0), {0.44, 0.12, 0.78});
-
     patterns[1].centroid = new Torus(glm::vec3(0.0), {0.16, 0.95, 0.04});
     patterns[2].centroid = new Cone(glm::vec3(0.0), {0.88, 0.57, 0.52});
     patterns[3].centroid = new Cylinder(glm::vec3(0.0), {0.2, 0.03, 0.92});
@@ -22,18 +21,20 @@ JokersTrap::JokersTrap()
 
     for (std::size_t i = 0; i < EDGE_NUMBER; i++) {
         patterns[i].centroid->scale(glm::vec3(SCALE_OBJECT));
-        patterns[i].translate(glm::vec3((i + 1) * MOVE_DISTANCE));
+        patterns[i].translate(
+            glm::vec3(static_cast<float>(i + 1) * MOVE_DISTANCE));
         patterns[i].inverse_rotate();
         base.portals[i].set_destination(&patterns[i].portals[i]);
     }
+
     patterns[4].portals[4].rotate(M_PI, {1.0, 0.0, 0.0});
     patterns[5].portals[5].rotate(M_PI, {1.0, 0.0, 0.0});
+
     base.portals[4].set_destination(&patterns[4].portals[4]);
     base.portals[5].set_destination(&patterns[5].portals[5]);
 }
 
-PortalsCube::PortalsCube() : centroid(nullptr) {
-    const std::size_t EDGE_NUMBER = 6;
+JokersTrap::PortalsCube::PortalsCube() : centroid(nullptr) {
     const float BOUND_MATCH = 0.9;
 
     static const float x_offset[] = {0, 0, 1, -1, 0, 0};
@@ -57,7 +58,7 @@ PortalsCube::PortalsCube() : centroid(nullptr) {
     portals[5].rotate(-M_PI_2, {1.0, 0.0, 0.0});
 }
 
-void PortalsCube::inverse_rotate() {
+void JokersTrap::PortalsCube::inverse_rotate() {
     portals[0].rotate(M_PI, {0.0, 1.0, 0.0});
     portals[1].rotate(M_PI, {0.0, 1.0, 0.0});
     portals[2].rotate(M_PI, {0.0, 1.0, 0.0});
@@ -66,14 +67,9 @@ void PortalsCube::inverse_rotate() {
     portals[5].rotate(M_PI, {1.0, 0.0, 0.0});
 }
 
-void PortalsCube::translate(glm::vec3 data) {
+void JokersTrap::PortalsCube::translate(glm::vec3 data) {
     for (auto &i : portals) i.translate(data);
     centroid->translate(data);
-}
-
-void PortalsCube::scale(glm::vec3 data) {
-    for (auto &i : portals) i.scale(data);
-    centroid->scale(data);
 }
 
 void JokersTrap::draw(const Camera &camera) const {
