@@ -12,13 +12,15 @@
 class Drawable : public Entity {
 protected:
     std::shared_ptr<ShaderProgram> shader;
-    const std::vector<LightSource> *light_sources{}; //TODO: vector<LightSources*>, чтобы не было рассинхрона
+    const std::vector<LightSource>
+        *light_sources{};    // TODO: vector<LightSources*>, чтобы не было
+                             // рассинхрона
 
 public:
-    virtual void draw(const Camera& camera) const = 0;
+    virtual void draw(const Camera &camera) const = 0;
     explicit Drawable(std::shared_ptr<ShaderProgram> shader);
 
-    void set_light_sources(const std::vector<LightSource> *data);
+    virtual void set_light_sources(const std::vector<LightSource> *data);
 
     ~Drawable() override = default;
 };
