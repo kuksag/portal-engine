@@ -1,6 +1,10 @@
 #include "puzzle.h"
 
-JokersTrap::JokersTrap() {
+#include "portal.h"
+
+JokersTrap::JokersTrap()
+    : Drawable(std::make_shared<ShaderProgram>("shaders/light.vertex",
+                                               "shaders/light.fragment")) {
     const float SCALE_OBJECT = 0.8;
 
     patterns.resize(EDGE_NUMBER);
@@ -70,4 +74,29 @@ void PortalsCube::translate(glm::vec3 data) {
 void PortalsCube::scale(glm::vec3 data) {
     for (auto &i : portals) i.scale(data);
     centroid->scale(data);
+}
+
+void JokersTrap::draw(const Camera &camera) const {
+    std::vector<const Portal *> portals;
+    std::vector<const Drawable *> objects;
+    // -------------------------------------------------------------------------
+    for (std::size_t i = 0; i < EDGE_NUMBER; i++) {
+        objects.push_back(patterns[i].centroid);
+        for (std::size_t j = 0; j < EDGE_NUMBER; j++) {
+            if (i != j) objects.push_back(&patterns[i].portals[j]);
+        }
+    }
+    for (auto &i : base.portals) portals.push_back(&i);
+    // -------------------------------------------------------------------------
+    auto custom_camera = camera;
+    custom_camera.set_view_matrix(camera.get_view_matrix() *
+                                  get_model_matrix());
+    // -------------------------------------------------------------------------
+    render_scene(custom_camera, objects, portals, 0);
+}
+
+void JokersTrap::set_light_sources(const std::vector<LightSource> *data) {
+    for (auto &i : base.portals) i.set_light_sources(data);
+    for (PortalsCube &pattern : patterns)
+        pattern.centroid->set_light_sources(data);
 }

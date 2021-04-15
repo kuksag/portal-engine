@@ -23,23 +23,31 @@ int main() {
         LightSource(glm::vec3(-10.0f, 10.0f, -10.0f),
                     glm::vec3(1.0f, 1.0f, 1.0f))};
     // -------------------------------------------------------------------------
-    std::vector<Portal *> portals;
     std::vector<Drawable *> objects;
     // -------------------------------------------------------------------------
-    JokersTrap JS;
-    for (std::size_t i = 0; i < JS.EDGE_NUMBER; i++) {
-        objects.push_back(JS.patterns[i].centroid);
-        for (std::size_t j = 0; j < JS.EDGE_NUMBER; j++) {
-            if (i != j)
-                objects.push_back(&JS.patterns[i].portals[j]);
-        }
-    }
-    for (auto &i : JS.base.portals) portals.push_back(&i);
+    Sphere center;
+    center.set_color({1.0, 0.0, 0.0});
+    center.scale(glm::vec3(0.1));
+
+    Plane floor;
+    floor.translate({0.0, -5.0, 0.0});
+    floor.scale({100.0, 1.0, 100.0});
+
+    JokersTrap JT;
+    JT.translate(glm::vec3(5.0));
+    JT.scale(glm::vec3(2.0));
+    JT.rotate(M_PI_4, {0.5, 0.2, 0.7});
+
+    objects.push_back(&JT);
+    objects.push_back(&center);
+    objects.push_back(&floor);
     // -------------------------------------------------------------------------
-    for (auto &primitive : objects)
-        primitive->set_light_sources(&light_sources);
+    for (Drawable *object : objects)
+        object->set_light_sources(&light_sources);
     // -------------------------------------------------------------------------
     glEnable(GL_CULL_FACE);
+    glEnable(GL_DEPTH_TEST);
+    // -------------------------------------------------------------------------
     do {
         controller.cursor_position_callback();
         controller.key_callback();
@@ -52,7 +60,7 @@ int main() {
         glClear(GL_STENCIL_BUFFER_BIT | GL_DEPTH_BUFFER_BIT |
                 GL_COLOR_BUFFER_BIT);
         // ---------------------------------------------------------------------
-        render_scene(camera, objects, portals, 0);
+        for (Drawable *object : objects) object->draw(camera);
         // ---------------------------------------------------------------------
 
         glfwSwapBuffers(window);
