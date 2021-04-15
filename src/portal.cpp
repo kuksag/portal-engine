@@ -11,11 +11,11 @@
 
 namespace {
 void draw_non_portals(const Camera &camera,
-                      const std::vector<Drawable *> &objects,
-                      const std::vector<Portal *> &portals) {
+                      const std::vector<const Drawable *> &objects,
+                      const std::vector<const Portal *> &portals) {
     for (auto &object : objects) {
         object->draw(camera);
-        if (auto dc = dynamic_cast<Portal *>(object);
+        if (auto dc = dynamic_cast<const Portal *>(object);
             dc != nullptr && dc->is_draw_bounds) {
             dc->draw_bounds(camera);
         }
@@ -23,7 +23,8 @@ void draw_non_portals(const Camera &camera,
 }
 }    // namespace
 
-void draw_portals(const Camera &camera, const std::vector<Portal *> &portals,
+void draw_portals(const Camera &camera,
+                  const std::vector<const Portal *> &portals,
                   bool draw_bounds = false) {
     for (auto &portal : portals) {
         if (draw_bounds) {
@@ -48,18 +49,25 @@ Portal::Portal()
     beacon.rotate(-M_PI_2, {0.0, 0.0, 1.0});
     beacon.translate({0.0, 0.0, -0.5});
     // -------------------------------------------------------------------------
-    bounds.resize(4);
-    for (auto &bound : bounds) {
-        bound.scale({1.2, 0.1, 0.1});
-        bound.set_color({0.06, 0.06, 0.06});
-    }
-    bounds[0].translate({0.0, -1.1, 0.0});
-    bounds[1].translate({0.0, 1.1, 0.0});
+    const float COLOR = 0.75;    // grey
+    const float X_SCALE = 1.21;
+    const float YZ_SCALE = 0.1;
+    const float OFFSET = 1.11;
+    const std::size_t EDGE_NUMBER = 4;
 
-    bounds[2].translate({-1.1, 0.0, 0.0});
+    bounds.resize(EDGE_NUMBER);
+    for (auto &bound : bounds) {
+        bound.scale({X_SCALE, YZ_SCALE, YZ_SCALE});
+        bound.set_color({glm::vec3(COLOR)});
+    }
+
+    bounds[0].translate({0.0, -OFFSET, 0.0});
+    bounds[1].translate({0.0, OFFSET, 0.0});
+
+    bounds[2].translate({-OFFSET, 0.0, 0.0});
     bounds[2].rotate(M_PI_2, {0.0, 0.0, 1.0});
 
-    bounds[3].translate({1.1, 0.0, 0.0});
+    bounds[3].translate({OFFSET, 0.0, 0.0});
     bounds[3].rotate(M_PI_2, {0.0, 0.0, 1.0});
     // -------------------------------------------------------------------------
 }
@@ -104,8 +112,9 @@ Camera get_portal_destination_camera(const Camera &camera,
     return result;
 }
 
-void render_scene(const Camera &camera, const std::vector<Drawable *> &objects,
-                  const std::vector<Portal *> &portals,
+void render_scene(const Camera &camera,
+                  const std::vector<const Drawable *> &objects,
+                  const std::vector<const Portal *> &portals,
                   int recursion_level = 0) {
     for (auto &portal : portals) {
         // Calculate view matrix as if the player was already teleported
@@ -243,3 +252,7 @@ void render_scene(const Camera &camera, const std::vector<Drawable *> &objects,
 }
 
 void Portal::toggle_draw_bounds() { is_draw_bounds ^= true; }
+
+void Portal::set_light_sources(const std::vector<LightSource> *data) {
+    for (Cube &cube : bounds) cube.set_light_sources(data);
+}
