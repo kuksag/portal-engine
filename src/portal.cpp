@@ -35,8 +35,8 @@ void draw_portals(const Camera &camera, const std::vector<Portal *> &portals,
 }
 
 Portal::Portal()
-    : Drawable(std::make_shared<ShaderProgram>("shaders/color.vertex",
-                                               "shaders/color.fragment")),
+    : Drawable(std::make_shared<ShaderProgram>("shaders/light.vertex",
+                                               "shaders/light.fragment")),
       destination(this) {
     // -------------------------------------------------------------------------
     shape.rotate(M_PI_2, {1.0, 0.0, 0.0});
