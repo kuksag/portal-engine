@@ -5,8 +5,12 @@
 #include "primitives.h"
 
 struct Portal : Drawable {
+    // -------------------------------------------------------------------------
+    // because we dont want to write bounds into stencil buffer
+    void draw_bounds(const Camera &camera) const;
+
 private:
-    Cube shape;
+    Plane shape;
     Portal *destination;
 
     // -------------------------------------------------------------------------
@@ -17,17 +21,21 @@ private:
     Cone beacon;
     std::vector<Cube> bounds;
     // -------------------------------------------------------------------------
-    // because we dont want to write bounds into stencil buffer
-    void draw_bounds(const Camera &camera) const;
-    // -------------------------------------------------------------------------
 
     [[nodiscard]] glm::vec3 get_center() const;
 
 public:
+    bool is_draw_bounds = false;
+
     Portal();
+
+    void toggle_draw_bounds();
 
     // TODO: make protected
     void draw(const Camera &camera) const override;
+    void depth_test_draw(
+        const Camera& camera,
+        std::shared_ptr<ShaderProgram> depth_shader) const override;
 
     void set_destination(Portal *other);
 
@@ -36,15 +44,19 @@ public:
 
     friend void render_scene(const Camera &camera,
                              const std::vector<Drawable *> &objects,
-                             const std::vector<Portal *> &portals);
+                             const std::vector<Portal *> &portals,
+                             int recursion_level);
 
-    friend void render_portal(const Camera &camera,
-                              const std::vector<Drawable *> &objects,
-                              const Portal &portal,
-                              std::size_t recursion_level);
+    friend void draw_portals(const Camera &camera,
+                             const std::vector<Portal *> &portals,
+                             bool draw_bounds);
+
+    void set_light_sources(const std::vector<LightSource> *data) override;
 };
 
-void render_scene(const Camera &camera, const std::vector<Drawable *> &objects,
-                  const std::vector<Portal *> &portals);
+void render_scene(const Camera &camera,
+                  const std::vector<Drawable *> &objects,
+                  const std::vector<Portal *> &portals,
+                  int recursion_level);
 
 #endif    // PORTAL_ENGINE_PORTAL_H

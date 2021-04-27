@@ -20,14 +20,16 @@ protected:
     [[nodiscard]] glm::mat4 get_scale_matrix() const;
     [[nodiscard]] glm::mat4 get_model_matrix() const;
 
+
+public:
     void set_translation_matrix(const glm::mat4 &data);
     void set_rotation_matrix(const glm::mat4 &data);
     void set_scale_matrix(const glm::mat4 &data);
+    void set_model_matrix(const glm::mat4 &data);
 
-public:
-    void translate(const glm::vec3 &data);
-    void rotate(float angle, const glm::vec3 &data);
-    void scale(const glm::vec3 &data);
+    virtual void translate(const glm::vec3 &data);
+    virtual void rotate(float angle, const glm::vec3 &data);
+    virtual void scale(const glm::vec3 &data);
 
     virtual ~Entity() = default;
 };

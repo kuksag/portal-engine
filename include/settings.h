@@ -50,11 +50,11 @@ const float MOUSE_SENSITIVITY = 0.25f;
 const float SCROLL_SENSITIVITY = 1.0f;
 
 const float DISPLAY_RANGE_NEAR = 0.1f;
-const float DISPLAY_RANGE_FAR = 1000.0f;
+const float DISPLAY_RANGE_FAR = 100.0f;
 }    // namespace Camera
 
 namespace Portal {
-const int MAX_RECURSION_LEVEL = 64;
+const int MAX_RECURSION_LEVEL = 0;
 }
 
 }    // namespace Settings

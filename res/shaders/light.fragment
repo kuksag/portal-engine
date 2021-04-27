@@ -1,20 +1,28 @@
 #version 330 core
 
+const int MAX_COUNT_OF_LIGHT_SOURCES = 5;
+
 in vec2 TexCoord;
 in vec3 Normal;
-in vec3 point_pos;
+in vec4 point_pos;
+in vec4 point_pos_light_space[MAX_COUNT_OF_LIGHT_SOURCES];
+
 
 struct LightSource {
     vec3 position;
     vec3 color;
 };
 
-const int MAX_COUNT_OF_LIGHT_SOURCES = 5;
 uniform LightSource light_sources[MAX_COUNT_OF_LIGHT_SOURCES];
-uniform int count_of_light_sources;
 
+uniform int count_of_light_sources;
 uniform vec3 camera_pos;
 uniform sampler2D Texture;
+uniform sampler2D depth_map0;
+uniform sampler2D depth_map1;
+uniform sampler2D depth_map2;
+uniform sampler2D depth_map3;
+uniform sampler2D depth_map4;
 uniform vec4 color;
 
 out vec4 out_color;
@@ -26,7 +34,7 @@ vec3 calc_diffusion(LightSource light_source, vec3 light_dir, vec3 norm) {
 }
 
 vec3 calc_specular(LightSource light_source, vec3 light_dir, vec3 norm) {
-    vec3 view_dir = normalize(camera_pos - point_pos);
+    vec3 view_dir = normalize(camera_pos - vec3(point_pos));
     vec3 reflect_dir = reflect(-light_dir, norm);
 
     float spec = pow(max(dot(view_dir, reflect_dir), 0.0), 16);
@@ -39,7 +47,7 @@ float calc_attenuation(float dist) {
 }
 
 vec3 calc_light_effect(LightSource light_source, vec3 norm) {
-    vec3 light_dir = normalize(light_source.position - point_pos);
+    vec3 light_dir = normalize(light_source.position - vec3(point_pos));
 
     vec3 diffusion = calc_diffusion(light_source, light_dir, norm);
     vec3 specular = calc_specular(light_source, light_dir, norm);
@@ -48,9 +56,57 @@ vec3 calc_light_effect(LightSource light_source, vec3 norm) {
         specular = vec3(0.0f, 0.0f, 0.0f);
     }
 
-    float attenuation = calc_attenuation(distance(light_source.position, point_pos));
+    float attenuation = calc_attenuation(distance(light_source.position, vec3(point_pos)));
 
     return attenuation * (diffusion + specular);
+}
+
+float get_depth(int i, vec2 vec) {
+    if (i == 0) {
+        return texture(depth_map0, vec).r;
+    } else if (i == 1) {
+        return texture(depth_map1, vec).r;
+    } else if (i == 2) {
+        return texture(depth_map2, vec).r;
+    } else if (i == 3) {
+        return texture(depth_map3, vec).r;
+    } else if (i == 4) {
+        return texture(depth_map4, vec).r;
+    }
+}
+
+ivec2 get_texture_size(int i) {
+    if (i == 0) {
+        return textureSize(depth_map0, 0);
+    } else if (i == 1) {
+        return textureSize(depth_map1, 0);
+    } else if (i == 2) {
+        return textureSize(depth_map2, 0);
+    } else if (i == 3) {
+        return textureSize(depth_map3, 0);
+    } else if (i == 4) {
+        return textureSize(depth_map4, 0);
+    }
+}
+
+float calc_shadow(int i) {
+    vec3 pos = point_pos_light_space[i].xyz / point_pos_light_space[i].w * 0.5 + 0.5;
+    float depth = get_depth(i, pos.xy);
+    vec3 light_dir = normalize(light_sources[i].position - vec3(point_pos));
+    vec3 norm = normalize(Normal);
+    float bias = 0.00015;
+
+    float shadow = 0.0;
+    vec2 pixel_size = 1.0 / get_texture_size(i);
+    for(int x = -1; x <= 1; ++x) {
+        for(int y = -1; y <= 1; ++y) {
+           float near_point_depth = get_depth(i, pos.xy + vec2(x, y) * pixel_size);
+           shadow += pos.z - bias > near_point_depth  ? 1.0 : 0.0;
+        }
+    }
+    shadow /= 9.0;
+    return 1 - shadow;
+    return depth + bias < pos.z ? 0.0 : 1.0;
 }
 
 void main()
@@ -59,7 +115,7 @@ void main()
     vec3 norm = normalize(Normal);
     vec3 summary_effects = vec3(0.0, 0.0, 0.0);
     for (int i = 0; i < count_of_light_sources; ++i) {
-        summary_effects += calc_light_effect(light_sources[i], norm);
+        summary_effects += calc_shadow(i) * calc_light_effect(light_sources[i], norm);
     }
     vec3 min_color = vec3(0.3f, 0.3f, 0.3f);
     if (count_of_light_sources == 0) {
