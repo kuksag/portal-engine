@@ -3,12 +3,10 @@
 #include <glm/glm.hpp>
 #include <memory>
 #include <string>
-#include "portal.h"
 
 Primitive::Primitive(const glm::vec3& position, const glm::vec3& color,
-                     const std::string& path)
-    : Model(path, std::make_shared<ShaderProgram>("shaders/light.vertex",
-                                                  "shaders/light.fragment")) {
+                     const std::string& path, bool need_load, std::shared_ptr<ShaderProgram> shader)
+    : Model(path, shader, need_load) {
     translate(position);
     set_color(color);
 }
@@ -21,15 +19,15 @@ void Primitive::set_color(glm::vec3 color_) {
 
 glm::vec3 Primitive::get_color() const { return color; }
 
-Sphere::Sphere(const glm::vec3& position, const glm::vec3& color)
-    : Primitive(position, color, "res/models/primitives/sphere.obj") {}
-Cube::Cube(const glm::vec3& position, const glm::vec3& color)
-    : Primitive(position, color, "res/models/primitives/cube.obj") {}
-Plane::Plane(const glm::vec3& position, const glm::vec3& color)
-    : Primitive(position, color, "res/models/primitives/plane.obj") {}
-Cylinder::Cylinder(const glm::vec3& position, const glm::vec3& color)
-    : Primitive(position, color, "res/models/primitives/cylinder.obj") {}
-Torus::Torus(const glm::vec3& position, const glm::vec3& color)
-    : Primitive(position, color, "res/models/primitives/torus.obj") {}
-Cone::Cone(const glm::vec3& position, const glm::vec3& color)
-    : Primitive(position, color, "res/models/primitives/cone.obj") {}
+Sphere::Sphere(std::shared_ptr<ShaderProgram> shader, bool need_load, const glm::vec3& position, const glm::vec3& color)
+    : Primitive(position, color, "res/models/primitives/sphere.obj", need_load, shader) {}
+Cube::Cube(std::shared_ptr<ShaderProgram> shader, bool need_load, const glm::vec3& position, const glm::vec3& color)
+    : Primitive(position, color, "res/models/primitives/cube.obj", need_load, shader) {}
+Plane::Plane(std::shared_ptr<ShaderProgram> shader, bool need_load, const glm::vec3& position, const glm::vec3& color)
+    : Primitive(position, color, "res/models/primitives/plane.obj", need_load, shader) {}
+Cylinder::Cylinder(std::shared_ptr<ShaderProgram> shader, bool need_load, const glm::vec3& position, const glm::vec3& color)
+    : Primitive(position, color, "res/models/primitives/cylinder.obj", need_load, shader) {}
+Torus::Torus(std::shared_ptr<ShaderProgram> shader, bool need_load, const glm::vec3& position, const glm::vec3& color)
+    : Primitive(position, color, "res/models/primitives/torus.obj", need_load, shader) {}
+Cone::Cone(std::shared_ptr<ShaderProgram> shader, bool need_load, const glm::vec3& position, const glm::vec3& color)
+    : Primitive(position, color, "res/models/primitives/cone.obj", need_load, shader) {}

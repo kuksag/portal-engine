@@ -45,13 +45,18 @@ void LightSource::init_depth_map() {
     glReadBuffer(GL_NONE);
     glBindFramebuffer(GL_FRAMEBUFFER, 0);
 }
-void LightSource::gen_depth_map(const std::vector<Drawable*> &drawables) {
-    static const std::shared_ptr<ShaderProgram> depth_shader{new ShaderProgram("shaders/depth.vertex", "shaders/depth.fragment")};
+
+void LightSource::start_depth_test() {
     glViewport(0, 0, SHADOW_WIDTH, SHADOW_HEIGHT);
     glBindFramebuffer(GL_FRAMEBUFFER, depth_map_fbo);
     glClear(GL_DEPTH_BUFFER_BIT);
-    for (auto &drawable : drawables) {
-        drawable->depth_test_draw(camera, depth_shader);
-    }
+}
+
+void LightSource::finish_depth_test() {
     glBindFramebuffer(GL_FRAMEBUFFER, 0);
+}
+
+void LightSource::gen_depth_map(Drawable const * drawable) {
+    static const std::shared_ptr<ShaderProgram> depth_shader{new ShaderProgram("shaders/depth.vertex", "shaders/depth.fragment")};
+    drawable->depth_test_draw(camera, depth_shader);
 }

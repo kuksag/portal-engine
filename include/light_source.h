@@ -23,7 +23,9 @@ public:
     [[nodiscard]] glm::vec3 get_color() const;
     [[nodiscard]] const Camera &get_camera() const;
     [[nodiscard]] GLuint get_depth_map() const;
-    void gen_depth_map(const std::vector<Drawable *> &drawables);
+    void start_depth_test();
+    void finish_depth_test();
+    void gen_depth_map(Drawable const * drawable);
 };
 
 #endif    // PORTAL_ENGINE_LIGHT_SOURCE_H

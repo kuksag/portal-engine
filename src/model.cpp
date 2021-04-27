@@ -10,9 +10,13 @@
 #include <sstream>
 #include <string>
 
-Model::Model(const std::string &path, std::shared_ptr<ShaderProgram> shader)
+Model::Model(const std::string &path, std::shared_ptr<ShaderProgram> shader, bool need_load)
     : Drawable(std::move(shader)),
       directory(path.substr(0, path.find_last_of('/'))) {
+
+    if (!need_load)
+        return;
+    
     Assimp::Importer importer;
     const aiScene *scene = importer.ReadFile(
         path,
@@ -38,7 +42,7 @@ void Model::depth_test_draw(const Camera &camera, std::shared_ptr<ShaderProgram>
     for (const auto &i : meshes) i.depth_test_draw(depth_shader);
 }
 
-void Model::set_matrices(const Camera &camera) const {
+void Model::set_matrices(const Camera &camera, const std::vector< std::shared_ptr<LightSource> >& light_sources) const {
     shader->use();
     auto model_matrix = get_model_matrix();
     auto MVP = camera.get_projection_matrix() * camera.get_view_matrix() *
@@ -50,38 +54,38 @@ void Model::set_matrices(const Camera &camera) const {
                        &model_matrix[0][0]);
     glUniformMatrix3fv(shader->get_uniform_id("normal_transformation"), 1,
                        GL_FALSE, &normal_transformation[0][0]);
-    for (std::size_t i = 0; light_sources && i < light_sources->size(); ++i) {
+    for (std::size_t i = 0; i < light_sources.size(); ++i) {
         auto light_matrix =
-            (*light_sources)[i].get_camera().get_projection_matrix() *
-            (*light_sources)[i].get_camera().get_view_matrix() * model_matrix;
+            light_sources[i]->get_camera().get_projection_matrix() *
+            light_sources[i]->get_camera().get_view_matrix() * model_matrix;
         glUniformMatrix4fv(shader->get_uniform_id("light_matrix[" + std::to_string(i) + "]"), 1,
                            GL_FALSE, &light_matrix[0][0]);
     }
 }
 
-void Model::draw(const Camera &camera) const {
+void Model::draw(const Camera &camera, const std::vector< std::shared_ptr<LightSource> >& light_sources) const {
     shader->use();
-    set_matrices(camera);
+    set_matrices(camera, light_sources);
 
     auto set_vec3 = [](GLuint id, glm::vec3 data) {//TODO: make ShaderProgram method
         glUniform3f(id, data.x, data.y, data.z);
     };
     set_vec3(shader->get_uniform_id("camera_pos"), camera.get_position());
-    glUniform1i(shader->get_uniform_id("count_of_light_sources"), light_sources ? (*light_sources).size() : 0);
-    for (std::size_t i = 0; light_sources && i < light_sources->size(); ++i) {
+    glUniform1i(shader->get_uniform_id("count_of_light_sources"), light_sources.size());
+    for (std::size_t i = 0; i < light_sources.size(); ++i) {
         std::stringstream position_uniform_name;
         position_uniform_name << "light_sources[" << i << "].position";
-        set_vec3(shader->get_uniform_id(position_uniform_name.str()),(*light_sources)[i].get_position());
+        set_vec3(shader->get_uniform_id(position_uniform_name.str()), light_sources[i]->get_position());
 
         std::stringstream color_uniform_name;
         color_uniform_name << "light_sources[" << i << "].color";
-        set_vec3(shader->get_uniform_id(color_uniform_name.str()),(*light_sources)[i].get_color());
+        set_vec3(shader->get_uniform_id(color_uniform_name.str()), light_sources[i]->get_color());
 
         std::stringstream depth_map_uniform_name;
         depth_map_uniform_name << "depth_map" << i << "";
         glUniform1i(shader->get_uniform_id(depth_map_uniform_name.str()), i + 1);
         glActiveTexture(GL_TEXTURE1 + i);
-        glBindTexture(GL_TEXTURE_2D, (*light_sources)[i].get_depth_map());
+        glBindTexture(GL_TEXTURE_2D, light_sources[i]->get_depth_map());
     }
 
     for (const auto &i : meshes) i.draw();
@@ -175,4 +179,8 @@ Texture Model::load_texture(const char *path) {
     glBindTexture(GL_TEXTURE_2D, 0);
 
     return texture;
+}
+
+void Model::move_to(std::shared_ptr<Model> to) {
+    set_model_matrix(to->get_model_matrix());
 }
