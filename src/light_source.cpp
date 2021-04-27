@@ -37,6 +37,7 @@ void LightSource::init_depth_map() {
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_BORDER);
     float border_color[] = {0.3f, 0.3f, 0.3f, 0.3f};
     glTexParameterfv(GL_TEXTURE_2D, GL_CONVOLUTION_BORDER_COLOR, border_color);
+    glBindTexture(GL_TEXTURE_2D, 0);
 
     glBindFramebuffer(GL_FRAMEBUFFER, depth_map_fbo);
     glFramebufferTexture2D(GL_FRAMEBUFFER, GL_DEPTH_ATTACHMENT, GL_TEXTURE_2D, depth_map, 0);

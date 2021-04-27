@@ -34,6 +34,10 @@ int main() {
     floor.translate({0.0, -5.0, 0.0});
     floor.scale({100.0, 1.0, 100.0});
 
+    Sphere joke;
+    joke.set_color({0.0, 1.0, 0.0});
+    joke.translate({20.0, 0.0, 20.0});
+
     JokersTrap JT;
     JT.translate(glm::vec3(5.0));
     JT.scale(glm::vec3(2.0));
@@ -41,6 +45,7 @@ int main() {
 
     objects.push_back(&center);
     objects.push_back(&floor);
+    objects.push_back(&joke);
 
     for (auto &object : JT.objects) objects.push_back(object);
     for (auto &portal : JT.portals) portals.push_back(portal);
@@ -48,6 +53,7 @@ int main() {
     JT.set_light_sources(&light_sources);
     floor.set_light_sources(&light_sources);
     center.set_light_sources(&light_sources);
+    joke.set_light_sources(&light_sources);
     // -------------------------------------------------------------------------
     glEnable(GL_CULL_FACE);
     glEnable(GL_DEPTH_TEST);
