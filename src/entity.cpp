@@ -46,3 +46,8 @@ void Entity::scale(const glm::vec3 &data) {
 glm::mat4 Entity::get_rotation_matrix() const { return rotation_matrix; }
 
 glm::mat4 Entity::get_scale_matrix() const { return scale_matrix; }
+
+void Entity::set_model_matrix(const glm::mat4 &data) {
+    model_matrix = data;
+    // alert! next update will undo this action
+}

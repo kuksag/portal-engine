@@ -43,15 +43,20 @@ public:
                                                 const Portal &portal);
 
     friend void render_scene(const Camera &camera,
-                             const std::vector<const Drawable *> &objects,
-                             const std::vector<const Portal *> &portals,
+                             const std::vector<Drawable *> &objects,
+                             const std::vector<Portal *> &portals,
                              int recursion_level);
 
     friend void draw_portals(const Camera &camera,
-                             const std::vector<const Portal *> &portals,
+                             const std::vector<Portal *> &portals,
                              bool draw_bounds);
 
     void set_light_sources(const std::vector<LightSource> *data) override;
 };
+
+void render_scene(const Camera &camera,
+                  const std::vector<Drawable *> &objects,
+                  const std::vector<Portal *> &portals,
+                  int recursion_level);
 
 #endif    // PORTAL_ENGINE_PORTAL_H

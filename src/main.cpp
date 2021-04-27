@@ -24,6 +24,7 @@ int main() {
                     glm::vec3(1.0f, 1.0f, 1.0f))};
     // -------------------------------------------------------------------------
     std::vector<Drawable *> objects;
+    std::vector<Portal *> portals;
     // -------------------------------------------------------------------------
     Sphere center;
     center.set_color({1.0, 0.0, 0.0});
@@ -38,12 +39,15 @@ int main() {
     JT.scale(glm::vec3(2.0));
     JT.rotate(M_PI_4, {0.5, 0.2, 0.7});
 
-    objects.push_back(&JT);
     objects.push_back(&center);
     objects.push_back(&floor);
+
+    for (auto &object : JT.objects) objects.push_back(object);
+    for (auto &portal : JT.portals) portals.push_back(portal);
     // -------------------------------------------------------------------------
-    for (Drawable *object : objects)
-        object->set_light_sources(&light_sources);
+    JT.set_light_sources(&light_sources);
+    floor.set_light_sources(&light_sources);
+    center.set_light_sources(&light_sources);
     // -------------------------------------------------------------------------
     glEnable(GL_CULL_FACE);
     glEnable(GL_DEPTH_TEST);
@@ -60,7 +64,11 @@ int main() {
         glClear(GL_STENCIL_BUFFER_BIT | GL_DEPTH_BUFFER_BIT |
                 GL_COLOR_BUFFER_BIT);
         // ---------------------------------------------------------------------
-        for (Drawable *object : objects) object->draw(camera);
+        render_scene(camera, objects, portals, 0);
+        for (LightSource &ls : light_sources) {
+            ls.gen_depth_map(objects);
+        }
+        glViewport(0, 0, WIDTH, HEIGHT);
         // ---------------------------------------------------------------------
 
         glfwSwapBuffers(window);

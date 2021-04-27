@@ -8,13 +8,15 @@ private:
     static const std::size_t EDGE_NUMBER = 6;
     const float MOVE_DISTANCE = 100.0F * Settings::Camera::DISPLAY_RANGE_FAR;
 
-    struct PortalsCube {
+    struct PortalsCube : Entity {
         std::vector<Portal> portals;
         Drawable *centroid;
         PortalsCube();
         void inverse_rotate();
 
-        void translate(glm::vec3 data);
+        void translate(const glm::vec3 &data) override;
+        void rotate(float angle, const glm::vec3 &data) override;
+        void scale(const glm::vec3 &data) override;
     };
 
     std::vector<PortalsCube> patterns;
@@ -23,11 +25,18 @@ private:
 public:
     JokersTrap();
 
+    std::vector<Portal *> portals;
+    std::vector<Drawable *> objects;
+
     void draw(const Camera &camera) const override;
     void depth_test_draw(
         const Camera &camera,
-        std::shared_ptr<ShaderProgram> depth_sahder) const override;
+        std::shared_ptr<ShaderProgram> depth_shader) const override;
     void set_light_sources(const std::vector<LightSource> *data) override;
+
+    void translate(const glm::vec3 &data) override;
+    void rotate(float angle, const glm::vec3 &data) override;
+    void scale(const glm::vec3 &data) override;
 };
 
 #endif    // PORTAL_ENGINE_PUZZLE_H

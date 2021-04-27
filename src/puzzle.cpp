@@ -32,6 +32,15 @@ JokersTrap::JokersTrap()
 
     base.portals[4].set_destination(&patterns[4].portals[4]);
     base.portals[5].set_destination(&patterns[5].portals[5]);
+
+    // -------------------------------------------------------------------------
+    for (std::size_t i = 0; i < EDGE_NUMBER; i++) {
+        objects.push_back(patterns[i].centroid);
+        for (std::size_t j = 0; j < EDGE_NUMBER; j++) {
+            if (i != j) objects.push_back(&patterns[i].portals[j]);
+        }
+    }
+    for (auto &i : base.portals) portals.push_back(&i);
 }
 
 JokersTrap::PortalsCube::PortalsCube() : centroid(nullptr) {
@@ -66,30 +75,20 @@ void JokersTrap::PortalsCube::inverse_rotate() {
     portals[4].rotate(M_PI, {1.0, 0.0, 0.0});
     portals[5].rotate(M_PI, {1.0, 0.0, 0.0});
 }
-
-void JokersTrap::PortalsCube::translate(glm::vec3 data) {
-    for (auto &i : portals) i.translate(data);
-    centroid->translate(data);
+void JokersTrap::PortalsCube::translate(const glm::vec3 &data) {
+    for (Portal &portal : portals) portal.translate(data);
+    if (centroid) centroid->translate(data);
+}
+void JokersTrap::PortalsCube::rotate(float angle, const glm::vec3 &data) {
+    for (Portal &portal : portals) portal.rotate(angle, data);
+    if (centroid) centroid->rotate(angle, data);
+}
+void JokersTrap::PortalsCube::scale(const glm::vec3 &data) {
+    for (Portal &portal : portals) portal.scale(data);
+    if (centroid) centroid->scale(data);
 }
 
-void JokersTrap::draw(const Camera &camera) const {
-    std::vector<const Portal *> portals;
-    std::vector<const Drawable *> objects;
-    // -------------------------------------------------------------------------
-    for (std::size_t i = 0; i < EDGE_NUMBER; i++) {
-        objects.push_back(patterns[i].centroid);
-        for (std::size_t j = 0; j < EDGE_NUMBER; j++) {
-            if (i != j) objects.push_back(&patterns[i].portals[j]);
-        }
-    }
-    for (auto &i : base.portals) portals.push_back(&i);
-    // -------------------------------------------------------------------------
-    auto custom_camera = camera;
-    custom_camera.set_view_matrix(camera.get_view_matrix() *
-                                  get_model_matrix());
-    // -------------------------------------------------------------------------
-    render_scene(custom_camera, objects, portals, 0);
-}
+void JokersTrap::draw(const Camera &camera) const {}
 
 void JokersTrap::set_light_sources(const std::vector<LightSource> *data) {
     for (auto &i : base.portals) i.set_light_sources(data);
@@ -97,4 +96,20 @@ void JokersTrap::set_light_sources(const std::vector<LightSource> *data) {
         pattern.centroid->set_light_sources(data);
 }
 void JokersTrap::depth_test_draw(
-    const Camera &camera, std::shared_ptr<ShaderProgram> depth_sahder) const {}
+    const Camera &camera, std::shared_ptr<ShaderProgram> depth_shader) const {}
+
+void JokersTrap::translate(const glm::vec3 &data) {
+    base.translate(data);
+}
+
+void JokersTrap::rotate(float angle, const glm::vec3 &data) {
+    // TODO
+//    for (PortalsCube &PS : patterns) PS.rotate(angle, data);
+//    base.rotate(angle, data);
+}
+
+void JokersTrap::scale(const glm::vec3 &data) {
+    // TODO
+//    for (PortalsCube &PS : patterns) PS.scale(data);
+//    base.scale(data);
+}

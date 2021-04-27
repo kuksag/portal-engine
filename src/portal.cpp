@@ -11,8 +11,8 @@
 
 namespace {
 void draw_non_portals(const Camera &camera,
-                      const std::vector<const Drawable *> &objects,
-                      const std::vector<const Portal *> &portals) {
+                      const std::vector<Drawable *> &objects,
+                      const std::vector<Portal *> &portals) {
     for (auto &object : objects) {
         object->draw(camera);
         if (auto dc = dynamic_cast<const Portal *>(object);
@@ -24,7 +24,7 @@ void draw_non_portals(const Camera &camera,
 }    // namespace
 
 void draw_portals(const Camera &camera,
-                  const std::vector<const Portal *> &portals,
+                  const std::vector<Portal *> &portals,
                   bool draw_bounds = false) {
     for (auto &portal : portals) {
         if (draw_bounds) {
@@ -113,8 +113,8 @@ Camera get_portal_destination_camera(const Camera &camera,
 }
 
 void render_scene(const Camera &camera,
-                  const std::vector<const Drawable *> &objects,
-                  const std::vector<const Portal *> &portals,
+                  const std::vector<Drawable *> &objects,
+                  const std::vector<Portal *> &portals,
                   int recursion_level = 0) {
     for (auto &portal : portals) {
         // Calculate view matrix as if the player was already teleported
