@@ -19,7 +19,7 @@ private:
         void scale(const glm::vec3 &data) override;
     };
 
-    std::vector<PortalsCube> patterns;
+    inline static std::vector<PortalsCube> patterns;
     PortalsCube base;
 
 public:

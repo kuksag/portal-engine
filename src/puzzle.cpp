@@ -7,32 +7,37 @@ JokersTrap::JokersTrap()
                                                "shaders/light.fragment")) {
     const float SCALE_OBJECT = 0.8;
 
-    patterns.resize(EDGE_NUMBER);
+    if (patterns.empty()) {
+        patterns.resize(EDGE_NUMBER);
 
-    patterns[0].centroid = new Sphere(glm::vec3(0.0), {0.44, 0.12, 0.78});
-    patterns[1].centroid = new Torus(glm::vec3(0.0), {0.16, 0.95, 0.04});
-    patterns[2].centroid = new Cone(glm::vec3(0.0), {0.88, 0.57, 0.52});
-    patterns[3].centroid = new Cylinder(glm::vec3(0.0), {0.2, 0.03, 0.92});
-    patterns[4].centroid = new Cone(glm::vec3(0.0), {0.92, 0.48, 0.16});
-    patterns[5].centroid = new Cube(glm::vec3(0.0), {0.2, 0.66, 0.66});
+        patterns[0].centroid = new Sphere(glm::vec3(0.0), {0.44, 0.12, 0.78});
+        patterns[1].centroid = new Torus(glm::vec3(0.0), {0.16, 0.95, 0.04});
+        patterns[2].centroid = new Cone(glm::vec3(0.0), {0.88, 0.57, 0.52});
+        patterns[3].centroid = new Cylinder(glm::vec3(0.0), {0.2, 0.03, 0.92});
+        patterns[4].centroid = new Cone(glm::vec3(0.0), {0.92, 0.48, 0.16});
+        patterns[5].centroid = new Cube(glm::vec3(0.0), {0.2, 0.66, 0.66});
 
-    patterns[3].centroid->scale(glm::vec3(0.6));
-    patterns[5].centroid->scale(glm::vec3(0.6));
+        patterns[3].centroid->scale(glm::vec3(0.6));
+        patterns[5].centroid->scale(glm::vec3(0.6));
 
-    for (std::size_t i = 0; i < EDGE_NUMBER; i++) {
-        patterns[i].centroid->scale(glm::vec3(SCALE_OBJECT));
-        patterns[i].translate(
-            glm::vec3(static_cast<float>(i + 1) * MOVE_DISTANCE));
-        patterns[i].inverse_rotate();
-        base.portals[i].set_destination(&patterns[i].portals[i]);
+        for (std::size_t i = 0; i < EDGE_NUMBER; i++) {
+            patterns[i].centroid->scale(glm::vec3(SCALE_OBJECT));
+            patterns[i].translate(
+                glm::vec3(static_cast<float>(i + 1) * MOVE_DISTANCE));
+            patterns[i].inverse_rotate();
+            base.portals[i].set_destination(&patterns[i].portals[i]);
+        }
+
+        patterns[4].portals[4].rotate(M_PI, {1.0, 0.0, 0.0});
+        patterns[5].portals[5].rotate(M_PI, {1.0, 0.0, 0.0});
+
     }
-
-    patterns[4].portals[4].rotate(M_PI, {1.0, 0.0, 0.0});
-    patterns[5].portals[5].rotate(M_PI, {1.0, 0.0, 0.0});
+    // -------------------------------------------------------------------------
+    for (std::size_t i = 0; i < EDGE_NUMBER; i++)
+        base.portals[i].set_destination(&patterns[i].portals[i]);
 
     base.portals[4].set_destination(&patterns[4].portals[4]);
     base.portals[5].set_destination(&patterns[5].portals[5]);
-
     // -------------------------------------------------------------------------
     for (std::size_t i = 0; i < EDGE_NUMBER; i++) {
         objects.push_back(patterns[i].centroid);
@@ -98,18 +103,16 @@ void JokersTrap::set_light_sources(const std::vector<LightSource> *data) {
 void JokersTrap::depth_test_draw(
     const Camera &camera, std::shared_ptr<ShaderProgram> depth_shader) const {}
 
-void JokersTrap::translate(const glm::vec3 &data) {
-    base.translate(data);
-}
+void JokersTrap::translate(const glm::vec3 &data) { base.translate(data); }
 
 void JokersTrap::rotate(float angle, const glm::vec3 &data) {
     // TODO
-//    for (PortalsCube &PS : patterns) PS.rotate(angle, data);
-//    base.rotate(angle, data);
+    //    for (PortalsCube &PS : patterns) PS.rotate(angle, data);
+    //    base.rotate(angle, data);
 }
 
 void JokersTrap::scale(const glm::vec3 &data) {
     // TODO
-//    for (PortalsCube &PS : patterns) PS.scale(data);
-//    base.scale(data);
+    //    for (PortalsCube &PS : patterns) PS.scale(data);
+    //    base.scale(data);
 }

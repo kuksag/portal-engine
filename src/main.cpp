@@ -42,18 +42,36 @@ int main() {
     JT.translate(glm::vec3(5.0));
     JT.scale(glm::vec3(2.0));
     JT.rotate(M_PI_4, {0.5, 0.2, 0.7});
+    for (auto &object : JT.objects) objects.push_back(object);
+    for (auto &portal : JT.portals) portals.push_back(portal);
+
+    JokersTrap JT2;
+    JT2.translate(glm::vec3({-5.0, 0.0, 10.0}));
+    JT2.scale(glm::vec3(1.0));
+    JT2.rotate(M_PI_4, {0.5, 0.2, 0.7});
+    for (auto &object : JT2.objects) objects.push_back(object);
+    for (auto &portal : JT2.portals) portals.push_back(portal);
+
+    std::shared_ptr<ShaderProgram> lighted_shader(
+        new ShaderProgram("shaders/light.vertex", "shaders/light.fragment"));
+    Model skull("res/models/skull/12140_Skull_v3_L2.obj", lighted_shader);
+    skull.translate({5.0, 0.0, 0.0});
+    skull.scale(glm::vec3(0.1));
+    skull.rotate(-M_PI_2, {1.0, 0.0, 0.0});
+    skull.rotate(-M_PI_4, {0.0, 0.0, 1.0});
 
     objects.push_back(&center);
     objects.push_back(&floor);
     objects.push_back(&joke);
+    objects.push_back(&skull);
 
-    for (auto &object : JT.objects) objects.push_back(object);
-    for (auto &portal : JT.portals) portals.push_back(portal);
     // -------------------------------------------------------------------------
     JT.set_light_sources(&light_sources);
+    JT2.set_light_sources(&light_sources);
     floor.set_light_sources(&light_sources);
     center.set_light_sources(&light_sources);
     joke.set_light_sources(&light_sources);
+    skull.set_light_sources(&light_sources);
     // -------------------------------------------------------------------------
     glEnable(GL_CULL_FACE);
     glEnable(GL_DEPTH_TEST);
