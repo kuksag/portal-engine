@@ -4,6 +4,7 @@
 #include <vector>
 #include <string>
 #include <memory>
+#include <unordered_map>
 
 #include "window.h"
 #include "camera.h"
@@ -12,17 +13,18 @@
 #include "light_source.h"
 
 class Scene {
-	using prim_ptr = std::shared_ptr<Primitive>;
-	using model_ptr = std::shared_ptr<Model>;
-	using light_ptr = std::shared_ptr<LightSource>;
 private:
 
 	Window& window;
 	Camera& camera;//TODO: make own camera
 
-	std::vector<prim_ptr> cubes;
-	std::vector<model_ptr> models;
-	std::vector<LightSource> lights; //TODO: light_ptr
+	std::vector< std::vector<std::shared_ptr<Primitive>> > primitives;
+	std::vector<std::shared_ptr<LightSource>> lights;
+	std::unordered_map<std::string, std::vector<std::shared_ptr<Model>>> models;
+
+	std::shared_ptr<ShaderProgram> lighted_shader;
+
+	glm::vec3 bg_color = {1, 1, 1};
 
 public:
 
@@ -30,10 +32,35 @@ public:
 
 	void draw() const;
 
-	prim_ptr add_cube(const glm::vec3& position = {0, 0, 0}, const glm::vec3& color = {1, 1, 1});
-	// model_ptr add_model(const std::string& path, const glm::vec3& position = {0, 0, 0});
+	template<class Type>
+	auto add_primitive(const glm::vec3& position = {0, 0, 0}, const glm::vec3& color = {1, 1, 1});
+	
+	auto add_model(const std::string& path, const glm::vec3& position = {0, 0, 0});
+
+	std::shared_ptr<LightSource> add_light(const glm::vec3& position = {0, 0, 0}, const glm::vec3& color = {1, 1, 1});
+
+	void set_bg_color(const glm::vec3& color);
 
 };
 
+namespace {
+template<class Type> struct PrimId { static const int id = -1; };
+template<> struct PrimId<Sphere> { static const int id = 0; };
+template<> struct PrimId<Cube> { static const int id = 1; };
+template<> struct PrimId<Plane> { static const int id = 2; };
+template<> struct PrimId<Cylinder> { static const int id = 3; };
+template<> struct PrimId<Torus> { static const int id = 4; };
+template<> struct PrimId<Cone> { static const int id = 5; };
+} //namespace
+
+template<class Type>
+auto Scene::add_primitive(const glm::vec3& position, const glm::vec3& color) {
+	static_assert(PrimId<Type>::id != -1);
+	int id = PrimId<Type>::id;
+	if (primitives[id].empty())
+		primitives[id].push_back(std::make_shared<Type>(lighted_shader, true));
+	primitives[id].push_back(std::make_shared<Type>(lighted_shader, false, position, color));
+	return primitives[id].back();
+}
 
 #endif    // PORTAL_ENGINE_SCENE_H

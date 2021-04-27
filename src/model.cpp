@@ -15,7 +15,7 @@
 
 Model::Model(const std::string &path, std::shared_ptr<ShaderProgram> shader, bool need_load)
     : Drawable(std::move(shader)),
-      directory(path.substr(0, path.find_last_of('/'))), name(path) {
+      directory(path.substr(0, path.find_last_of('/'))) {
     if (!need_load)
         return;
     Assimp::Importer importer;
@@ -31,11 +31,9 @@ Model::Model(const std::string &path, std::shared_ptr<ShaderProgram> shader, boo
     }
 
     deep_load_meshes(scene->mRootNode, scene);
-
-    std::cout << "Model Loaded!!!\n";//TODO: remove
 }
 
-void Model::draw(const Camera &camera, const std::vector<LightSource>& light_sources) const {
+void Model::draw(const Camera &camera, const std::vector<std::shared_ptr<LightSource>>& light_sources) const {
     shader->use();
 
     auto set_vec3 = [](GLuint id, glm::vec3 data) { //TODO: make ShaderProgram method
@@ -60,11 +58,11 @@ void Model::draw(const Camera &camera, const std::vector<LightSource>& light_sou
     for (std::size_t i = 0; i < light_sources.size(); ++i) {
         std::stringstream position_uniform_name;
         position_uniform_name << "light_sources[" << i << "].position";
-       set_vec3(shader->get_uniform_id(position_uniform_name.str()), light_sources[i].get_position());
+       set_vec3(shader->get_uniform_id(position_uniform_name.str()), light_sources[i]->get_position());
 
         std::stringstream color_uniform_name;
         color_uniform_name << "light_sources[" << i << "].color";
-        set_vec3(shader->get_uniform_id(color_uniform_name.str()), light_sources[i].get_color());
+        set_vec3(shader->get_uniform_id(color_uniform_name.str()), light_sources[i]->get_color());
     }
 
     for (const auto &i : meshes) i.draw();
@@ -158,4 +156,9 @@ Texture Model::load_texture(const char *path) {
     glBindTexture(GL_TEXTURE_2D, 0);
 
     return texture;
+}
+
+
+void Model::move_to(std::shared_ptr<Model> to) {
+    set_model_matrix(to->get_model_matrix());
 }

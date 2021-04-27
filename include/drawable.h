@@ -15,7 +15,7 @@ protected:
     std::shared_ptr<ShaderProgram> shader;
 
 public:
-    virtual void draw(const Camera& camera, const std::vector<LightSource>& light_sources) const = 0;
+    virtual void draw(const Camera& camera, const std::vector< std::shared_ptr<LightSource> >& light_sources) const = 0;
     explicit Drawable(std::shared_ptr<ShaderProgram> shader);
 
     ~Drawable() override = default;

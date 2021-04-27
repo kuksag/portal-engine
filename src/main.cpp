@@ -15,10 +15,9 @@ int main() {
                                          //TODO: swap(camera, window)
 
     Scene scene(window, camera); //TODO: own camera
-    std::shared_ptr<Primitive> cube = scene.add_cube({10, 0, 0});
-    scene.add_cube({10, 10, 0}, {255, 0, 0});
-    scene.add_cube({10, 0, 4}, {0, 255, 0});
-
+    scene.set_bg_color({0.6, 0.5, 0.2});
+    std::shared_ptr<Primitive> cube = scene.add_primitive<Sphere>({1, 0, 0});
+    scene.add_light({10, 0, 0});
 
     do {
         controller.cursor_position_callback(); //TODO: make one method
