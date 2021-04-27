@@ -24,6 +24,9 @@ public:
     JokersTrap();
 
     void draw(const Camera &camera) const override;
+    void depth_test_draw(
+        const Camera &camera,
+        std::shared_ptr<ShaderProgram> depth_sahder) const override;
     void set_light_sources(const std::vector<LightSource> *data) override;
 };
 

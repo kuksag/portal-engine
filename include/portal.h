@@ -33,6 +33,9 @@ public:
 
     // TODO: make protected
     void draw(const Camera &camera) const override;
+    void depth_test_draw(
+        const Camera& camera,
+        std::shared_ptr<ShaderProgram> depth_shader) const override;
 
     void set_destination(Portal *other);
 

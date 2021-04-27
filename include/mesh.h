@@ -37,6 +37,7 @@ public:
     Mesh(const std::vector<Vertex>& vertexes, const std::vector<GLuint>& indexes, const std::vector<Texture>& textures, std::shared_ptr<ShaderProgram> shader);
 
     void draw() const;
+    void depth_test_draw(std::shared_ptr<ShaderProgram> depth_shader) const;
     
 };
 

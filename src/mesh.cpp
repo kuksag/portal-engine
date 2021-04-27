@@ -42,3 +42,10 @@ void Mesh::draw() const {
 
     glActiveTexture(GL_TEXTURE0);
 }
+
+void Mesh::depth_test_draw(std::shared_ptr<ShaderProgram> depth_shader) const {
+    depth_shader->use();
+    glBindVertexArray(VAO);
+    glDrawElements(GL_TRIANGLES, indexes.size(), GL_UNSIGNED_INT, 0);
+    glBindVertexArray(0);
+}

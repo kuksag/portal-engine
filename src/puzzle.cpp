@@ -96,3 +96,5 @@ void JokersTrap::set_light_sources(const std::vector<LightSource> *data) {
     for (PortalsCube &pattern : patterns)
         pattern.centroid->set_light_sources(data);
 }
+void JokersTrap::depth_test_draw(
+    const Camera &camera, std::shared_ptr<ShaderProgram> depth_sahder) const {}

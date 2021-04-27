@@ -256,3 +256,6 @@ void Portal::toggle_draw_bounds() { is_draw_bounds ^= true; }
 void Portal::set_light_sources(const std::vector<LightSource> *data) {
     for (Cube &cube : bounds) cube.set_light_sources(data);
 }
+
+void Portal::depth_test_draw(
+    const Camera &camera, std::shared_ptr<ShaderProgram> depth_shader) const {}
