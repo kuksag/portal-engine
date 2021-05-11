@@ -25,12 +25,6 @@ private:
     float display_range_near;
     float display_range_far;
 
-    bool custom_state_view_matrix{false};
-    glm::mat4 custom_view_matrix{};
-
-    bool custom_state_projection_matrix{false};
-    glm::mat4 custom_projection_matrix{};
-
 public:
     explicit Camera(glm::vec3 position_ = glm::vec3(POS_X, POS_Y, POS_Z),
                     float horizontal_angle_ = HORIZONTAL_ANGLE,

@@ -2,6 +2,7 @@
 
 #include <cmath>
 #include <glm/glm.hpp>
+#include <iostream>
 
 #include "settings.h"
 using namespace Settings::Camera;
@@ -28,21 +29,13 @@ using namespace Settings::Camera;
 }
 
 [[nodiscard]] glm::mat4 Camera::get_view_matrix() const {
-    if (custom_state_view_matrix) {
-        return custom_view_matrix;
-    } else {
-        return glm::lookAt(position, position + get_forward_direction(),
-                           get_up_direction());
-    }
+    return glm::lookAt(position, position + get_forward_direction(),
+                       get_up_direction());
 }
 
 [[nodiscard]] glm::mat4 Camera::get_projection_matrix() const {
-    if (custom_state_projection_matrix) {
-        return custom_projection_matrix;
-    } else {
-        return glm::perspective(glm::radians(fov), ratio, display_range_near,
-                                display_range_far);
-    }
+    return glm::perspective(glm::radians(fov), ratio, display_range_near,
+                            display_range_far);
 }
 
 void Camera::move_forward(float time_delta) {
@@ -91,10 +84,12 @@ void Camera::process_mouse_scroll(float y_delta) {
 }
 
 void Camera::set_view_matrix(glm::mat4 data) {
-    custom_state_view_matrix = true;
-    custom_view_matrix = data;
+    // https://stackoverflow.com/questions/349050/calculating-a-lookat-matrix
+    glm::mat4 axis =
+        glm::mat4(data[0], data[1], data[2], glm::vec4(glm::vec3(0), 1));
+    glm::mat4 negative_eye = glm::inverse(axis) * data;
+    position = -negative_eye[3];
+    horizontal_angle = std::atan2(data[0][0], data[0][2]) + M_PI_2;
+    horizontal_angle = std::atan2(data[0][0], data[2][0]) + M_PI_2;
 }
-void Camera::set_projection_matrix(glm::mat4 data) {
-    custom_state_projection_matrix = true;
-    custom_projection_matrix = data;
-}
+void Camera::set_projection_matrix(glm::mat4 data) {}

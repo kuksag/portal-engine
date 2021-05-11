@@ -83,7 +83,8 @@ void Portal::draw_bounds(const Camera &camera) const {
     auto custom_camera = camera;
     custom_camera.set_view_matrix(camera.get_view_matrix() *
                                   get_model_matrix());
-    //    beacon.draw(custom_camera);
+    // toggle to see direction
+        beacon.draw(custom_camera);
     for (auto &bound : bounds) bound.draw(custom_camera);
 }
 
