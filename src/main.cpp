@@ -1,6 +1,7 @@
 #include <GL/glew.h>
 #include <GLFW/glfw3.h>
 
+#include <iostream>
 #include <vector>
 
 #include "camera.h"
@@ -9,7 +10,6 @@
 #include "portal.h"
 #include "primitives.h"
 #include "puzzle.h"
-#include <iostream>
 using namespace Settings::Window;
 
 int main() {
@@ -18,21 +18,23 @@ int main() {
     Controller controller(&camera, window);
     // -------------------------------------------------------------------------
     std::vector<LightSource> light_sources{
-        LightSource(glm::vec3(10.0f, 10.0f, 10.0f),
-                    glm::vec3(1.0f, 1.0f, 1.0f)),
-        LightSource(glm::vec3(-10.0f, 10.0f, -10.0f),
+        LightSource(glm::vec3(0.0f, 5.0f, -25.0f), glm::vec3(1.0f, 1.0f, 1.0f)),
+        LightSource(glm::vec3(-10.0f, 4.0f, -15.0f),
                     glm::vec3(1.0f, 1.0f, 1.0f))};
     // -------------------------------------------------------------------------
     std::vector<Drawable *> objects;
     std::vector<Portal *> portals;
     Portal a;
     Portal b;
-    a.translate({-10, 0, -10});
-    b.translate({1, 0, 1});
-    b.rotate(M_PI_2, {0, 1, 0});
+    a.translate({20, 0, 25});
+    b.translate({-4, 0, 1});
+    b.rotate(-M_PI_2, {0, 1, 0});
+
     a.set_destination(&b);
     b.set_destination(&a);
-    portals.insert(portals.end(), {&a, &b});
+
+    portals.push_back(&a);
+    portals.push_back(&b);
     // -------------------------------------------------------------------------
     Sphere center;
     center.set_color({1.0, 0.0, 0.0});
@@ -42,10 +44,9 @@ int main() {
     floor.translate({0.0, -5.0, 0.0});
     floor.scale({100.0, 1.0, 100.0});
 
-    Sphere joke;
-    joke.set_color({0.0, 1.0, 0.0});
-    joke.translate({20.0, 0.0, 20.0});
-
+    Sphere sphere;
+    sphere.set_color({0.0, 1.0, 0.0});
+    sphere.translate({20.0, 0.0, 20.0});
 
     std::shared_ptr<ShaderProgram> lighted_shader(
         new ShaderProgram("shaders/light.vertex", "shaders/light.fragment"));
@@ -57,13 +58,13 @@ int main() {
 
     objects.push_back(&center);
     objects.push_back(&floor);
-    objects.push_back(&joke);
+    objects.push_back(&sphere);
     objects.push_back(&skull);
 
     // -------------------------------------------------------------------------
     floor.set_light_sources(&light_sources);
     center.set_light_sources(&light_sources);
-    joke.set_light_sources(&light_sources);
+    sphere.set_light_sources(&light_sources);
     skull.set_light_sources(&light_sources);
     // -------------------------------------------------------------------------
     glEnable(GL_CULL_FACE);
@@ -91,8 +92,6 @@ int main() {
         controller.cursor_position_callback();
         controller.key_callback();
         controller.update_time();
-
-
 
         glClearColor(0.3f, 0.3f, 0.6f, 0.0f);
         glColorMask(GL_TRUE, GL_TRUE, GL_TRUE, GL_TRUE);
