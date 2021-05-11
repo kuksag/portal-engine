@@ -65,6 +65,8 @@ public:
                             bool constraint = true);
     void process_mouse_scroll(float y_delta);
 
+
+
     // -------------------------------------------------------------------------
     // This is used for easy transfer of view\projection matrix, when calling
     // Drawable::draw(); also because we might apply additional model-matrix.

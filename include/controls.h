@@ -18,6 +18,7 @@ public:
 
     void scroll_callback(double y_delta);
     void cursor_position_callback();
+    void cursor_position_callback_without_changes();
     void key_callback();
 
     void update_time();
@@ -25,6 +26,9 @@ public:
     void toggle_fullscreen(bool flag);
 
     void window_initialise();
+
+    [[nodiscard]] glm::vec3 get_position() const;
+    [[nodiscard]] Camera *get_camera();
 
     // TODO:
     //    void mouse_button_callback(int button, int action, int mods);

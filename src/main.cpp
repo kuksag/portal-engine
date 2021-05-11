@@ -9,7 +9,7 @@
 #include "portal.h"
 #include "primitives.h"
 #include "puzzle.h"
-
+#include <iostream>
 using namespace Settings::Window;
 
 int main() {
@@ -25,6 +25,14 @@ int main() {
     // -------------------------------------------------------------------------
     std::vector<Drawable *> objects;
     std::vector<Portal *> portals;
+    Portal a;
+    Portal b;
+    a.translate({-10, 0, -10});
+    b.translate({1, 0, 1});
+    b.rotate(M_PI_2, {0, 1, 0});
+    a.set_destination(&b);
+    b.set_destination(&a);
+    portals.insert(portals.end(), {&a, &b});
     // -------------------------------------------------------------------------
     Sphere center;
     center.set_color({1.0, 0.0, 0.0});
@@ -38,19 +46,6 @@ int main() {
     joke.set_color({0.0, 1.0, 0.0});
     joke.translate({20.0, 0.0, 20.0});
 
-    JokersTrap JT;
-    JT.translate(glm::vec3(5.0));
-    JT.scale(glm::vec3(2.0));
-    JT.rotate(M_PI_4, {0.5, 0.2, 0.7});
-    for (auto &object : JT.objects) objects.push_back(object);
-    for (auto &portal : JT.portals) portals.push_back(portal);
-
-    JokersTrap JT2;
-    JT2.translate(glm::vec3({-5.0, 0.0, 10.0}));
-    JT2.scale(glm::vec3(1.0));
-    JT2.rotate(M_PI_4, {0.5, 0.2, 0.7});
-    for (auto &object : JT2.objects) objects.push_back(object);
-    for (auto &portal : JT2.portals) portals.push_back(portal);
 
     std::shared_ptr<ShaderProgram> lighted_shader(
         new ShaderProgram("shaders/light.vertex", "shaders/light.fragment"));
@@ -66,8 +61,6 @@ int main() {
     objects.push_back(&skull);
 
     // -------------------------------------------------------------------------
-    JT.set_light_sources(&light_sources);
-    JT2.set_light_sources(&light_sources);
     floor.set_light_sources(&light_sources);
     center.set_light_sources(&light_sources);
     joke.set_light_sources(&light_sources);
@@ -76,10 +69,30 @@ int main() {
     glEnable(GL_CULL_FACE);
     glEnable(GL_DEPTH_TEST);
     // -------------------------------------------------------------------------
+    auto get_position_after_move = [&controller, &camera]() {
+        auto old_version_of_camera = camera;
+        controller.cursor_position_callback_without_changes();
+        controller.key_callback();
+        glm::vec3 position = controller.get_position();
+        camera = old_version_of_camera;
+        return position;
+    };
     do {
+        glm::vec3 first_point = controller.get_position();
+        glm::vec3 last_point = get_position_after_move();
+
+        if (a.crossed(first_point, last_point)) {
+            camera = get_portal_destination_camera(camera, a);
+            std::cerr << "Crossed a!" << std::endl;
+        } else if (b.crossed(first_point, last_point)) {
+            camera = get_portal_destination_camera(camera, b);
+            std::cerr << "Crossed b!" << std::endl;
+        }
         controller.cursor_position_callback();
         controller.key_callback();
         controller.update_time();
+
+
 
         glClearColor(0.3f, 0.3f, 0.6f, 0.0f);
         glColorMask(GL_TRUE, GL_TRUE, GL_TRUE, GL_TRUE);

@@ -259,3 +259,13 @@ void Portal::set_light_sources(const std::vector<LightSource> *data) {
 
 void Portal::depth_test_draw(
     const Camera &camera, std::shared_ptr<ShaderProgram> depth_shader) const {}
+
+bool Portal::crossed(glm::vec3 first_point, glm::vec3 last_point) const {
+    auto inverse_operator = glm::inverse(get_model_matrix());
+
+    first_point = inverse_operator * glm::vec4(first_point, 1.0f);
+    last_point = inverse_operator * glm::vec4(last_point, 1.0f);
+    bool crossed_plane = (first_point.z <= 0 && last_point.z >= 0) || (first_point.z >= 0 && last_point.z <= 0);
+    return crossed_plane;
+
+};
