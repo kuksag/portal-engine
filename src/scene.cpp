@@ -10,8 +10,9 @@
 #include "window.h"
 #include "portal.h"
 #include "camera.h"
+#include "controls.h"
 
-Scene::Scene(Window& window, Camera& camera) : window(window), camera(camera), primitives(PORTAL_ENGINE_PRIMITIVES_COUNT), lighted_shader(new ShaderProgram("shaders/light.vertex", "shaders/light.fragment")) {
+Scene::Scene(Window& window, Camera& camera, Controller& controller) : window(window), camera(camera), controller(controller), primitives(PORTAL_ENGINE_PRIMITIVES_COUNT), lighted_shader(new ShaderProgram("shaders/light.vertex", "shaders/light.fragment")) {
 	glClearColor(bg_color.x, bg_color.y, bg_color.z, 0.0f);
 	glEnable(GL_CULL_FACE);
     glEnable(GL_DEPTH_TEST);
@@ -40,6 +41,16 @@ void Scene::draw() const {
 	// 		i.second[0]->draw(camera, lights);
 	// 	}
 	// }
+        glm::vec3 first_point = controller.get_position();
+        glm::vec3 last_point = controller.get_position_after_move();
+        for (const std::shared_ptr<Portal> &portal : portals) {
+            if (portal->crossed(first_point, last_point)) {
+                camera = get_portal_destination_camera(camera, *portal);
+            }
+        }
+        controller.cursor_position_callback();
+        controller.key_callback();
+        controller.update_time();
 
 	for (auto& ls : lights) {
 		ls->start_depth_test();

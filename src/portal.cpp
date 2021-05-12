@@ -74,10 +74,11 @@ void Portal::draw(const Camera& camera, const std::vector< std::shared_ptr<Light
 }
 
 void Portal::translate(const glm::vec3 &data) {
-	shape->translate(data);
-	// beacon->translate(data);
+	//shape->translate(data);
+        //beacon->translate(data);
 	for (auto& i : bounds)
 		i->translate(data);
+        Entity::translate(data);
 }
 
 void Portal::draw1(const Camera &camera/*, std::shared_ptr<ShaderProgram> depth_shader*/) const {

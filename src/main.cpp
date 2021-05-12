@@ -20,7 +20,7 @@ int main() {
     Controller controller(camera, window);
     // -------------------------------------------------------------------------
 
-	Scene scene(window, camera);
+	Scene scene(window, camera, controller);
 	scene.set_bg_color({0.3, 0.3, 0.6});
 
     auto c = scene.add_primitive<Cylinder>({2, 0, -1}, {0.1, 0.7, 0.2});
@@ -38,12 +38,7 @@ int main() {
 
     // -------------------------------------------------------------------------
     do {
-        controller.cursor_position_callback();
-        controller.key_callback();
-        controller.update_time();
-
-        scene.draw();        
-
+        scene.draw();
         glfwPollEvents();
     } while (window.is_open());
 

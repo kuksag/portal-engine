@@ -11,14 +11,16 @@
 #include "model.h"
 #include "primitives.h"
 #include "light_source.h"
+#include "controls.h"
 
 struct Portal;
 
 class Scene {
 private:
 
-	Window& window;
-	Camera& camera;//TODO: make own camera
+	Window &window;
+	Camera &camera;//TODO: make own camera
+        Controller &controller;
 
 	std::vector< std::vector<std::shared_ptr<Primitive>> > primitives;
 	std::vector<std::shared_ptr<LightSource>> lights;
@@ -36,7 +38,7 @@ private:
 
 public:
 
-	Scene(Window& window, Camera& camera);
+	Scene(Window& window, Camera& camera, Controller& controller);
 
 	void draw() const;
 
