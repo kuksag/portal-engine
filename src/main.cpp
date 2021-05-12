@@ -18,7 +18,7 @@ int main() {
     Controller controller(&camera, window);
     // -------------------------------------------------------------------------
     std::vector<LightSource> light_sources{
-        LightSource(glm::vec3(0.0f, 5.0f, -25.0f), glm::vec3(1.0f, 1.0f, 1.0f)),
+        LightSource(glm::vec3(0.0f, 35.0f, -25.0f), glm::vec3(1.0f, 1.0f, 1.0f)),
         LightSource(glm::vec3(-10.0f, 4.0f, -15.0f),
                     glm::vec3(1.0f, 1.0f, 1.0f))};
     // -------------------------------------------------------------------------
