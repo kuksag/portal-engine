@@ -70,24 +70,15 @@ int main() {
     glEnable(GL_CULL_FACE);
     glEnable(GL_DEPTH_TEST);
     // -------------------------------------------------------------------------
-    auto get_position_after_move = [&controller, &camera]() {
-        auto old_version_of_camera = camera;
-        controller.cursor_position_callback_without_changes();
-        controller.key_callback();
-        glm::vec3 position = controller.get_position();
-        camera = old_version_of_camera;
-        return position;
-    };
     do {
         glm::vec3 first_point = controller.get_position();
-        glm::vec3 last_point = get_position_after_move();
+        glm::vec3 last_point = controller.get_position_after_move();
 
-        if (a.crossed(first_point, last_point)) {
-            camera = get_portal_destination_camera(camera, a);
-            std::cerr << "Crossed a!" << std::endl;
-        } else if (b.crossed(first_point, last_point)) {
-            camera = get_portal_destination_camera(camera, b);
-            std::cerr << "Crossed b!" << std::endl;
+        for (Portal *portal :portals) {
+            if (portal->crossed(first_point, last_point)) {
+                camera = get_portal_destination_camera(camera, *portal);
+                break;
+            }
         }
         controller.cursor_position_callback();
         controller.key_callback();

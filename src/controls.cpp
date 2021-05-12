@@ -22,6 +22,23 @@ void Controller::scroll_callback(double y_delta) {
     camera->process_mouse_scroll(static_cast<float>(y_delta));
 }
 
+void Controller::cursor_position_callback_without_changes() {
+    auto current_time = static_cast<float>(glfwGetTime());
+    auto time_delta = current_time - last_time_point;
+    int width, height;
+    glfwGetWindowSize(window, &width, &height);
+
+    double x_mouse = 0;
+    double y_mouse = 0;
+    glfwGetCursorPos(window, &x_mouse, &y_mouse);
+
+    auto x_delta = static_cast<float>(width / 2.0 - x_mouse);
+    auto y_delta = static_cast<float>(height / 2.0 - y_mouse);
+
+    camera->process_mouse_move(static_cast<float>(x_delta),
+                               static_cast<float>(y_delta), time_delta);
+}
+
 void Controller::cursor_position_callback() {
     auto current_time = static_cast<float>(glfwGetTime());
     auto time_delta = current_time - last_time_point;
@@ -39,23 +56,6 @@ void Controller::cursor_position_callback() {
                                static_cast<float>(y_delta), time_delta);
 
     glfwSetCursorPos(window, width / 2.0, height / 2.0);
-}
-
-void Controller::cursor_position_callback_without_changes() {
-    auto current_time = static_cast<float>(glfwGetTime());
-    auto time_delta = current_time - last_time_point;
-    int width, height;
-    glfwGetWindowSize(window, &width, &height);
-
-    double x_mouse = 0;
-    double y_mouse = 0;
-    glfwGetCursorPos(window, &x_mouse, &y_mouse);
-
-    auto x_delta = static_cast<float>(width / 2.0 - x_mouse);
-    auto y_delta = static_cast<float>(height / 2.0 - y_mouse);
-
-    camera->process_mouse_move(static_cast<float>(x_delta),
-                               static_cast<float>(y_delta), time_delta);
 }
 
 void Controller::key_callback() {
@@ -208,7 +208,12 @@ void glfw_focus_callback(GLFWwindow *window, int focused) {
 glm::vec3 Controller::get_position() const {
     return camera->get_position();
 }
-Camera *Controller::get_camera() {
-    return camera;
-}
 
+glm::vec3 Controller::get_position_after_move() {
+    auto old_version_of_camera = *camera;
+    cursor_position_callback_without_changes();
+    key_callback();
+    glm::vec3 position = get_position();
+    *camera = old_version_of_camera;
+    return position;
+}

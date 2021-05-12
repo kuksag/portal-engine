@@ -12,13 +12,13 @@ private:
     GLFWwindow *&window;
     float last_time_point;
     bool is_fullscreen;
+    void cursor_position_callback_without_changes();
 
 public:
     explicit Controller(Camera *camera_, GLFWwindow *&window);
 
     void scroll_callback(double y_delta);
     void cursor_position_callback();
-    void cursor_position_callback_without_changes();
     void key_callback();
 
     void update_time();
@@ -28,7 +28,7 @@ public:
     void window_initialise();
 
     [[nodiscard]] glm::vec3 get_position() const;
-    [[nodiscard]] Camera *get_camera();
+    [[nodiscard]] glm::vec3 get_position_after_move();
 
     // TODO:
     //    void mouse_button_callback(int button, int action, int mods);
