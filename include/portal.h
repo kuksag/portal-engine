@@ -1,62 +1,66 @@
-// #ifndef PORTAL_ENGINE_PORTAL_H
-// #define PORTAL_ENGINE_PORTAL_H
+#ifndef PORTAL_ENGINE_PORTAL_H
+#define PORTAL_ENGINE_PORTAL_H
 
-// #include "drawable.h"
-// #include "primitives.h"
+#include <memory>
 
-// struct Portal : Drawable {
-//     // -------------------------------------------------------------------------
-//     // because we dont want to write bounds into stencil buffer
-//     void draw_bounds(const Camera &camera) const;
+#include "shader.h"
+#include "drawable.h"
+#include "primitives.h"
+#include "scene.h"
 
-// private:
-//     Plane shape;
-//     Portal *destination;
 
-//     // -------------------------------------------------------------------------
-//     // debug info:
-//     // 'beacon' shows direction of portal (turned off by default)
-//     // 'bounds' show bounds of portal (turned on by default)
-//     // TODO: make key trigger to turn on debug-info; make flags
-//     Cone beacon;
-//     std::vector<Cube> bounds;
-//     // -------------------------------------------------------------------------
+struct Portal : public Drawable {
+    // -------------------------------------------------------------------------
+    // because we dont want to write bounds into stencil buffer
+    // void draw_bounds(const Camera &camera) const;
 
-//     [[nodiscard]] glm::vec3 get_center() const;
+private:
+    std::shared_ptr<Primitive> shape;
+    Portal *destination;
 
-// public:
-//     bool is_draw_bounds = false;
+    // -------------------------------------------------------------------------
+    // debug info:
+    // 'beacon' shows direction of portal (turned off by default)
+    // 'bounds' show bounds of portal (turned on by default)
+    // TODO: make key trigger to turn on debug-info; make flags
+    std::shared_ptr<Primitive> beacon;
+    std::vector<std::shared_ptr<Primitive>> bounds;
+    // -------------------------------------------------------------------------
 
-//     Portal();
+    [[nodiscard]] glm::vec3 get_center() const;
 
-//     void toggle_draw_bounds();
+public:
+    // bool is_draw_bounds = false;
 
-//     // TODO: make protected
-//     void draw(const Camera &camera) const override;
-//     void depth_test_draw(
-//         const Camera& camera,
-//         std::shared_ptr<ShaderProgram> depth_shader) const override;
+    Portal(Scene* scene, std::shared_ptr<ShaderProgram> shader);
 
-//     void set_destination(Portal *other);
+    void translate(const glm::vec3 &data) override;
 
-//     friend Camera get_portal_destination_camera(const Camera &camera,
-//                                                 const Portal &portal);
+    // void toggle_draw_bounds();
 
-//     friend void render_scene(const Camera &camera,
-//                              const std::vector<Drawable *> &objects,
-//                              const std::vector<Portal *> &portals,
-//                              int recursion_level);
+    // TODO: make protected
+    void draw1(const Camera &camera/*, std::shared_ptr<ShaderProgram> depth_shader*/) const;
+    void depth_test_draw(
+        const Camera& camera,
+        std::shared_ptr<ShaderProgram> depth_shader) const override;
 
-//     friend void draw_portals(const Camera &camera,
-//                              const std::vector<Portal *> &portals,
-//                              bool draw_bounds);
+    void draw(const Camera& camera, const std::vector< std::shared_ptr<LightSource> >& ls) const override;
 
-//     void set_light_sources(const std::vector<LightSource> *data) override;
-// };
+    void set_destination(Portal *other);
 
-// void render_scene(const Camera &camera,
-//                   const std::vector<Drawable *> &objects,
-//                   const std::vector<Portal *> &portals,
-//                   int recursion_level);
+    friend Camera get_portal_destination_camera(const Camera &camera,
+                                                const Portal &portal);
 
-// #endif    // PORTAL_ENGINE_PORTAL_H
+    // friend void draw_portals(const Camera &camera,
+    //                          const std::vector<Portal *> &portals,
+    //                          bool draw_bounds);
+
+    // void set_light_sources(const std::vector<LightSource> *data) override;
+};
+
+void render_scene(const Camera &camera,
+                  const std::vector< std::vector<std::shared_ptr<Primitive>> >& objects,
+                  const std::vector<std::shared_ptr<Portal>> &portals,
+                  int recursion_level);
+
+#endif    // PORTAL_ENGINE_PORTAL_H

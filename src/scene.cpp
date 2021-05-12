@@ -23,32 +23,33 @@ void Scene::draw() const {
     glStencilMask(0xFF);
 	glClear(GL_STENCIL_BUFFER_BIT | GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
-	for (const auto& prim : primitives) {
-		for (unsigned i=1; i < prim.size(); ++i) {
-			prim[0]->move_to(prim[i]);
-			prim[0]->set_color(prim[i]->get_color());
-			prim[0]->draw(camera, lights);
-		}
-	}
+	// for (const auto& prim : primitives) {
+	// 	for (unsigned i=1; i < prim.size(); ++i) {
+	// 		prim[0]->move_to(prim[i]);
+	// 		prim[0]->set_color(prim[i]->get_color());
+	// 		prim[0]->draw(camera, lights);
+	// 	}
+	// }
 
-	for (auto i : models) {
-		for (unsigned j=1; j < i.second.size(); ++j) {
-			i.second[0]->move_to(i.second[j]);
-			i.second[0]->draw(camera, lights);
-		}
-	}
+	// for (auto i : models) {
+	// 	for (unsigned j=1; j < i.second.size(); ++j) {
+	// 		i.second[0]->move_to(i.second[j]);
+	// 		i.second[0]->draw(camera, lights);
+	// 	}
+	// }
 
-	for (auto& ls : lights) {
-		ls->start_depth_test();
-		for (const auto& i : models)
-			for (unsigned j=1; j < i.second.size(); ++j)
-				ls->gen_depth_map(dynamic_cast<Drawable*>(i.second[j].get()));
-		for (const auto& j : primitives)
-			for (const auto& i : j)
-				ls->gen_depth_map(dynamic_cast<Drawable*>(i.get()));
-		ls->finish_depth_test();
-	}
-    glViewport(0, 0, Settings::Window::WIDTH, Settings::Window::HEIGHT); //TODO
+	// for (auto& ls : lights) {
+	// 	ls->start_depth_test();
+	// 	for (const auto& i : models)
+	// 		for (unsigned j=1; j < i.second.size(); ++j)
+	// 			ls->gen_depth_map(dynamic_cast<Drawable*>(i.second[j].get()));
+	// 	for (const auto& j : primitives)
+	// 		for (const auto& i : j)
+	// 			ls->gen_depth_map(dynamic_cast<Drawable*>(i.get()));
+	// 	ls->finish_depth_test();
+	// }
+ //    glViewport(0, 0, Settings::Window::WIDTH, Settings::Window::HEIGHT); //TODO
+    render_scene(camera, primitives, portals, 0);
 
 	glfwSwapBuffers(window.glfw_window());
 }
@@ -65,9 +66,11 @@ std::shared_ptr<LightSource> Scene::add_light(const glm::vec3& position, const g
 	return lights.back();
 }
 
-// std::shared_ptr<Portal> Scene::add_portal() {
-
-// }
+std::shared_ptr<Portal> Scene::add_portal(const glm::vec3& position) {
+	portals.push_back(std::make_shared<Portal>(this, lighted_shader));
+	portals.back()->translate(position);
+	return portals.back();
+}
 
 
 void Scene::set_bg_color(const glm::vec3& color) {

@@ -23,10 +23,13 @@ int main() {
 	Scene scene(window, camera);
 	scene.set_bg_color({0.3, 0.3, 0.6});
 
-	scene.add_primitive<Torus>({1, 0, 0}, {1, 1, 0});
-	std::shared_ptr<LightSource> l = scene.add_light({1, 10, 1}, {1, 1, 1});
-	std::shared_ptr<Primitive> p = scene.add_primitive<Plane>({0, -1, 0}, {0.34, 0.28, 0.67});
-	p->scale({100, 1, 100});
+    auto c = scene.add_primitive<Cylinder>({2, 0, -1}, {0.1, 0.7, 0.2});
+    c->scale({0.3, 0.3, 0.3});
+
+	std::shared_ptr<Portal> p1 = scene.add_portal({2, 0, 2});
+	std::shared_ptr<Portal> p2 = scene.add_portal({-2, 0, -2});
+	p1->set_destination(p2.get());
+	p2->set_destination(p1.get());
 
 
     // -------------------------------------------------------------------------

@@ -9,9 +9,10 @@
 #include "window.h"
 #include "camera.h"
 #include "model.h"
-#include "portal.h"
 #include "primitives.h"
 #include "light_source.h"
+
+struct Portal;
 
 class Scene {
 private:
@@ -22,6 +23,7 @@ private:
 	std::vector< std::vector<std::shared_ptr<Primitive>> > primitives;
 	std::vector<std::shared_ptr<LightSource>> lights;
 	std::unordered_map<std::string, std::vector<std::shared_ptr<Model>>> models;
+	std::vector< std::shared_ptr<Portal> > portals;
 
 	std::shared_ptr<ShaderProgram> lighted_shader;
 
@@ -40,7 +42,7 @@ public:
 
 	std::shared_ptr<LightSource> add_light(const glm::vec3& position = {0, 0, 0}, const glm::vec3& color = {1, 1, 1});
 
-	// std::shared_ptr<Portal> Scene::add_portal();
+	std::shared_ptr<Portal> add_portal(const glm::vec3& position = {0, 0, 0});
 
 	void set_bg_color(const glm::vec3& color);
 
