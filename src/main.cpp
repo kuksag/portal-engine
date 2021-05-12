@@ -25,11 +25,15 @@ int main() {
 
     auto c = scene.add_primitive<Cylinder>({2, 0, -1}, {0.1, 0.7, 0.2});
     c->scale({0.3, 0.3, 0.3});
+    // auto c1 = scene.add_primitive<Cylinder>({-2, 0, 1}, {0.9, 0, 0.2});
+    // c1->scale({0.3, 0.3, 0.3});
 
 	std::shared_ptr<Portal> p1 = scene.add_portal({2, 0, 2});
 	std::shared_ptr<Portal> p2 = scene.add_portal({-2, 0, -2});
 	p1->set_destination(p2.get());
 	p2->set_destination(p1.get());
+
+    scene.add_light({5, 5, 5});
 
 
     // -------------------------------------------------------------------------

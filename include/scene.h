@@ -29,6 +29,11 @@ private:
 
 	glm::vec3 bg_color = {1, 1, 1};
 
+	void render_scene(const Camera &camera,
+                  const std::vector< std::vector<std::shared_ptr<Primitive>> >& objects,
+                  const std::vector<std::shared_ptr<Portal>> &portals,
+                  int recursion_level) const;
+
 public:
 
 	Scene(Window& window, Camera& camera);
@@ -64,7 +69,7 @@ std::shared_ptr<Primitive> Scene::add_primitive(const glm::vec3& position, const
 	int id = PrimId<Type>::id;
 	if (primitives[id].empty())
 		primitives[id].push_back(std::make_shared<Type>(lighted_shader, true));
-	primitives[id].push_back(std::make_shared<Type>(lighted_shader, false, position, color));
+	primitives[id].push_back(std::make_shared<Type>(lighted_shader, true, position, color));
 	return primitives[id].back();
 }
 

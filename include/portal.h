@@ -23,7 +23,7 @@ private:
     // 'beacon' shows direction of portal (turned off by default)
     // 'bounds' show bounds of portal (turned on by default)
     // TODO: make key trigger to turn on debug-info; make flags
-    std::shared_ptr<Primitive> beacon;
+    // std::shared_ptr<Primitive> beacon;
     std::vector<std::shared_ptr<Primitive>> bounds;
     // -------------------------------------------------------------------------
 
@@ -57,10 +57,5 @@ public:
 
     // void set_light_sources(const std::vector<LightSource> *data) override;
 };
-
-void render_scene(const Camera &camera,
-                  const std::vector< std::vector<std::shared_ptr<Primitive>> >& objects,
-                  const std::vector<std::shared_ptr<Portal>> &portals,
-                  int recursion_level);
 
 #endif    // PORTAL_ENGINE_PORTAL_H
