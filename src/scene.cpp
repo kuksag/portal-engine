@@ -84,9 +84,11 @@ void draw_non_portals(const Camera &camera,
                       const std::vector<std::shared_ptr<LightSource>>& lights) {
     for (const auto& prim : primitives) {
      for (unsigned i=1; i < prim.size(); ++i) {
-         prim[0]->move_to(prim[i]);
-         prim[0]->set_color(prim[i]->get_color());
-         prim[0]->draw(camera, lights);
+         if (prim[i]->get_color() != glm::vec3(-1, -1, -1)) {
+             prim[0]->move_to(prim[i]);
+             prim[0]->set_color(prim[i]->get_color());
+             prim[0]->draw(camera, lights);
+         }
      }
     }
 }
