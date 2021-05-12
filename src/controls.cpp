@@ -27,6 +27,23 @@ void Controller::scroll_callback(double y_delta) {
     camera.process_mouse_scroll(static_cast<float>(y_delta));
 }
 
+void Controller::cursor_position_callback_without_changes() {
+    auto current_time = static_cast<float>(glfwGetTime());
+    auto time_delta = current_time - last_time_point;
+    int width, height;
+    glfwGetWindowSize(window.glfw_window(), &width, &height);
+
+    double x_mouse = 0;
+    double y_mouse = 0;
+    glfwGetCursorPos(window.glfw_window(), &x_mouse, &y_mouse);
+
+    auto x_delta = static_cast<float>(width / 2.0 - x_mouse);
+    auto y_delta = static_cast<float>(height / 2.0 - y_mouse);
+
+    camera.process_mouse_move(static_cast<float>(x_delta),
+                              static_cast<float>(y_delta), time_delta);
+}
+
 void Controller::cursor_position_callback() {
     auto current_time = static_cast<float>(glfwGetTime());
     auto time_delta = current_time - last_time_point;
@@ -150,4 +167,17 @@ void glfw_focus_callback(GLFWwindow *window, int focused) {
     } else {
         glfwSetInputMode(window, GLFW_CURSOR, GLFW_CURSOR_NORMAL);
     }
+}
+
+glm::vec3 Controller::get_position() const {
+    return camera.get_position();
+}
+
+glm::vec3 Controller::get_position_after_move() {
+    auto old_version_of_camera = camera;
+    cursor_position_callback_without_changes();
+    key_callback();
+    glm::vec3 position = get_position();
+    camera = old_version_of_camera;
+    return position;
 }

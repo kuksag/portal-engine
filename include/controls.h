@@ -14,7 +14,7 @@ private:
     
     float last_time_point;
     bool is_fullscreen;
-
+    void cursor_position_callback_without_changes();
 public:
     explicit Controller(Camera& camera_, Window& window);
 
@@ -25,6 +25,10 @@ public:
     void update_time();
 
     void toggle_fullscreen(bool flag);
+
+    [[nodiscard]] glm::vec3 get_position() const;
+
+    [[nodiscard]] glm::vec3 get_position_after_move();
 
     // TODO:
     //    void mouse_button_callback(int button, int action, int mods);
