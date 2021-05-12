@@ -56,6 +56,8 @@ public:
     //                          bool draw_bounds);
 
     // void set_light_sources(const std::vector<LightSource> *data) override;
+
+    bool crossed(glm::vec3 first_point, glm::vec3 last_point) const;
 };
 
 #endif    // PORTAL_ENGINE_PORTAL_H
