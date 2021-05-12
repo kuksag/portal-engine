@@ -89,7 +89,8 @@ void Camera::set_view_matrix(glm::mat4 data) {
         glm::mat4(data[0], data[1], data[2], glm::vec4(glm::vec3(0), 1));
     glm::mat4 negative_eye = glm::inverse(axis) * data;
     position = -negative_eye[3];
-    horizontal_angle = std::atan2(data[0][0], data[0][2]) + M_PI_2;
-    horizontal_angle = std::atan2(data[0][0], data[2][0]) + M_PI_2;
+    vertical_angle = std::asin(-data[1][2]);
+    horizontal_angle =
+        std::atan2(data[0][0], data[2][0]) + static_cast<float>(M_PI_2);
 }
 void Camera::set_projection_matrix(glm::mat4 data) {}
