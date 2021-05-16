@@ -18,6 +18,8 @@ public:
     Primitive(const glm::vec3& position, const glm::vec3& color,
               const std::string& path, bool need_load, std::shared_ptr<ShaderProgram> shader);
 
+    void set_unvisible();
+
     void set_color(glm::vec3 color);
     [[nodiscard]] glm::vec3 get_color() const;
 };

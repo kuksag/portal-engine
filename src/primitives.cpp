@@ -17,6 +17,10 @@ void Primitive::set_color(glm::vec3 color_) {
     glUniform4f(shader->get_uniform_id("color"), color.x, color.y, color.z, 1);
 }
 
+void Primitive::set_unvisible() {
+    set_color({-1, -1, -1});
+}
+
 glm::vec3 Primitive::get_color() const { return color; }
 
 Sphere::Sphere(std::shared_ptr<ShaderProgram> shader, bool need_load, const glm::vec3& position, const glm::vec3& color)
