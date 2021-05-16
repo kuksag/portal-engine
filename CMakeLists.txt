@@ -43,7 +43,8 @@ add_executable(main
         src/portal.cpp include/portal.h
         src/puzzle.cpp include/puzzle.h
         src/scene.cpp include/scene.h
-        src/window.cpp include/window.h)
+        src/window.cpp include/window.h
+        src/portal_gun.cpp include/portal_gun.h)
 
 target_include_directories(main PUBLIC include include/primitives src)
 target_link_libraries(main ${OPENGL_LIBS})

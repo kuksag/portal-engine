@@ -51,3 +51,5 @@ void Entity::set_model_matrix(const glm::mat4 &data) {
     model_matrix = data;
     // alert! next update will undo this action
 }
+void Entity::move(float time_delta) {
+}
