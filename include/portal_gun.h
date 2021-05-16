@@ -19,11 +19,13 @@ public:
 struct Bullet : Entity {
 private:
     glm::vec3 direction;
+    glm::vec3 start_point;
     std::shared_ptr<Primitive> ball;
 public:
     inline static const glm::vec3 Bullet_Color = glm::vec3(0.5f, 0.3f, 0.4f);
-    Bullet(glm::vec3 start_point, glm::vec3 direction, std::shared_ptr<Primitive>);
+    Bullet(glm::vec3 start_point_, glm::vec3 direction_, std::shared_ptr<Primitive> ball_);
     void move(float time_delta) override;
+    void translate(const glm::vec3 &data) override;
 };
 
 #endif    // PORTAL_ENGINE_PORTAL_GUN_H

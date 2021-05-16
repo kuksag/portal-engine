@@ -1,4 +1,5 @@
 #include "entity.h"
+#include <cassert>
 
 #include <glm/gtc/matrix_transform.hpp>
 
@@ -52,4 +53,7 @@ void Entity::set_model_matrix(const glm::mat4 &data) {
     // alert! next update will undo this action
 }
 void Entity::move(float time_delta) {
+}
+glm::vec3 Entity::get_position() const {
+    return get_model_matrix() * glm::vec4(0.0f, 0.0f, 0.0f, 1.0f);
 }

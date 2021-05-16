@@ -293,4 +293,6 @@ bool Portal::crossed(glm::vec3 first_point, glm::vec3 last_point) const {
     return intersection.x >= -1.0 && intersection.x <= 1.0 &&
            intersection.y >= -1.0 && intersection.y <= 1.0;
 }
-
+Portal *const Portal::get_destination() {
+    return destination;
+}

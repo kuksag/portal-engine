@@ -31,6 +31,7 @@ public:
     virtual void rotate(float angle, const glm::vec3 &data);
     virtual void scale(const glm::vec3 &data);
     virtual void move(float time_delta);
+    glm::vec3 get_position() const;
 
     virtual ~Entity() = default;
 };
