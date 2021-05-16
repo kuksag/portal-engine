@@ -11,8 +11,10 @@
 #include "portal.h"
 #include "camera.h"
 #include "controls.h"
+#include <iostream>
 
-Scene::Scene(Window& window, Camera& camera, Controller& controller) : window(window), camera(camera), controller(controller), primitives(PORTAL_ENGINE_PRIMITIVES_COUNT), lighted_shader(new ShaderProgram("shaders/light.vertex", "shaders/light.fragment")) {
+Scene::Scene(Window& window, Camera& camera, Controller& controller) : window(window), camera(camera), controller(controller), primitives(PORTAL_ENGINE_PRIMITIVES_COUNT), lighted_shader(new ShaderProgram("shaders/light.vertex", "shaders/light.fragment")),
+                                                                      portal_gun(*this, camera)  {
 	glClearColor(bg_color.x, bg_color.y, bg_color.z, 0.0f);
 	glEnable(GL_CULL_FACE);
     glEnable(GL_DEPTH_TEST);
@@ -41,6 +43,14 @@ void Scene::draw() const {
 	// 		i.second[0]->draw(camera, lights);
 	// 	}
 	// }
+        if (controller.is_enter_pressed()) {
+            portal_gun.launch_bullet();
+        }
+        float time_delta = controller.get_time_delta();
+        for (const auto &bullet : bullets) {
+            bullet->move(time_delta);
+        }
+
         glm::vec3 first_point = controller.get_position();
         glm::vec3 last_point = controller.get_position_after_move();
         for (const std::shared_ptr<Portal> &portal : portals) {
@@ -86,6 +96,13 @@ std::shared_ptr<Portal> Scene::add_portal(const glm::vec3& position) {
 	portals.push_back(std::make_shared<Portal>(this, lighted_shader));
 	portals.back()->translate(position);
 	return portals.back();
+}
+
+std::shared_ptr<Bullet> Scene::add_bullet(const glm::vec3& start_point,
+                                          const glm::vec3& direction) {
+    auto ball = add_primitive<Sphere>({0, 0, 0}, Bullet::Bullet_Color);
+    bullets.push_back(std::shared_ptr<Bullet>(new Bullet(start_point, direction, ball)));
+    return bullets.back();
 }
 
 namespace {

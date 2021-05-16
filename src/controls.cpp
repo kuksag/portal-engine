@@ -116,6 +116,8 @@ void Controller::key_callback() {
     }
 }
 
+
+
 void Controller::update_time() {
     last_time_point = static_cast<float>(glfwGetTime());
 }
@@ -180,4 +182,10 @@ glm::vec3 Controller::get_position_after_move() {
     glm::vec3 position = get_position();
     camera = old_version_of_camera;
     return position;
+}
+bool Controller::is_enter_pressed() {
+    return glfwGetKey(window.glfw_window(), GLFW_KEY_ENTER) == GLFW_PRESS;
+}
+float Controller::get_time_delta() {
+    return glfwGetTime() - last_time_point;
 }

@@ -26,6 +26,9 @@ public:
 
     void toggle_fullscreen(bool flag);
 
+    bool is_enter_pressed();
+    float get_time_delta();
+
     [[nodiscard]] glm::vec3 get_position() const;
 
     [[nodiscard]] glm::vec3 get_position_after_move();

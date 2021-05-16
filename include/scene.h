@@ -13,6 +13,10 @@
 #include "light_source.h"
 #include "controls.h"
 
+#include "portal_gun.h"
+
+#include <iostream>
+
 struct Portal;
 
 class Scene {
@@ -26,8 +30,11 @@ private:
 	std::vector<std::shared_ptr<LightSource>> lights;
 	std::unordered_map<std::string, std::vector<std::shared_ptr<Model>>> models;
 	std::vector< std::shared_ptr<Portal> > portals;
-
+        std::vector<std::shared_ptr<Bullet>> bullets;
 	std::shared_ptr<ShaderProgram> lighted_shader;
+
+        PortalGun portal_gun;
+
 
 	glm::vec3 bg_color = {1, 1, 1};
 
@@ -50,6 +57,8 @@ public:
 	std::shared_ptr<LightSource> add_light(const glm::vec3& position = {0, 0, 0}, const glm::vec3& color = {1, 1, 1});
 
 	std::shared_ptr<Portal> add_portal(const glm::vec3& position = {0, 0, 0});
+
+        std::shared_ptr<Bullet> add_bullet(const glm::vec3 &start_point, const glm::vec3 &direction);
 
 	void set_bg_color(const glm::vec3& color);
 
