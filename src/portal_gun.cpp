@@ -2,6 +2,7 @@
 #include <utility>
 #include "scene.h"
 #include <iostream>
+#include "camera.h"
 
 PortalGun::PortalGun(Scene &scene, Camera &camera)
  : scene(scene),
@@ -28,4 +29,9 @@ void Bullet::move(float time_delta) {
 void Bullet::translate(const glm::vec3 &data) {
     Entity::translate(data);
     ball->translate(data);
+}
+
+void Bullet::change_direction(const glm::vec3 &direction1,
+                              const glm::vec3 &direction2) {
+
 }

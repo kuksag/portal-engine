@@ -51,22 +51,22 @@ void Scene::draw() const {
             auto first_point = bullet->get_position();
             bullet->move(time_delta);
             auto last_point = bullet->get_position();
-            for (const std::shared_ptr<Portal> &portal : portals) {
+            for (const auto &portal : portals) {
                 if (portal->crossed(first_point, last_point)) {
-                    std::cerr << "crossed" << std::endl;
                     bullet->translate(portal->get_destination()->get_position() - portal->get_position());
+                    bullet->change_direction(portal->get_normal(), portal->get_destination()->get_normal());
                     break;
                 }
             }
         }
 
-        /*glm::vec3 first_point = controller.get_position();
+        glm::vec3 first_point = controller.get_position();
         glm::vec3 last_point = controller.get_position_after_move();
         for (const std::shared_ptr<Portal> &portal : portals) {
             if (portal->crossed(first_point, last_point)) {
                 camera = get_portal_destination_camera(camera, *portal);
             }
-        }*/
+        }
         controller.cursor_position_callback();
         controller.key_callback();
         controller.update_time();

@@ -59,6 +59,8 @@ public:
 
     bool crossed(glm::vec3 first_point, glm::vec3 last_point) const;
     Portal * const get_destination();
+
+    glm::vec3 get_normal() const;
 };
 
 #endif    // PORTAL_ENGINE_PORTAL_H

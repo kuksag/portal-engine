@@ -296,3 +296,6 @@ bool Portal::crossed(glm::vec3 first_point, glm::vec3 last_point) const {
 Portal *const Portal::get_destination() {
     return destination;
 }
+glm::vec3 Portal::get_normal() const {
+    return get_model_matrix() * glm::vec4(0.0f, 0.0f, 1.0f, 1.0f);
+}
