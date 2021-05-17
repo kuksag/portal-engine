@@ -25,6 +25,12 @@ private:
     float display_range_near;
     float display_range_far;
 
+    glm::vec3 speed = {0, 0, 0};
+    static constexpr glm::vec3 acceleration = {0, -3, 0};
+    static constexpr glm::vec3 jump_speed = {0, 3, 0};
+
+    bool is_on_floor = false;
+
 public:
     explicit Camera(glm::vec3 position_ = glm::vec3(POS_X, POS_Y, POS_Z),
                     float horizontal_angle_ = HORIZONTAL_ANGLE,
@@ -47,6 +53,9 @@ public:
 
     [[nodiscard]] glm::mat4 get_projection_matrix() const;
     [[nodiscard]] glm::mat4 get_view_matrix() const;
+
+    void update(float dt);
+    void jump();
 
     void move_forward(float time_delta);
     void move_backward(float time_delta);
