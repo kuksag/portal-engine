@@ -9,7 +9,6 @@ out vec2 TexCoord;
 out vec3 Normal;
 out vec4 point_pos;
 out vec4 point_pos_light_space[MAX_COUNT_OF_LIGHT_SOURCES];
-uniform int is_shadowed_vs[MAX_COUNT_OF_LIGHT_SOURCES];
 
 uniform mat4 MVP;
 uniform mat3 normal_transformation;
@@ -23,8 +22,6 @@ void main()
     Normal = normal_transformation * normal;
     point_pos = model_matrix * vec4(position, 1.0f);
     for (int i = 0; i < MAX_COUNT_OF_LIGHT_SOURCES; ++i) {
-        if (is_shadowed_vs[i] == 1) {
             point_pos_light_space[i] = light_matrix[i] * vec4(position, 1.0f);
-        }
     }
 }

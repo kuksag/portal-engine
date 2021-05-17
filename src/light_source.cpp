@@ -1,5 +1,6 @@
 #include "light_source.h"
 #include "drawable.h"
+#include <cassert>
 
 glm::vec3 LightSource::get_color() const {
     return color;

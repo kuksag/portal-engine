@@ -36,7 +36,7 @@ int main() {
     p->scale({10, 10, 10});
 
     scene.add_light({5, 25, 5}, {1, 1, 1}, 0.6f, false);
-    scene.add_light({5, 5, 5}, {0.7, 0.8, 0.9}, 0.2f, true);
+    scene.add_light({5, 25, 5}, {0.7, 0.8, 0.9}, 0.8f, true);
 
 
 

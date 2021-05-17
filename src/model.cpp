@@ -97,12 +97,9 @@ void Model::draw(const Camera &camera, const std::vector< std::shared_ptr<LightS
             glBindTexture(GL_TEXTURE_2D, light_sources[i]->get_depth_map());
         }
 
-        std::stringstream is_shadowed_uniform_vs_name;
         std::stringstream is_shadowed_uniform_fs_name;
-        is_shadowed_uniform_vs_name << "is_shadowed_vs[" << i << "]";
         is_shadowed_uniform_fs_name << "is_shadowed_fs[" << i << "]";
         glUniform1i(shader->get_uniform_id(is_shadowed_uniform_fs_name.str()), light_sources[i]->shadowed() ? 1 : 0);
-        glUniform1i(shader->get_uniform_id(is_shadowed_uniform_vs_name.str()), light_sources[i]->shadowed() ? 1 : 0);
     }
 
     for (const auto &i : meshes) i.draw();
