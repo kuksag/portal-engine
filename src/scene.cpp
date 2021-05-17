@@ -60,16 +60,17 @@ void Scene::draw() const {
             }
         }
 
-        glm::vec3 first_point = controller.get_position();
-        glm::vec3 last_point = controller.get_position_after_move();
-        for (const std::shared_ptr<Portal> &portal : portals) {
-            if (portal->crossed(first_point, last_point)) {
-                camera = get_portal_destination_camera(camera, *portal);
-            }
+    glm::vec3 first_point = controller.get_position();
+    glm::vec3 last_point = controller.get_position_after_move();
+    for (const std::shared_ptr<Portal> &portal : portals) {
+        if (portal->crossed(first_point, last_point)) {
+            camera = get_portal_destination_camera(camera, *portal);
         }
-        controller.cursor_position_callback();
-        controller.key_callback();
-        controller.update_time();
+    }
+    controller.cursor_position_callback();
+    controller.key_callback();
+    camera.update(controller.delta_time());
+    controller.update_time();
 
 	for (auto& ls : lights) {
 		ls->start_depth_test();

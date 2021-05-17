@@ -63,6 +63,10 @@ void Controller::cursor_position_callback() {
     glfwSetCursorPos(window.glfw_window(), width / 2.0, height / 2.0);
 }
 
+float Controller::delta_time() {
+    return static_cast<float>(glfwGetTime()) - last_time_point;
+}
+
 void Controller::key_callback() {
     auto current_time = static_cast<float>(glfwGetTime());
     auto time_delta = current_time - last_time_point;
@@ -96,7 +100,8 @@ void Controller::key_callback() {
     }
 
     if (glfwGetKey(window.glfw_window(), GLFW_KEY_SPACE) == GLFW_PRESS) {
-        camera.move_up(time_delta);
+        // camera.move_up(time_delta);
+        camera.jump();
     }
 
     if (glfwGetKey(window.glfw_window(), GLFW_KEY_LEFT_ALT) == GLFW_PRESS) {

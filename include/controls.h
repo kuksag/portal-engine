@@ -23,6 +23,7 @@ public:
     void key_callback();
 
     void update_time();
+    float delta_time();
 
     void toggle_fullscreen(bool flag);
 
