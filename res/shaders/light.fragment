@@ -11,9 +11,11 @@ in vec4 point_pos_light_space[MAX_COUNT_OF_LIGHT_SOURCES];
 struct LightSource {
     vec3 position;
     vec3 color;
+    float intensity;
 };
 
 uniform LightSource light_sources[MAX_COUNT_OF_LIGHT_SOURCES];
+uniform int is_shadowed_fs[MAX_COUNT_OF_LIGHT_SOURCES];
 
 uniform int count_of_light_sources;
 uniform vec3 camera_pos;
@@ -115,7 +117,11 @@ void main()
     vec3 norm = normalize(Normal);
     vec3 summary_effects = vec3(0.0, 0.0, 0.0);
     for (int i = 0; i < count_of_light_sources; ++i) {
-        summary_effects += calc_shadow(i) * calc_light_effect(light_sources[i], norm);
+        vec3 additional_effect = calc_light_effect(light_sources[i], norm) * light_sources[i].intensity;
+        if (is_shadowed_fs[i] == 1) {
+            additional_effect *= calc_shadow(i);
+        }
+        summary_effects += additional_effect;
     }
     vec3 min_color = vec3(0.3f, 0.3f, 0.3f);
     if (count_of_light_sources == 0) {

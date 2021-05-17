@@ -54,7 +54,7 @@ public:
 	
 	std::shared_ptr<Model> add_model(const std::string& path, const glm::vec3& position = {0, 0, 0});
 
-	std::shared_ptr<LightSource> add_light(const glm::vec3& position = {0, 0, 0}, const glm::vec3& color = {1, 1, 1});
+	std::shared_ptr<LightSource> add_light(const glm::vec3& position = {0, 0, 0}, const glm::vec3& color = {1, 1, 1}, float intensity = 0.3f,  bool is_shadowed = false);
 
 	std::shared_ptr<Portal> add_portal(const glm::vec3& position = {0, 0, 0});
 

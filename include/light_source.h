@@ -15,10 +15,14 @@ private:
     Camera camera;
     GLuint depth_map;
     GLuint depth_map_fbo;
+    bool is_shadowed;
+    float intensity_;
 
     void init_depth_map();
 public:
-    LightSource(glm::vec3 position_, glm::vec3 color_);
+    LightSource(glm::vec3 position_, glm::vec3 color_, float intensity, bool is_shadowed_);
+    [[nodiscard]] float intensity() const;
+    [[nodiscard]] bool shadowed() const;
     [[nodiscard]] glm::vec3 get_position() const;
     [[nodiscard]] glm::vec3 get_color() const;
     [[nodiscard]] const Camera &get_camera() const;

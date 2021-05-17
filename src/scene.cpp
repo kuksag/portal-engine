@@ -97,8 +97,8 @@ std::shared_ptr<Model> Scene::add_model(const std::string& path, const glm::vec3
 	return models[path].back();
 }
 
-std::shared_ptr<LightSource> Scene::add_light(const glm::vec3& position, const glm::vec3& color) {
-	lights.push_back(std::make_shared<LightSource>(position, color));
+std::shared_ptr<LightSource> Scene::add_light(const glm::vec3& position, const glm::vec3& color, float intensity, bool is_shadowed) {
+	lights.push_back(std::make_shared<LightSource>(position, color, intensity, is_shadowed));
 	return lights.back();
 }
 

@@ -55,11 +55,14 @@ void Model::set_matrices(const Camera &camera, const std::vector< std::shared_pt
     glUniformMatrix3fv(shader->get_uniform_id("normal_transformation"), 1,
                        GL_FALSE, &normal_transformation[0][0]);
     for (std::size_t i = 0; i < light_sources.size(); ++i) {
-        auto light_matrix =
-            light_sources[i]->get_camera().get_projection_matrix() *
-            light_sources[i]->get_camera().get_view_matrix() * model_matrix;
-        glUniformMatrix4fv(shader->get_uniform_id("light_matrix[" + std::to_string(i) + "]"), 1,
-                           GL_FALSE, &light_matrix[0][0]);
+        if (light_sources[i]->shadowed()) {
+            auto light_matrix =
+                light_sources[i]->get_camera().get_projection_matrix() *
+                light_sources[i]->get_camera().get_view_matrix() * model_matrix;
+            glUniformMatrix4fv(shader->get_uniform_id("light_matrix[" +
+                                                      std::to_string(i) + "]"),
+                               1, GL_FALSE, &light_matrix[0][0]);
+        }
     }
 }
 
@@ -81,11 +84,25 @@ void Model::draw(const Camera &camera, const std::vector< std::shared_ptr<LightS
         color_uniform_name << "light_sources[" << i << "].color";
         set_vec3(shader->get_uniform_id(color_uniform_name.str()), light_sources[i]->get_color());
 
-        std::stringstream depth_map_uniform_name;
-        depth_map_uniform_name << "depth_map" << i << "";
-        glUniform1i(shader->get_uniform_id(depth_map_uniform_name.str()), i + 1);
-        glActiveTexture(GL_TEXTURE1 + i);
-        glBindTexture(GL_TEXTURE_2D, light_sources[i]->get_depth_map());
+        std::stringstream intensity_uniform_name;
+        intensity_uniform_name << "light_sources[" << i << "].intensity";
+        glUniform1f(shader->get_uniform_id(intensity_uniform_name.str()), light_sources[i]->intensity());
+
+        if (light_sources[i]->shadowed()) {
+            std::stringstream depth_map_uniform_name;
+            depth_map_uniform_name << "depth_map" << i << "";
+            glUniform1i(shader->get_uniform_id(depth_map_uniform_name.str()),
+                        i + 1);
+            glActiveTexture(GL_TEXTURE1 + i);
+            glBindTexture(GL_TEXTURE_2D, light_sources[i]->get_depth_map());
+        }
+
+        std::stringstream is_shadowed_uniform_vs_name;
+        std::stringstream is_shadowed_uniform_fs_name;
+        is_shadowed_uniform_vs_name << "is_shadowed_vs[" << i << "]";
+        is_shadowed_uniform_fs_name << "is_shadowed_fs[" << i << "]";
+        glUniform1i(shader->get_uniform_id(is_shadowed_uniform_fs_name.str()), light_sources[i]->shadowed() ? 1 : 0);
+        glUniform1i(shader->get_uniform_id(is_shadowed_uniform_vs_name.str()), light_sources[i]->shadowed() ? 1 : 0);
     }
 
     for (const auto &i : meshes) i.draw();
