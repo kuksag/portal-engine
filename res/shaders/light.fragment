@@ -96,7 +96,8 @@ float calc_shadow(int i) {
     float depth = get_depth(i, pos.xy);
     vec3 light_dir = normalize(light_sources[i].position - vec3(point_pos));
     vec3 norm = normalize(Normal);
-    float bias = 0.00015;
+    float bias = 0.0000015 / dot(light_dir, norm);
+    return depth + bias < pos.z ? 0.0 : 1.0;
 
     float shadow = 0.0;
     vec2 pixel_size = 1.0 / get_texture_size(i);
@@ -108,7 +109,6 @@ float calc_shadow(int i) {
     }
     shadow /= 9.0;
     return 1 - shadow;
-    return depth + bias < pos.z ? 0.0 : 1.0;
 }
 
 void main()
