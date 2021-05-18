@@ -12,9 +12,11 @@ private:
 
     glm::mat4 model_matrix;
 
-    Entity* link = nullptr;
-
     void update();
+
+protected:
+
+    Entity* link = nullptr;
 
 public:
     Entity();

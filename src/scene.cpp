@@ -93,17 +93,17 @@ void Scene::update() {
     float time_delta = controller.get_time_delta();
     for (const auto &bullet : bullets) {
         auto first_point = bullet->get_position();
-        bullet->move(time_delta);
-        auto last_point = bullet->get_position();
+        auto last_point = bullet->get_position_after_move(time_delta);
         for (const auto &portal : portals) {
             if (portal->crossed(first_point, last_point)) {
                 Camera custom_camera;
-                custom_camera.set_view_matrix(glm::lookAt(last_point, last_point + last_point - first_point, {40, 28, 34} /*random vector*/));
+                custom_camera.set_view_matrix(glm::lookAt(first_point, last_point, {0, 1, 0} /*random vector*/));
                 custom_camera = get_portal_destination_camera(custom_camera, *portal);
                 bullet->set_position_by_camera(custom_camera);
                 break;
             }
         }
+        bullet->move(time_delta);
     }
 
     glm::vec3 first_point = controller.get_position();
@@ -119,19 +119,19 @@ void Scene::update() {
     controller.update_time();
 }
 
-void Scene::render_scene(const Camera& camera, int recursion_level = 0) const {
-    auto draw_portals = [&](const Camera& camera) {
+void Scene::render_scene(const Camera& Cam, int recursion_level = 0) const {
+    auto draw_portals = [&](const Camera& cam) {
         for (auto& portal : portals) {
-            portal->draw1(camera);
+            portal->draw1(cam);
         }
     };
 
-    auto draw_non_portals = [&](const Camera& camera) {
+    auto draw_non_portals = [&](const Camera& cam) {
         glUniform4f(lighted_shader->get_uniform_id("color"), 0, 0, 0, 1);
         for (const auto& i : models) {
             for (unsigned j = 1; j < i.second.size(); ++j) {
                 i.second[0]->move_to(i.second[j]);
-                i.second[0]->draw(camera, lights);
+                i.second[0]->draw(cam, lights);
             }
         }
         for (const auto& prim : primitives) {
@@ -139,7 +139,7 @@ void Scene::render_scene(const Camera& camera, int recursion_level = 0) const {
                 if (prim[i]->get_color() != glm::vec3(-1, -1, -1)) {
                     prim[0]->move_to(prim[i]);
                     prim[0]->set_color(prim[i]->get_color());
-                    prim[0]->draw(camera, lights);
+                    prim[0]->draw(cam, lights);
                 }
             }
         }
@@ -147,7 +147,7 @@ void Scene::render_scene(const Camera& camera, int recursion_level = 0) const {
 
     for (auto& portal : portals) {
         // Calculate view matrix as if the player was already teleported
-        Camera destination_camera = camera;
+        Camera destination_camera = Cam;
         destination_camera =
             get_portal_destination_camera(destination_camera, *portal);
 
@@ -174,7 +174,7 @@ void Scene::render_scene(const Camera& camera, int recursion_level = 0) const {
         glStencilMask(0xFF);
 
         // Draw portal into stencil buffer
-        portal->draw1(camera);
+        portal->draw1(Cam);
 
         // Base case, render inside of inner portal
         if (recursion_level == Settings::Portal::MAX_RECURSION_LEVEL) {
@@ -231,7 +231,7 @@ void Scene::render_scene(const Camera& camera, int recursion_level = 0) const {
         glStencilOp(GL_DECR, GL_KEEP, GL_KEEP);
 
         // Draw portal into stencil buffer
-        portal->draw1(camera);
+        portal->draw1(Cam);
     }
 
     // Disable the stencil test and stencil writing
@@ -252,7 +252,7 @@ void Scene::render_scene(const Camera& camera, int recursion_level = 0) const {
     glClear(GL_DEPTH_BUFFER_BIT);
 
     // Draw portals into depth buffer
-    draw_portals(camera);
+    draw_portals(Cam);
 
     // Reset the depth function to the default
     glDepthFunc(GL_LESS);
@@ -275,6 +275,6 @@ void Scene::render_scene(const Camera& camera, int recursion_level = 0) const {
 
     // Draw scene objects normally, only at recursionLevel
 
-    draw_non_portals(camera);
-    draw_portals(camera);
+    draw_non_portals(Cam);
+    draw_portals(Cam);
 }

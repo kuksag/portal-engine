@@ -18,6 +18,7 @@ public:
 
 struct Bullet : Entity {
 private:
+    inline static const float Speed = 10.0f;
     glm::vec3 direction;
     glm::vec3 start_point;
     std::shared_ptr<Primitive> ball;
@@ -25,6 +26,7 @@ public:
     inline static const glm::vec3 Bullet_Color = glm::vec3(0.5f, 0.3f, 0.4f);
     Bullet(glm::vec3 start_point_, glm::vec3 direction_, std::shared_ptr<Primitive> ball_);
     void move(float time_delta) override;
+    glm::vec3 get_position_after_move(float time_delta);
     void translate(const glm::vec3 &data) override;
     void set_position_by_camera(const Camera &camera);
 };

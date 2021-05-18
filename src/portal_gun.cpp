@@ -17,13 +17,12 @@ Bullet::Bullet(glm::vec3 start_point_, glm::vec3 direction_, std::shared_ptr<Pri
  start_point(std::move(start_point_)),
  direction(glm::normalize(direction_)),
  ball(std::move(ball_)){
-    ball->scale(glm::vec3(0.01f));
+    ball->scale(glm::vec3(0.1f));
     translate(start_point);
 }
 
 void Bullet::move(float time_delta) {
-    static const float speed = 15.0f;
-    translate(speed * time_delta * direction);
+    translate(Speed * time_delta * direction);
 }
 
 void Bullet::translate(const glm::vec3 &data) {
@@ -36,4 +35,6 @@ void Bullet::set_position_by_camera(const Camera &camera) {
     start_point = camera.get_position();
     translate(start_point);
 }
-
+glm::vec3 Bullet::get_position_after_move(float time_delta) {
+    return get_position() + Speed * time_delta * direction;
+}

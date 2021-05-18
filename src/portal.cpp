@@ -14,16 +14,15 @@ Portal::Portal(Scene* scene, std::shared_ptr<ShaderProgram> shader)
     : Drawable(shader), destination(this) {
     // -------------------------------------------------------------------------
     shape = scene->add_primitive<Plane>();
-    // shape->set_color({0, 0, 0});
-    shape->set_color({-1, -1, -1});
-    // auto shared_this = std::shared_ptr<Entity>(this);
+    shape->rotate(M_PI_2, {1.0, 0.0, 0.0});
+    shape->rotate(M_PI, {0.0, 0.0, 1.0});
     shape->link_to(this);
     // -------------------------------------------------------------------------
-    // beacon = scene->add_primitive<Cone>({0.0, 0.0, -0.5}, {0.0, 1.0, 0.0});
-    // beacon->scale({0.2, 0.2, 0.2});
-    // beacon->rotate(M_PI_2, {0.0, 1.0, 0.0});
-    // beacon->rotate(-M_PI_2, {0.0, 0.0, 1.0});
-    // beacon->link_to(this);
+    // beacon.scale({0.2, 0.2, 0.2});
+    // beacon.set_color({0.0, 1.0, 0.0});
+    // beacon.rotate(M_PI_2, {0.0, 1.0, 0.0});
+    // beacon.rotate(-M_PI_2, {0.0, 0.0, 1.0});
+    // beacon.translate({0.0, 0.0, -0.5});
     // -------------------------------------------------------------------------
     const float COLOR = 0.75;    // grey
     const float X_SCALE = 1.21;
@@ -33,26 +32,20 @@ Portal::Portal(Scene* scene, std::shared_ptr<ShaderProgram> shader)
 
     bounds.resize(EDGE_NUMBER);
     for (auto &bound : bounds) {
-    	bound = scene->add_primitive<Cube>();
-        bound->scale({YZ_SCALE, X_SCALE, YZ_SCALE});
+        bound = scene->add_primitive<Cube>();
+        bound->scale({X_SCALE, YZ_SCALE, YZ_SCALE});
         bound->set_color({glm::vec3(COLOR)});
         bound->link_to(this);
     }
 
-    bounds[0]->rotate(M_PI_2, {1, 0, 0});
-    bounds[0]->translate({OFFSET, 0, 0});
+    bounds[0]->translate({0.0, -OFFSET, 0.0});
+    bounds[1]->translate({0.0, OFFSET, 0.0});
 
-    bounds[1]->rotate(M_PI_2, {1, 0, 0});
-    bounds[1]->translate({-OFFSET, 0, 0});
+    bounds[2]->translate({-OFFSET, 0.0, 0.0});
+    bounds[2]->rotate(M_PI_2, {0.0, 0.0, 1.0});
 
-    bounds[2]->rotate(M_PI_2, {0, 0, 1});
-    bounds[2]->translate({0, 0, OFFSET});
-
-    bounds[3]->rotate(M_PI_2, {0, 0, 1});
-    bounds[3]->translate({0, 0, -OFFSET});
-
-    rotate(M_PI_2, {1.0, 0.0, 0.0});
-    rotate(M_PI, {0.0, 0.0, 1.0});
+    bounds[3]->translate({OFFSET, 0.0, 0.0});
+    bounds[3]->rotate(M_PI_2, {0.0, 0.0, 1.0});
     // -------------------------------------------------------------------------
 }
 
@@ -61,9 +54,6 @@ void Portal::draw(const Camera& camera, const std::vector< std::shared_ptr<Light
 }
 
 void Portal::draw1(const Camera &camera) const {
-     auto custom_camera = camera;
-     custom_camera.set_view_matrix(camera.get_view_matrix() *
-                                   get_model_matrix());
     shape->draw(camera, {});
 }
 
@@ -110,9 +100,9 @@ bool Portal::crossed(glm::vec3 first_point, glm::vec3 last_point) const {
     auto inverse_operator = glm::inverse(get_model_matrix());
     first_point = inverse_operator * glm::vec4(first_point, 1.0f);
     last_point = inverse_operator * glm::vec4(last_point, 1.0f);
-    using std::swap;
-    swap(first_point.y, first_point.z);
-    swap(last_point.y, last_point.z);
+    // using std::swap;
+    // swap(first_point.y, first_point.z);
+    // swap(last_point.y, last_point.z);
     bool crossed_plane = (first_point.z < 0.0 && last_point.z > 0.0) ||
                          (first_point.z > 0.0 && last_point.z < 0.0);
     if (!crossed_plane) {
