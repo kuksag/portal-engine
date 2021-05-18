@@ -40,7 +40,7 @@ public:
     void draw(const Camera &camera, const std::vector< std::shared_ptr<LightSource> >& light_sources) const override;
     void depth_test_draw(const Camera &camera, std::shared_ptr<ShaderProgram> depth_sahder) const override;
 
-    void move_to(std::shared_ptr<Model> to);
+    void move_to(std::shared_ptr<Model> to, glm::mat4 t);
 
     ~Model() override = default;
 };

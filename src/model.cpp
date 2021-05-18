@@ -195,6 +195,6 @@ Texture Model::load_texture(const char *path) {
     return texture;
 }
 
-void Model::move_to(std::shared_ptr<Model> to) {
-    set_model_matrix(to->get_model_matrix());
+void Model::move_to(std::shared_ptr<Model> to, glm::mat4 t) {
+    set_model_matrix(t * to->get_model_matrix());
 }

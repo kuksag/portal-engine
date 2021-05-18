@@ -13,15 +13,13 @@ private:
 
     void update();
 
-protected:
+public:
     Entity();
     [[nodiscard]] glm::mat4 get_translation_matrix() const;
     [[nodiscard]] glm::mat4 get_rotation_matrix() const;
     [[nodiscard]] glm::mat4 get_scale_matrix() const;
     [[nodiscard]] glm::mat4 get_model_matrix() const;
-
-
-public:
+    
     void set_translation_matrix(const glm::mat4 &data);
     void set_rotation_matrix(const glm::mat4 &data);
     void set_scale_matrix(const glm::mat4 &data);
