@@ -26,16 +26,13 @@ int main() {
     auto floor = scene.add_primitive<Plane>({0, 0, 0}, {0.5, 0.2, 0.3});
     floor->scale({10, 1, 10});
 
-    auto a = scene.add_primitive<Cylinder>({0, 1.2, 0}, {0.5, 0, 0});
-    auto b = scene.add_primitive<Cube>({0, 3, 0}, {0, 0, 1});
-    a->translate({-5, 2, 0});
-    a->rotate(3.1415 / 4, {1, 0, 0});
-    a->scale({0.2, 0.2, 0.2});
+    auto p1 = scene.add_portal({2, 1.2, 2});
+    auto p2 = scene.add_portal({-2, 1.2, -2});
+    p1->set_destination(p2.get());
+    p2->set_destination(p1.get());
 
-    auto c = scene.add_primitive<Torus>({3, 0, 0}, {0, 0, 0});
-    
-    b->link_to(a); //unlink <=> link to nullptr
-    c->link_to(b);
+    auto c = scene.add_primitive<Torus>({2, 1.2, 0}, {0.3, 0, 0.3});
+    c->scale({0.3, 0.3, 0.3});
 
     scene.add_light({5, 25, 5}, {1, 1, 1}, 0.6f, false);
     scene.add_light({5, 25, 5}, {0.7, 0.8, 0.9}, 0.8f, true);

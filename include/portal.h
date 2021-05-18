@@ -35,11 +35,13 @@ public:
     Portal(Scene* scene, std::shared_ptr<ShaderProgram> shader);
 
     void translate(const glm::vec3 &data) override;
+    void rotate(float angle, const glm::vec3 &data) override;
+    void scale(const glm::vec3 &data) override;
 
     // void toggle_draw_bounds();
 
     // TODO: make protected
-    void draw1(const Camera &camera/*, std::shared_ptr<ShaderProgram> depth_shader*/) const;
+    void draw1(const Camera &camera) const;
     void depth_test_draw(
         const Camera& camera,
         std::shared_ptr<ShaderProgram> depth_shader) const override;
@@ -50,12 +52,6 @@ public:
 
     friend Camera get_portal_destination_camera(const Camera &camera,
                                                 const Portal &portal);
-
-    // friend void draw_portals(const Camera &camera,
-    //                          const std::vector<Portal *> &portals,
-    //                          bool draw_bounds);
-
-    // void set_light_sources(const std::vector<LightSource> *data) override;
 
     bool crossed(glm::vec3 first_point, glm::vec3 last_point) const;
     Portal * const get_destination();
