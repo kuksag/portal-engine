@@ -13,8 +13,8 @@ Primitive::Primitive(const glm::vec3& position, const glm::vec3& color,
 
 void Primitive::set_color(glm::vec3 color_) {
     color = color_;
-    glUniform4f(shader->get_uniform_id("color"), color.x, color.y, color.z, 1);
     shader->use();
+    glUniform4f(shader->get_uniform_id("color"), color.x, color.y, color.z, 1);
 }
 
 void Primitive::set_unvisible() {

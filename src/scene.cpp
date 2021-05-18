@@ -135,7 +135,6 @@ void Scene::render_scene(const Camera& camera, int recursion_level = 0) const {
                 i.second[0]->draw(camera, lights);
             }
         }
-
         for (const auto& prim : primitives) {
             for (std::size_t i = 1; i < prim.size(); ++i) {
                 if (prim[i]->get_color() != glm::vec3(-1, -1, -1)) {
