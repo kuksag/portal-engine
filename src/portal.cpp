@@ -16,14 +16,14 @@ Portal::Portal(Scene* scene, std::shared_ptr<ShaderProgram> shader)
     shape = scene->add_primitive<Plane>();
     // shape->set_color({0, 0, 0});
     shape->set_color({-1, -1, -1});
-    auto shared_this = std::shared_ptr<Entity>(this);
-    shape->link_to(shared_this);
+    // auto shared_this = std::shared_ptr<Entity>(this);
+    shape->link_to(this);
     // -------------------------------------------------------------------------
     // beacon = scene->add_primitive<Cone>({0.0, 0.0, -0.5}, {0.0, 1.0, 0.0});
     // beacon->scale({0.2, 0.2, 0.2});
     // beacon->rotate(M_PI_2, {0.0, 1.0, 0.0});
     // beacon->rotate(-M_PI_2, {0.0, 0.0, 1.0});
-    // beacon->link_to(shared_this);
+    // beacon->link_to(this);
     // -------------------------------------------------------------------------
     const float COLOR = 0.75;    // grey
     const float X_SCALE = 1.21;
@@ -36,7 +36,7 @@ Portal::Portal(Scene* scene, std::shared_ptr<ShaderProgram> shader)
     	bound = scene->add_primitive<Cube>();
         bound->scale({YZ_SCALE, X_SCALE, YZ_SCALE});
         bound->set_color({glm::vec3(COLOR)});
-        bound->link_to(shared_this);
+        bound->link_to(this);
     }
 
     bounds[0]->rotate(M_PI_2, {1, 0, 0});

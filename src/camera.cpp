@@ -8,7 +8,7 @@
 using namespace Settings::Camera;
 
 void Camera::update(float dt) {
-    // speed += acceleration * dt;
+    speed += acceleration * dt;
     position += speed * dt;
     if (position.y < 1) {
         position.y = 1;

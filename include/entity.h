@@ -12,7 +12,7 @@ private:
 
     glm::mat4 model_matrix;
 
-    std::shared_ptr<Entity> link = nullptr;
+    Entity* link = nullptr;
 
     void update();
 
@@ -28,7 +28,7 @@ public:
     void set_scale_matrix(const glm::mat4 &data);
     void set_model_matrix(const glm::mat4 &data);
 
-    void link_to(std::shared_ptr<Entity> link);
+    void link_to(Entity* link);
 
     virtual void translate(const glm::vec3 &data);
     virtual void rotate(float angle, const glm::vec3 &data);
