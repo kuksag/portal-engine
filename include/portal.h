@@ -30,13 +30,10 @@ private:
     [[nodiscard]] glm::vec3 get_center() const;
 
 public:
+
     // bool is_draw_bounds = false;
 
     Portal(Scene* scene, std::shared_ptr<ShaderProgram> shader);
-
-    void translate(const glm::vec3 &data) override;
-    void rotate(float angle, const glm::vec3 &data) override;
-    void scale(const glm::vec3 &data) override;
 
     // void toggle_draw_bounds();
 

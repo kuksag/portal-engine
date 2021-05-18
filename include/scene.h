@@ -30,10 +30,10 @@ private:
 	std::vector<std::shared_ptr<LightSource>> lights;
 	std::unordered_map<std::string, std::vector<std::shared_ptr<Model>>> models;
 	std::vector< std::shared_ptr<Portal> > portals;
-        std::vector<std::shared_ptr<Bullet>> bullets;
+    std::vector<std::shared_ptr<Bullet>> bullets;
 	std::shared_ptr<ShaderProgram> lighted_shader;
 
-        PortalGun portal_gun;
+    PortalGun portal_gun;
 
 
 	glm::vec3 bg_color = {1, 1, 1};

@@ -13,7 +13,7 @@ void Entity::update() {
     model_matrix = translation_matrix * rotation_matrix * scale_matrix;
 }
 
-void Entity::link_to(const std::shared_ptr<Entity>& link) {
+void Entity::link_to(Entity* link) {
     this->link = link;
 }
 
