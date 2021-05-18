@@ -25,8 +25,11 @@ int main() {
 
     auto c = scene.add_primitive<Cylinder>({2, 1.5, -1}, {0.1, 0.7, 0.2});
     c->scale({0.3, 0.3, 0.3});
-    auto c1 = scene.add_primitive<Cylinder>({-2, 0, 1}, {0.9, 0, 0.2});
+    auto c1 = scene.add_primitive<Cylinder>({-2, 1.5, 1}, {0.9, 0, 0.2});
      c1->scale({0.3, 0.3, 0.3});
+
+    auto c2 = scene.add_primitive<Cylinder>({-2, 1.5, -4}, {0.3, 0.4, 0.8});
+    c2->scale({0.3, 0.3, 0.3});
 
 	std::shared_ptr<Portal> p1 = scene.add_portal({2, 1.5, 2});
 	std::shared_ptr<Portal> p2 = scene.add_portal({-2, 1.5, -2});
@@ -35,10 +38,10 @@ int main() {
     auto p = scene.add_primitive<Plane>({0, 0, 0}, {0.7, 0.3, 0.3});
     p->scale({10, 10, 10});
 
-    scene.add_light({5, 25, 5}, {1, 1, 1}, 0.6f, false);
-    scene.add_light({5, 25, 5}, {0.7, 0.8, 0.9}, 0.8f, true);
+    scene.add_light({5, 25, 5}, {1, 1, 1}, 1.0f, false);
+    scene.add_light({5, 25, 5}, {0.7, 0.8, 0.9}, 0.2f, true);
 
-
+    auto skull = scene.add_model("res/models/skull/12140_Skull_v3_L2.obj", {3, 3, 3});
 
     // -------------------------------------------------------------------------
     do {
