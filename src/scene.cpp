@@ -129,20 +129,18 @@ void Scene::render_scene(const Camera& camera, int recursion_level = 0) const {
 
     auto draw_non_portals = [&](const Camera& camera) {
         glUniform4f(lighted_shader->get_uniform_id("color"), 0, 0, 0, 1);
-        // for (const auto& i : models) {
-        //     for (unsigned j = 1; j < i.second.size(); ++j) {
-        //         i.second[0]->move_to(i.second[j]);
-        //         i.second[0]->draw(camera, lights);
-        //     }
-        // }
-        int k = 0;
+        for (const auto& i : models) {
+            for (unsigned j = 1; j < i.second.size(); ++j) {
+                i.second[0]->move_to(i.second[j]);
+                i.second[0]->draw(camera, lights);
+            }
+        }
         for (const auto& prim : primitives) {
             for (std::size_t i = 1; i < prim.size(); ++i) {
                 if (prim[i]->get_color() != glm::vec3(-1, -1, -1)) {
-                    prim[0]->move_to(prim[i], k != 0 ? glm::mat4(1) : primitives[3][1]->get_model_matrix());
+                    prim[0]->move_to(prim[i]);
                     prim[0]->set_color(prim[i]->get_color());
                     prim[0]->draw(camera, lights);
-                    k++;
                 }
             }
         }
