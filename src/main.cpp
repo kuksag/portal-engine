@@ -33,12 +33,13 @@ int main() {
     p1->set_destination(p2.get());
     p2->set_destination(p1.get());
 
-    p2->rotate(3.14, {0, 1, 0});
+    p2->rotate(3.14 / 2, {0, -1, 0});
 
     // p1->scale({0.2, 1, 1});
     // p1->rotate(3.14 / 4, {1, 1, 0});
 
-    // p2->rotate(3.14 / 2, {1, 0, 0});
+    // p2->rotate(3.14 / 2, {0, 0, 1});
+    // p1->rotate(3.14 / 2, {0, 0, 1});
 
     // auto p = scene.add_primitive<Cube>();
     // p->scale({0.3, 0.4, 0.3});
