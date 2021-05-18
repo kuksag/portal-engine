@@ -53,8 +53,10 @@ void Scene::draw() const {
             auto last_point = bullet->get_position();
             for (const auto &portal : portals) {
                 if (portal->crossed(first_point, last_point)) {
-                    bullet->translate(portal->get_destination()->get_position() - portal->get_position());
-                    bullet->change_direction(portal->get_normal(), portal->get_destination()->get_normal());
+                    Camera custom_camera;
+                    custom_camera.set_view_matrix(glm::lookAt(last_point, last_point + last_point - first_point, {40, 28, 34} /*random vector*/));
+                    custom_camera = get_portal_destination_camera(custom_camera, *portal);
+                    bullet->set_position_by_camera(custom_camera);
                     break;
                 }
             }

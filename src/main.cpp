@@ -38,7 +38,7 @@ int main() {
     auto p = scene.add_primitive<Plane>({0, 0, 0}, {0.7, 0.3, 0.3});
     p->scale({10, 10, 10});
 
-    scene.add_light({5, 25, 5}, {1, 1, 1}, 1.0f, false);
+    scene.add_light({5, 25, 5}, {1, 1, 1}, 1.0f, true);
     scene.add_light({5, 25, 5}, {0.7, 0.8, 0.9}, 0.2f, true);
 
     auto skull = scene.add_model("res/models/skull/12140_Skull_v3_L2.obj", {3, 3, 3});

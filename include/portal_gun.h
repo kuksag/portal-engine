@@ -26,7 +26,7 @@ public:
     Bullet(glm::vec3 start_point_, glm::vec3 direction_, std::shared_ptr<Primitive> ball_);
     void move(float time_delta) override;
     void translate(const glm::vec3 &data) override;
-    void change_direction(const glm::vec3 &direction1, const glm::vec3 &direction2);
+    void set_position_by_camera(const Camera &camera);
 };
 
 #endif    // PORTAL_ENGINE_PORTAL_GUN_H
