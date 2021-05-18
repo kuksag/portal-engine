@@ -3,6 +3,8 @@
 
 #include <vector>
 
+#include <iostream> //TODO: remove
+
 #include "camera.h"
 #include "controls.h"
 #include "light_source.h"
@@ -31,11 +33,17 @@ int main() {
     p1->set_destination(p2.get());
     p2->set_destination(p1.get());
 
+    p1->scale({0.2, 1, 1});
+    p1->rotate(3.14 / 4, {1, 1, 0});
+
     auto c = scene.add_primitive<Torus>({2, 1.2, 0}, {0.3, 0, 0.3});
     c->scale({0.3, 0.3, 0.3});
 
     scene.add_light({5, 25, 5}, {1, 1, 1}, 0.6f, false);
     scene.add_light({5, 25, 5}, {0.7, 0.8, 0.9}, 0.8f, true);
+
+    auto C = p1->get_center();
+    std::cout << C.x << ' ' << C.y << ' ' << C.z << '\n';
 
 
     // -------------------------------------------------------------------------

@@ -14,7 +14,7 @@ Portal::Portal(Scene* scene, std::shared_ptr<ShaderProgram> shader)
     : Drawable(shader), destination(this) {
     // -------------------------------------------------------------------------
     shape = scene->add_primitive<Plane>();
-    shape->set_color({-1, -1, -1});
+    // shape->set_color({-1, -1, -1});
     rotate(M_PI_2, {1.0, 0.0, 0.0});
     rotate(M_PI, {0.0, 0.0, 1.0});
     // -------------------------------------------------------------------------
