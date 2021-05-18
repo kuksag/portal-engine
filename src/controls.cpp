@@ -100,8 +100,8 @@ void Controller::key_callback() {
     }
 
     if (glfwGetKey(window.glfw_window(), GLFW_KEY_SPACE) == GLFW_PRESS) {
-        // camera.move_up(time_delta);
-        camera.jump();
+        camera.move_up(time_delta);
+        // camera.jump();
     }
 
     if (glfwGetKey(window.glfw_window(), GLFW_KEY_LEFT_ALT) == GLFW_PRESS) {

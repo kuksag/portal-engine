@@ -27,18 +27,13 @@ private:
     std::vector<std::shared_ptr<Primitive>> bounds;
     // -------------------------------------------------------------------------
 
-    // [[nodiscard]] glm::vec3 get_center() const;
+    [[nodiscard]] glm::vec3 get_center() const;
 
 public:
 
-    [[nodiscard]] glm::vec3 get_center() const; //TODO:private
     // bool is_draw_bounds = false;
 
     Portal(Scene* scene, std::shared_ptr<ShaderProgram> shader);
-
-    void translate(const glm::vec3 &data) override;
-    void rotate(float angle, const glm::vec3 &data) override;
-    void scale(const glm::vec3 &data) override;
 
     // void toggle_draw_bounds();
 

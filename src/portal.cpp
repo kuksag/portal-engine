@@ -14,14 +14,16 @@ Portal::Portal(Scene* scene, std::shared_ptr<ShaderProgram> shader)
     : Drawable(shader), destination(this) {
     // -------------------------------------------------------------------------
     shape = scene->add_primitive<Plane>();
-    // shape->set_color({-1, -1, -1});
-    rotate(M_PI_2, {1.0, 0.0, 0.0});
-    rotate(M_PI, {0.0, 0.0, 1.0});
+    // shape->set_color({0, 0, 0});
+    shape->set_color({-1, -1, -1});
+    auto shared_this = std::shared_ptr<Entity>(this);
+    shape->link_to(shared_this);
     // -------------------------------------------------------------------------
     // beacon = scene->add_primitive<Cone>({0.0, 0.0, -0.5}, {0.0, 1.0, 0.0});
     // beacon->scale({0.2, 0.2, 0.2});
     // beacon->rotate(M_PI_2, {0.0, 1.0, 0.0});
     // beacon->rotate(-M_PI_2, {0.0, 0.0, 1.0});
+    // beacon->link_to(shared_this);
     // -------------------------------------------------------------------------
     const float COLOR = 0.75;    // grey
     const float X_SCALE = 1.21;
@@ -34,7 +36,7 @@ Portal::Portal(Scene* scene, std::shared_ptr<ShaderProgram> shader)
     	bound = scene->add_primitive<Cube>();
         bound->scale({YZ_SCALE, X_SCALE, YZ_SCALE});
         bound->set_color({glm::vec3(COLOR)});
-        bound->link_to(shape);
+        bound->link_to(shared_this);
     }
 
     bounds[0]->rotate(M_PI_2, {1, 0, 0});
@@ -48,6 +50,9 @@ Portal::Portal(Scene* scene, std::shared_ptr<ShaderProgram> shader)
 
     bounds[3]->rotate(M_PI_2, {0, 0, 1});
     bounds[3]->translate({0, 0, -OFFSET});
+
+    rotate(M_PI_2, {1.0, 0.0, 0.0});
+    rotate(M_PI, {0.0, 0.0, 1.0});
     // -------------------------------------------------------------------------
 }
 
@@ -55,24 +60,11 @@ void Portal::draw(const Camera& camera, const std::vector< std::shared_ptr<Light
 
 }
 
-void Portal::translate(const glm::vec3 &data) {
-    Entity::translate(data);
-	shape->translate(data);
-}
-void Portal::rotate(float angle, const glm::vec3 &data) {
-    Entity::rotate(angle, data);
-    shape->rotate(angle, data);
-}
-void Portal::scale(const glm::vec3 &data) {
-    Entity::scale(data);
-    shape->scale(data);
-}
-
 void Portal::draw1(const Camera &camera) const {
-    auto custom_camera = camera;
-    custom_camera.set_view_matrix(camera.get_view_matrix() *
-                                  get_model_matrix());
-    shape->draw(custom_camera, {});
+    // auto custom_camera = camera;
+    // custom_camera.set_view_matrix(camera.get_view_matrix() *
+    //                               get_model_matrix());
+    shape->draw(camera, {});
 }
 
 
@@ -118,6 +110,9 @@ bool Portal::crossed(glm::vec3 first_point, glm::vec3 last_point) const {
     auto inverse_operator = glm::inverse(get_model_matrix());
     first_point = inverse_operator * glm::vec4(first_point, 1.0f);
     last_point = inverse_operator * glm::vec4(last_point, 1.0f);
+    using std::swap;
+    swap(first_point.y, first_point.z);
+    swap(last_point.y, last_point.z);
     bool crossed_plane = (first_point.z < 0.0 && last_point.z > 0.0) ||
                          (first_point.z > 0.0 && last_point.z < 0.0);
     if (!crossed_plane) {
