@@ -45,6 +45,7 @@ public:
 	Scene(Window& window, Camera& camera, Controller& controller);
 
 	void draw() const;
+	void update();
 
 	template<class Type>
 	std::shared_ptr<Primitive> add_primitive(const glm::vec3& position = {0, 0, 0}, const glm::vec3& color = {1, 1, 1});

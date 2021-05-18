@@ -45,6 +45,7 @@ int main() {
 
     // -------------------------------------------------------------------------
     do {
+        scene.update();
         scene.draw();
         glfwPollEvents();
     } while (window.is_open());

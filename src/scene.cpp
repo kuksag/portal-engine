@@ -30,38 +30,6 @@ void Scene::draw() const {
     glDepthMask(GL_TRUE);
     glStencilMask(0xFF);
     glClear(GL_STENCIL_BUFFER_BIT | GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-    if (controller.is_enter_pressed()) {
-        portal_gun.launch_bullet();
-    }
-    float time_delta = controller.get_time_delta();
-    for (const auto& bullet : bullets) {
-        auto first_point = bullet->get_position();
-        bullet->move(time_delta);
-        auto last_point = bullet->get_position();
-        for (const auto& portal : portals) {
-            if (portal->crossed(first_point, last_point)) {
-                bullet->translate(portal->get_destination()->get_position() -
-                                  portal->get_position());
-                bullet->change_direction(
-                    portal->get_normal(),
-                    portal->get_destination()->get_normal());
-                break;
-            }
-        }
-    }
-
-    glm::vec3 first_point = controller.get_position();
-    glm::vec3 last_point = controller.get_position_after_move();
-    for (const std::shared_ptr<Portal>& portal : portals) {
-        if (portal->crossed(first_point, last_point)) {
-            camera = get_portal_destination_camera(camera, *portal);
-        }
-    }
-    controller.cursor_position_callback();
-    controller.key_callback();
-    camera.update(controller.delta_time());
-    controller.update_time();
-
     for (auto& ls : lights) {
         ls->start_depth_test();
         for (const auto& i : models)
@@ -116,6 +84,40 @@ std::shared_ptr<Bullet> Scene::add_bullet(const glm::vec3& start_point,
 void Scene::set_bg_color(const glm::vec3& color) {
     bg_color = color;
     glClearColor(bg_color.x, bg_color.y, bg_color.z, 0.0f);
+}
+
+void Scene::update() {
+    if (controller.is_enter_pressed()) {
+        portal_gun.launch_bullet();
+    }
+    float time_delta = controller.get_time_delta();
+    for (const auto& bullet : bullets) {
+        auto first_point = bullet->get_position();
+        bullet->move(time_delta);
+        auto last_point = bullet->get_position();
+        for (const auto& portal : portals) {
+            if (portal->crossed(first_point, last_point)) {
+                bullet->translate(portal->get_destination()->get_position() -
+                                  portal->get_position());
+                bullet->change_direction(
+                    portal->get_normal(),
+                    portal->get_destination()->get_normal());
+                break;
+            }
+        }
+    }
+
+    glm::vec3 first_point = controller.get_position();
+    glm::vec3 last_point = controller.get_position_after_move();
+    for (const std::shared_ptr<Portal>& portal : portals) {
+        if (portal->crossed(first_point, last_point)) {
+            camera = get_portal_destination_camera(camera, *portal);
+        }
+    }
+    controller.cursor_position_callback();
+    controller.key_callback();
+    camera.update(controller.delta_time());
+    controller.update_time();
 }
 
 void Scene::render_scene(const Camera& camera, int recursion_level = 0) const {
