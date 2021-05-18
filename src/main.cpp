@@ -29,14 +29,16 @@ int main() {
     floor->scale({10, 1, 10});
 
     auto p1 = scene.add_portal({2, 1.2, 2});
-    auto p2 = scene.add_portal({-2, 3, -2});
+    auto p2 = scene.add_portal({-2, 1.2, -2});
     p1->set_destination(p2.get());
     p2->set_destination(p1.get());
+
+    p2->rotate(3.14, {0, 1, 0});
 
     // p1->scale({0.2, 1, 1});
     // p1->rotate(3.14 / 4, {1, 1, 0});
 
-    p2->rotate(3.14 / 2, {1, 0, 0});
+    // p2->rotate(3.14 / 2, {1, 0, 0});
 
     // auto p = scene.add_primitive<Cube>();
     // p->scale({0.3, 0.4, 0.3});

@@ -44,9 +44,9 @@ void Model::depth_test_draw(const Camera &camera, std::shared_ptr<ShaderProgram>
 
 void Model::set_matrices(const Camera &camera, const std::vector< std::shared_ptr<LightSource> >& light_sources) const {
     shader->use();
-    auto model_matrix = get_model_matrix();
-    auto MVP = camera.get_projection_matrix() * camera.get_view_matrix() *
-               model_matrix;    // TODO: one calculation
+    auto model_matrix = /*glm::inverse(link ? link->get_model_matrix() : glm::mat4(1)) * */get_model_matrix();
+    auto MVP = camera.get_projection_matrix() * camera.get_view_matrix() * model_matrix;    // TODO: one calculation
+    // model_matrix = glm::inverse(link ? link->get_model_matrix() : glm::mat4(1)) * model_matrix;
     auto normal_transformation = glm::mat3(transpose(inverse(model_matrix)));
 
     glUniformMatrix4fv(shader->get_uniform_id("MVP"), 1, GL_FALSE, &MVP[0][0]);

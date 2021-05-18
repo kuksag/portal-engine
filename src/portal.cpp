@@ -62,8 +62,7 @@ void Portal::draw(const Camera& camera, const std::vector< std::shared_ptr<Light
 
 void Portal::draw1(const Camera &camera) const {
     // auto custom_camera = camera;
-    // custom_camera.set_view_matrix(camera.get_view_matrix() *
-    //                               get_model_matrix());
+    // custom_camera.set_view_matrix(camera.get_view_matrix() * get_model_matrix());
     shape->draw(camera, {});
 }
 
