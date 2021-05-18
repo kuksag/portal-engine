@@ -3,6 +3,8 @@
 
 #include <vector>
 
+#include <iostream> //TODO: remove
+
 #include "camera.h"
 #include "controls.h"
 #include "light_source.h"
@@ -20,32 +22,40 @@ int main() {
     Controller controller(camera, window);
     // -------------------------------------------------------------------------
 
-	Scene scene(window, camera, controller);
-	scene.set_bg_color({0.3, 0.3, 0.6});
+    Scene scene(window, camera, controller);
+    scene.set_bg_color({0.3, 0.3, 0.6});
 
-    auto c = scene.add_primitive<Cylinder>({2, 1.5, -1}, {0.1, 0.7, 0.2});
+    auto floor = scene.add_primitive<Plane>({0, 0, 0}, {0.5, 0.2, 0.3});
+    floor->scale({10, 1, 10});
+
+    auto p1 = scene.add_portal({2, 1.2, 2});
+    auto p2 = scene.add_portal({-2, 3, -2});
+    p1->set_destination(p2.get());
+    p2->set_destination(p1.get());
+
+    // p1->scale({0.2, 1, 1});
+    // p1->rotate(3.14 / 4, {1, 1, 0});
+
+    p2->rotate(3.14 / 2, {1, 0, 0});
+
+    // auto p = scene.add_primitive<Cube>();
+    // p->scale({0.3, 0.4, 0.3});
+
+    auto c = scene.add_primitive<Torus>({2, 1.2, 0}, {0.3, 0, 0.3});
     c->scale({0.3, 0.3, 0.3});
-    auto c1 = scene.add_primitive<Cylinder>({-2, 1.5, 1}, {0.9, 0, 0.2});
-     c1->scale({0.3, 0.3, 0.3});
 
-    auto c2 = scene.add_primitive<Cylinder>({-2, 1.5, -4}, {0.3, 0.4, 0.8});
-    c2->scale({0.3, 0.3, 0.3});
+    scene.add_light({5, 25, 5}, {1, 1, 1}, 0.6f, false);
+    scene.add_light({5, 25, 5}, {0.7, 0.8, 0.9}, 0.8f, true);
 
-	std::shared_ptr<Portal> p1 = scene.add_portal({2, 1.5, 2});
-	std::shared_ptr<Portal> p2 = scene.add_portal({-2, 1.5, -2});
-	p1->set_destination(p2.get());
-	p2->set_destination(p1.get());
-    auto p = scene.add_primitive<Plane>({0, 0, 0}, {0.7, 0.3, 0.3});
-    p->scale({10, 10, 10});
-
-    scene.add_light({5, 25, 5}, {1, 1, 1}, 1.0f, true);
-    scene.add_light({5, 25, 5}, {0.7, 0.8, 0.9}, 0.2f, true);
-
-    auto skull = scene.add_model("res/models/skull/12140_Skull_v3_L2.obj", {3, 3, 3});
 
     // -------------------------------------------------------------------------
     do {
+        scene.update();
         scene.draw();
+
+        // p->set_translation_matrix(glm::mat4(1));
+        // p->translate(camera.get_position() + glm::vec3{0, -0.6, 0});
+
         glfwPollEvents();
     } while (window.is_open());
 

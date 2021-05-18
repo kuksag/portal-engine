@@ -13,9 +13,15 @@ void Entity::update() {
     model_matrix = translation_matrix * rotation_matrix * scale_matrix;
 }
 
+void Entity::link_to(Entity* link) {
+    this->link = link;
+}
+
 glm::mat4 Entity::get_translation_matrix() const { return translation_matrix; }
 
-glm::mat4 Entity::get_model_matrix() const { return model_matrix; }
+glm::mat4 Entity::get_model_matrix() const {
+    return (link ? link->get_model_matrix() : glm::mat4(1)) * model_matrix;
+}
 
 void Entity::set_translation_matrix(const glm::mat4 &data) {
     translation_matrix = data;

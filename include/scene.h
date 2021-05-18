@@ -30,24 +30,22 @@ private:
 	std::vector<std::shared_ptr<LightSource>> lights;
 	std::unordered_map<std::string, std::vector<std::shared_ptr<Model>>> models;
 	std::vector< std::shared_ptr<Portal> > portals;
-        std::vector<std::shared_ptr<Bullet>> bullets;
+    std::vector<std::shared_ptr<Bullet>> bullets;
 	std::shared_ptr<ShaderProgram> lighted_shader;
 
-        PortalGun portal_gun;
+    PortalGun portal_gun;
 
 
 	glm::vec3 bg_color = {1, 1, 1};
 
-	void render_scene(const Camera &camera,
-                  const std::vector< std::vector<std::shared_ptr<Primitive>> >& objects,
-                  const std::vector<std::shared_ptr<Portal>> &portals,
-                  int recursion_level) const;
+	void render_scene(const Camera& camera, int recursion_level) const;
 
 public:
 
 	Scene(Window& window, Camera& camera, Controller& controller);
 
 	void draw() const;
+	void update();
 
 	template<class Type>
 	std::shared_ptr<Primitive> add_primitive(const glm::vec3& position = {0, 0, 0}, const glm::vec3& color = {1, 1, 1});

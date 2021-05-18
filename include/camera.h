@@ -29,6 +29,7 @@ private:
     static constexpr glm::vec3 acceleration = {0, -9, 0};
     static constexpr glm::vec3 jump_speed = {0, 4, 0};
 
+
     bool is_on_floor = false;
 
 public:
