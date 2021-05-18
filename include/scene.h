@@ -38,10 +38,7 @@ private:
 
 	glm::vec3 bg_color = {1, 1, 1};
 
-	void render_scene(const Camera &camera,
-                  const std::vector< std::vector<std::shared_ptr<Primitive>> >& objects,
-                  const std::vector<std::shared_ptr<Portal>> &portals,
-                  int recursion_level) const;
+	void render_scene(const Camera& camera, int recursion_level) const;
 
 public:
 

@@ -3,66 +3,56 @@
 #include <GL/glew.h>
 #include <GLFW/glfw3.h>
 
+#include <iostream>
 #include <memory>
 
-#include "settings.h"
-
-#include "window.h"
-#include "portal.h"
 #include "camera.h"
 #include "controls.h"
-#include <iostream>
+#include "portal.h"
+#include "settings.h"
+#include "window.h"
 
-Scene::Scene(Window& window, Camera& camera, Controller& controller) : window(window), camera(camera), controller(controller), primitives(PORTAL_ENGINE_PRIMITIVES_COUNT), lighted_shader(new ShaderProgram("shaders/light.vertex", "shaders/light.fragment")),
-                                                                      portal_gun(*this, camera)  {
-	glClearColor(bg_color.x, bg_color.y, bg_color.z, 0.0f);
-	glEnable(GL_CULL_FACE);
+Scene::Scene(Window& window, Camera& camera, Controller& controller)
+    : window(window),
+      camera(camera),
+      controller(controller),
+      primitives(PORTAL_ENGINE_PRIMITIVES_COUNT),
+      lighted_shader(
+          new ShaderProgram("shaders/light.vertex", "shaders/light.fragment")),
+      portal_gun(*this, camera) {
+    glClearColor(bg_color.x, bg_color.y, bg_color.z, 0.0f);
+    glEnable(GL_CULL_FACE);
     glEnable(GL_DEPTH_TEST);
 }
 
 void Scene::draw() const {
-	glColorMask(GL_TRUE, GL_TRUE, GL_TRUE, GL_TRUE);
+    glColorMask(GL_TRUE, GL_TRUE, GL_TRUE, GL_TRUE);
     glDepthMask(GL_TRUE);
     glStencilMask(0xFF);
-	glClear(GL_STENCIL_BUFFER_BIT | GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-
-	// int k = 0;
-	// for (const auto& prim : primitives) {
-	// 	if (k++ == 2)
-	// 		continue;
-	// 	for (unsigned i=1; i < prim.size(); ++i) {
-	// 		prim[0]->move_to(prim[i]);
-	// 		prim[0]->set_color(prim[i]->get_color());
-	// 		prim[0]->draw(camera, lights);
-	// 	}
-	// }
-
-	// for (auto i : models) {
-	// 	for (unsigned j=1; j < i.second.size(); ++j) {
-	// 		i.second[0]->move_to(i.second[j]);
-	// 		i.second[0]->draw(camera, lights);
-	// 	}
-	// }
-        if (controller.is_enter_pressed()) {
-            portal_gun.launch_bullet();
-        }
-        float time_delta = controller.get_time_delta();
-        for (const auto &bullet : bullets) {
-            auto first_point = bullet->get_position();
-            bullet->move(time_delta);
-            auto last_point = bullet->get_position();
-            for (const auto &portal : portals) {
-                if (portal->crossed(first_point, last_point)) {
-                    bullet->translate(portal->get_destination()->get_position() - portal->get_position());
-                    bullet->change_direction(portal->get_normal(), portal->get_destination()->get_normal());
-                    break;
-                }
+    glClear(GL_STENCIL_BUFFER_BIT | GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+    if (controller.is_enter_pressed()) {
+        portal_gun.launch_bullet();
+    }
+    float time_delta = controller.get_time_delta();
+    for (const auto& bullet : bullets) {
+        auto first_point = bullet->get_position();
+        bullet->move(time_delta);
+        auto last_point = bullet->get_position();
+        for (const auto& portal : portals) {
+            if (portal->crossed(first_point, last_point)) {
+                bullet->translate(portal->get_destination()->get_position() -
+                                  portal->get_position());
+                bullet->change_direction(
+                    portal->get_normal(),
+                    portal->get_destination()->get_normal());
+                break;
             }
         }
+    }
 
     glm::vec3 first_point = controller.get_position();
     glm::vec3 last_point = controller.get_position_after_move();
-    for (const std::shared_ptr<Portal> &portal : portals) {
+    for (const std::shared_ptr<Portal>& portal : portals) {
         if (portal->crossed(first_point, last_point)) {
             camera = get_portal_destination_camera(camera, *portal);
         }
@@ -72,85 +62,90 @@ void Scene::draw() const {
     camera.update(controller.delta_time());
     controller.update_time();
 
-	for (auto& ls : lights) {
-		ls->start_depth_test();
-		for (const auto& i : models)
-			for (unsigned j=1; j < i.second.size(); ++j)
-				ls->gen_depth_map(dynamic_cast<Drawable*>(i.second[j].get()));
-		for (const auto& j : primitives)
-			for (const auto& i : j)
-				ls->gen_depth_map(dynamic_cast<Drawable*>(i.get()));
-		ls->finish_depth_test();
-	}
-    glViewport(0, 0, Settings::Window::WIDTH, Settings::Window::HEIGHT); //TODO
+    for (auto& ls : lights) {
+        ls->start_depth_test();
+        for (const auto& i : models)
+            for (unsigned j = 1; j < i.second.size(); ++j)
+                ls->gen_depth_map(dynamic_cast<Drawable*>(i.second[j].get()));
+        for (const auto& j : primitives)
+            for (const auto& i : j)
+                ls->gen_depth_map(dynamic_cast<Drawable*>(i.get()));
+        ls->finish_depth_test();
+    }
+    glViewport(0, 0, Settings::Window::WIDTH,
+               Settings::Window::HEIGHT);    // TODO
 
+    render_scene(camera, 0);
 
-    render_scene(camera, primitives, portals, 0);
-
-	glfwSwapBuffers(window.glfw_window());
+    glfwSwapBuffers(window.glfw_window());
 }
 
-std::shared_ptr<Model> Scene::add_model(const std::string& path, const glm::vec3& position) {
-	if (models[path].empty())
-		models[path].push_back(std::make_shared<Model>(path, lighted_shader, true));
-	models[path].push_back(std::make_shared<Model>(path, lighted_shader, false));
-	return models[path].back();
+std::shared_ptr<Model> Scene::add_model(const std::string& path,
+                                        const glm::vec3& position) {
+    if (models[path].empty())
+        models[path].push_back(
+            std::make_shared<Model>(path, lighted_shader, true));
+    models[path].push_back(
+        std::make_shared<Model>(path, lighted_shader, false));
+    return models[path].back();
 }
 
-std::shared_ptr<LightSource> Scene::add_light(const glm::vec3& position, const glm::vec3& color, float intensity, bool is_shadowed) {
-	lights.push_back(std::make_shared<LightSource>(position, color, intensity, is_shadowed));
-	return lights.back();
+std::shared_ptr<LightSource> Scene::add_light(const glm::vec3& position,
+                                              const glm::vec3& color,
+                                              float intensity,
+                                              bool is_shadowed) {
+    lights.push_back(
+        std::make_shared<LightSource>(position, color, intensity, is_shadowed));
+    return lights.back();
 }
 
 std::shared_ptr<Portal> Scene::add_portal(const glm::vec3& position) {
-	portals.push_back(std::make_shared<Portal>(this, lighted_shader));
-	portals.back()->translate(position);
-	return portals.back();
+    portals.push_back(std::make_shared<Portal>(this, lighted_shader));
+    portals.back()->translate(position);
+    return portals.back();
 }
 
 std::shared_ptr<Bullet> Scene::add_bullet(const glm::vec3& start_point,
                                           const glm::vec3& direction) {
     auto ball = add_primitive<Sphere>({0, 0, 0}, Bullet::Bullet_Color);
-    bullets.push_back(std::shared_ptr<Bullet>(new Bullet(start_point, direction, ball)));
+    bullets.push_back(
+        std::shared_ptr<Bullet>(new Bullet(start_point, direction, ball)));
     return bullets.back();
 }
 
-namespace {
-void draw_non_portals(const Camera &camera,
-                      const std::vector< std::vector<std::shared_ptr<Primitive>> > &primitives,
-                      const std::vector<std::shared_ptr<Portal>> &portals,
-                      const std::vector<std::shared_ptr<LightSource>>& lights) {
-    for (const auto& prim : primitives) {
-     for (unsigned i=1; i < prim.size(); ++i) {
-         if (prim[i]->get_color() != glm::vec3(-1, -1, -1)) {
-             prim[0]->move_to(prim[i]);
-             prim[0]->set_color(prim[i]->get_color());
-             prim[0]->draw(camera, lights);
-         }
-     }
-    }
-}
-
-void draw_portals(const Camera &camera,
-                      const std::vector<std::shared_ptr<Portal>> &portals) {
-    for (auto &portal : portals) {
-            portal->draw1(camera);
-    }
-}
-
-}
-
-
 void Scene::set_bg_color(const glm::vec3& color) {
-	bg_color = color;
-	glClearColor(bg_color.x, bg_color.y, bg_color.z, 0.0f);
+    bg_color = color;
+    glClearColor(bg_color.x, bg_color.y, bg_color.z, 0.0f);
 }
 
-void Scene::render_scene(const Camera &camera,
-                  const std::vector< std::vector<std::shared_ptr<Primitive>> >& objects,
-                  const std::vector<std::shared_ptr<Portal>> &portals,
-                  int recursion_level = 0) const {
-    for (auto &portal : portals) {
+void Scene::render_scene(const Camera& camera, int recursion_level = 0) const {
+    auto draw_portals = [&](const Camera& camera) {
+        for (auto& portal : portals) {
+            portal->draw1(camera);
+        }
+    };
+
+    auto draw_non_portals = [&](const Camera& camera) {
+        glUniform4f(lighted_shader->get_uniform_id("color"), 0, 0, 0, 1);
+        for (const auto& i : models) {
+            for (unsigned j = 1; j < i.second.size(); ++j) {
+                i.second[0]->move_to(i.second[j]);
+                i.second[0]->draw(camera, lights);
+            }
+        }
+
+        for (const auto& prim : primitives) {
+            for (std::size_t i = 1; i < prim.size(); ++i) {
+                if (prim[i]->get_color() != glm::vec3(-1, -1, -1)) {
+                    prim[0]->move_to(prim[i]);
+                    prim[0]->set_color(prim[i]->get_color());
+                    prim[0]->draw(camera, lights);
+                }
+            }
+        }
+    };
+
+    for (auto& portal : portals) {
         // Calculate view matrix as if the player was already teleported
         Camera destination_camera = camera;
         destination_camera =
@@ -209,13 +204,12 @@ void Scene::render_scene(const Camera &camera,
             // Draw scene objects with destView, limited to stencil buffer
             // use an edited projection matrix to set the near plane to the
             // portal plane
-            draw_non_portals(destination_camera, objects, portals, lights);
+            draw_non_portals(destination_camera);
         } else {
             // Recursion case
             // Pass our new view matrix and the clipped projection matrix (see
             // above)
-            render_scene(destination_camera, objects, portals,
-                         recursion_level + 1);
+            render_scene(destination_camera, recursion_level + 1);
         }
 
         // Disable color and depth drawing
@@ -258,7 +252,7 @@ void Scene::render_scene(const Camera &camera,
     glClear(GL_DEPTH_BUFFER_BIT);
 
     // Draw portals into depth buffer
-    draw_portals(camera, portals);
+    draw_portals(camera);
 
     // Reset the depth function to the default
     glDepthFunc(GL_LESS);
@@ -281,6 +275,6 @@ void Scene::render_scene(const Camera &camera,
 
     // Draw scene objects normally, only at recursionLevel
 
-    draw_non_portals(camera, objects, portals, lights);
-    draw_portals(camera, portals);
+    draw_non_portals(camera);
+    draw_portals(camera);
 }
