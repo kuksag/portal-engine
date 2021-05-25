@@ -24,34 +24,42 @@ public:
     [[nodiscard]] glm::vec3 get_color() const;
 };
 
-struct Sphere : public Primitive {
+struct Sphere : Primitive {
     explicit Sphere(std::shared_ptr<ShaderProgram> shader, bool need_load, const glm::vec3& position = {0, 0, 0},
                     const glm::vec3& color = {1, 1, 1});
 };
 
-struct Cube : public Primitive {
-    Cube(std::shared_ptr<ShaderProgram> shader, bool need_load, const glm::vec3& position = {0, 0, 0},
-         const glm::vec3& color = {1, 1, 1});
-};
-
-struct Plane : public Primitive {
+struct Plane : Primitive {
     Plane(std::shared_ptr<ShaderProgram> shader, bool need_load, const glm::vec3& position = {0, 0, 0},
           const glm::vec3& color = {1, 1, 1});
 };
 
-struct Cylinder : public Primitive {
+struct Cylinder : Primitive {
     Cylinder(std::shared_ptr<ShaderProgram> shader, bool need_load, const glm::vec3& position = {0, 0, 0},
              const glm::vec3& color = {1, 1, 1});
 };
 
-struct Torus : public Primitive {
+struct Torus : Primitive {
     Torus(std::shared_ptr<ShaderProgram> shader, bool need_load, const glm::vec3& position = {0, 0, 0},
           const glm::vec3& color = {1, 1, 1});
 };
 
-struct Cone : public Primitive {
+struct Cone : Primitive {
     Cone(std::shared_ptr<ShaderProgram> shader, bool need_load, const glm::vec3& position = {0, 0, 0},
          const glm::vec3& color = {1, 1, 1});
+};
+
+struct Cube : Primitive {
+private:
+
+  std::vector<std::shared_ptr<Plane>> planes;
+
+public:
+
+    Cube(std::shared_ptr<ShaderProgram> shader, bool need_load, const glm::vec3& position = {0, 0, 0},
+         const glm::vec3& color = {1, 1, 1});
+
+    const std::vector<std::shared_ptr<Plane>>& get_planes() const;    
 };
 
 #endif    // PORTAL_ENGINE_PRIMITIVES_H
