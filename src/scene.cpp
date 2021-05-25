@@ -104,9 +104,8 @@ void Scene::update() {
             if (auto plane = dynamic_cast<const Plane*>(plane_shared_ptr.get()); plane) {
                 if (!is_first && plane->is_visible() && plane->crossed(first_point, last_point)) {
                     player_portals.replace_portal(glm::translate(glm::mat4(1.0), first_point),
-                        plane->get_rotation_matrix());
+                        plane->get_rotation_matrix() * glm::rotate(glm::mat4(1.0), (float)-M_PI_2, glm::vec3{1, 0, 0}));
                     bullet->set_unvisible();
-                    std::cerr << "Crossed" << std::endl;
                 }
             }
             is_first = false;
@@ -307,7 +306,7 @@ void PairingPortals::replace_portal(glm::mat4 translation_matrix,
                                     glm::mat4 rotation_matrix) {
     std::swap(first, second);
     second->set_translation_matrix(translation_matrix);
-    //second->set_rotation_matrix(rotation_matrix);
+    second->set_rotation_matrix(rotation_matrix);
 }
 void PairingPortals::set_portals(std::shared_ptr<Portal> first_,
                                  std::shared_ptr<Portal> second_) {
