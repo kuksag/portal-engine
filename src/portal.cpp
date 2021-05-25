@@ -56,6 +56,7 @@ Portal::Portal(Scene* scene, std::shared_ptr<ShaderProgram> shader)
     	bound = scene->add_primitive<Cube>();
         bound->scale({X_SCALE, YZ_SCALE, YZ_SCALE});
         bound->set_color({glm::vec3(COLOR)});
+        bound->link_to(this);
     }
 
     bounds[0]->translate({0.0, -OFFSET, 0.0});
@@ -73,13 +74,6 @@ void Portal::draw(const Camera& camera, const std::vector< std::shared_ptr<Light
 
 }
 
-void Portal::translate(const glm::vec3 &data) {
-	//shape->translate(data);
-        //beacon->translate(data);
-	for (auto& i : bounds)
-		i->translate(data);
-        Entity::translate(data);
-}
 
 void Portal::draw1(const Camera &camera/*, std::shared_ptr<ShaderProgram> depth_shader*/) const {
     auto custom_camera = camera;

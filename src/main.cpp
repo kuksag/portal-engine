@@ -29,9 +29,10 @@ int main() {
      c1->scale({0.3, 0.3, 0.3});
 
 	std::shared_ptr<Portal> p1 = scene.add_portal({2, 1.5, 2});
-	std::shared_ptr<Portal> p2 = scene.add_portal({-2, 1.5, -2});
+	std::shared_ptr<Portal> p2 = scene.add_portal({-2, 2, -2});
 	p1->set_destination(p2.get());
 	p2->set_destination(p1.get());
+    p2->rotate(3.14 / 2, {-1, 0, 0});
     auto p = scene.add_primitive<Plane>({0, 0, 0}, {0.7, 0.3, 0.3});
     p->scale({10, 10, 10});
     auto sk = scene.add_model("res/models/skull/12140_Skull_v3_L2.obj");
