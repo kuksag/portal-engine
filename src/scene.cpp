@@ -26,7 +26,9 @@ Scene::Scene(Window& window, Camera& camera, Controller& controller)
     glEnable(GL_DEPTH_TEST);
     auto p1 = add_portal({-3, 1.2, 0});
     auto p2 = add_portal({4, 1.2, -1});
-    p2->rotate(M_PI_2, {0, 1, 0});
+    p2->translate({0.0, 3.0, 0.0});
+    p2->rotate(M_PI_4, {0.3, 0.8, 0.4});
+    p2->rotate(M_PI_2, {0.0, 1.0, 0.0});
     player_portals.set_portals(p1, p2);
 }
 
@@ -120,7 +122,7 @@ void Scene::update() {
         for (const auto &portal : portals) {
             if (portal->crossed(first_point, last_point)) {
                 Camera custom_camera;
-                custom_camera.set_view_matrix(glm::lookAt(first_point, last_point, {0, 1, 0} /*random vector*/));
+                custom_camera.set_view_matrix(glm::lookAt(first_point, last_point, {0, 1, 0} /*random vector*/), true);
                 custom_camera = get_portal_destination_camera(custom_camera, *portal);
                 bullet->set_position_by_camera(custom_camera);
                 break;
@@ -133,7 +135,8 @@ void Scene::update() {
     glm::vec3 last_point = controller.get_position_after_move();
     for (const std::shared_ptr<Portal>& portal : portals) {
         if (portal->crossed(first_point, last_point)) {
-            camera = get_portal_destination_camera(camera, *portal);
+            Camera custom_camera = get_portal_destination_camera(camera, *portal);
+            camera.set_view_matrix(custom_camera.get_view_matrix(), true);
         }
     }
     controller.cursor_position_callback();

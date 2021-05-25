@@ -17,7 +17,7 @@ LightSource::LightSource(glm::vec3 position_, glm::vec3 color_, float intensity,
     translate(position_);
     camera.set_view_matrix(glm::lookAt(position_,
                                        glm::vec3(0.0f, 0.0f, 0.0f) - position_,
-                                       glm::vec3(0.0f, 1.0f, 0.0f)));
+                                       glm::vec3(0.0f, 1.0f, 0.0f)), true);
     init_depth_map();
 
 }

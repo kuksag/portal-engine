@@ -29,9 +29,13 @@ private:
     static constexpr glm::vec3 acceleration = {0, -9, 0};
     static constexpr glm::vec3 jump_speed = {0, 4, 0};
 
-
     bool is_on_floor = false;
 
+    bool custom_state_view_matrix{false};
+    glm::mat4 custom_view_matrix{};
+
+    bool custom_state_projection_matrix{false};
+    glm::mat4 custom_projection_matrix{};
 public:
     explicit Camera(glm::vec3 position_ = glm::vec3(POS_X, POS_Y, POS_Z),
                     float horizontal_angle_ = HORIZONTAL_ANGLE,
@@ -78,7 +82,7 @@ public:
     // When its called, all following calls of any function, except
     // get_projection_matrix or get_view_matrix,
     // will do or return nonsense (but not UB)
-    void set_view_matrix(glm::mat4 data);
+    void set_view_matrix(glm::mat4 data, bool recalculate = false);
     void set_projection_matrix(glm::mat4 data);
     // -------------------------------------------------------------------------
 };
