@@ -34,8 +34,6 @@ public:
 
     Portal(Scene* scene, std::shared_ptr<ShaderProgram> shader);
 
-    void translate(const glm::vec3 &data) override;
-
     // void toggle_draw_bounds();
 
     // TODO: make protected

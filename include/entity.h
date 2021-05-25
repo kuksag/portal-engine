@@ -13,6 +13,8 @@ private:
 
     void update();
 
+    Entity* link = nullptr;
+
 protected:
     Entity();
     [[nodiscard]] glm::mat4 get_translation_matrix() const;
@@ -26,6 +28,8 @@ public:
     void set_rotation_matrix(const glm::mat4 &data);
     void set_scale_matrix(const glm::mat4 &data);
     void set_model_matrix(const glm::mat4 &data);
+
+    void link_to(Entity* link);
 
     virtual void translate(const glm::vec3 &data);
     virtual void rotate(float angle, const glm::vec3 &data);

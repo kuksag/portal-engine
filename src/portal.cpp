@@ -36,7 +36,7 @@ Portal::Portal(Scene* scene, std::shared_ptr<ShaderProgram> shader)
     : Drawable(shader), destination(this) {
     // -------------------------------------------------------------------------
     shape = scene->add_primitive<Plane>();
-    // shape->set_color({-1, -1, -1});
+    shape->set_color({-1, -1, -1});
     shape->rotate(M_PI_2, {1.0, 0.0, 0.0});
     shape->rotate(M_PI, {0.0, 0.0, 1.0});
     // -------------------------------------------------------------------------
@@ -56,6 +56,7 @@ Portal::Portal(Scene* scene, std::shared_ptr<ShaderProgram> shader)
     	bound = scene->add_primitive<Cube>();
         bound->scale({X_SCALE, YZ_SCALE, YZ_SCALE});
         bound->set_color({glm::vec3(COLOR)});
+        bound->link_to(this);
     }
 
     bounds[0]->translate({0.0, -OFFSET, 0.0});
@@ -71,13 +72,6 @@ Portal::Portal(Scene* scene, std::shared_ptr<ShaderProgram> shader)
 
 void Portal::draw(const Camera& camera, const std::vector< std::shared_ptr<LightSource> >& ls) const {
 
-}
-
-void Portal::translate(const glm::vec3 &data) {
-	shape->translate(data);
-	// beacon->translate(data);
-	for (auto& i : bounds)
-		i->translate(data);
 }
 
 void Portal::draw1(const Camera &camera/*, std::shared_ptr<ShaderProgram> depth_shader*/) const {
