@@ -23,10 +23,41 @@ void Primitive::set_unvisible() {
 
 glm::vec3 Primitive::get_color() const { return color; }
 
+bool Primitive::is_visible() const {
+    return color.x >= 0 && color.y >= 0 && color.z >= 0;
+}
+
+namespace {
+glm::vec2 cross_line_with_xz_plane(glm::vec3 first_point,
+                                     glm::vec3 last_point) {
+    glm::vec3 directive_vector = last_point - first_point;
+    float k = -first_point.y / directive_vector.y;
+    return glm::vec2(first_point.x + k * directive_vector.x,
+                     first_point.z + k * directive_vector.z);
+}
+}    // namespace
+
+bool Plane::crossed(glm::vec3 first_point, glm::vec3 last_point) const {
+    auto inverse_operator = glm::inverse(get_model_matrix());
+    first_point = inverse_operator * glm::vec4(first_point, 1.0f);
+    last_point = inverse_operator * glm::vec4(last_point, 1.0f);
+    bool crossed_plane = (first_point.y < 0.0 && last_point.y > 0.0) ||
+                         (first_point.y > 0.0 && last_point.y < 0.0);
+    if (!crossed_plane) {
+        return false;
+    }
+    glm::vec2 intersection =
+        cross_line_with_xz_plane(first_point, last_point);
+    return intersection.x >= -1.0 && intersection.x <= 1.0 &&
+           intersection.y >= -1.0 && intersection.y <= 1.0;
+}
+
 Sphere::Sphere(std::shared_ptr<ShaderProgram> shader, bool need_load, const glm::vec3& position, const glm::vec3& color)
     : Primitive(position, color, "res/models/primitives/sphere.obj", need_load, shader) {}
 Plane::Plane(std::shared_ptr<ShaderProgram> shader, bool need_load, const glm::vec3& position, const glm::vec3& color)
     : Primitive(position, color, "res/models/primitives/plane.obj", need_load, shader) {}
+
+
 Cylinder::Cylinder(std::shared_ptr<ShaderProgram> shader, bool need_load, const glm::vec3& position, const glm::vec3& color)
     : Primitive(position, color, "res/models/primitives/cylinder.obj", need_load, shader) {}
 Torus::Torus(std::shared_ptr<ShaderProgram> shader, bool need_load, const glm::vec3& position, const glm::vec3& color)

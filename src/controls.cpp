@@ -189,7 +189,16 @@ glm::vec3 Controller::get_position_after_move() {
     return position;
 }
 bool Controller::is_enter_pressed() {
-    return glfwGetKey(window.glfw_window(), GLFW_KEY_ENTER) == GLFW_PRESS;
+    bool is_pressed = glfwGetKey(window.glfw_window(), GLFW_KEY_ENTER) == GLFW_PRESS;
+    static bool pressed_already = false;
+    if (is_pressed && !pressed_already) {
+        pressed_already = true;
+        return true;
+    }
+    if (!is_pressed) {
+        pressed_already = false;
+    }
+    return false;
 }
 float Controller::get_time_delta() {
     return glfwGetTime() - last_time_point;

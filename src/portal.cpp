@@ -17,6 +17,7 @@ Portal::Portal(Scene* scene, std::shared_ptr<ShaderProgram> shader)
     shape->rotate(M_PI_2, {1.0, 0.0, 0.0});
     shape->rotate(M_PI, {0.0, 0.0, 1.0});
     shape->link_to(this);
+    shape->set_unvisible();
     // -------------------------------------------------------------------------
     // beacon.scale({0.2, 0.2, 0.2});
     // beacon.set_color({0.0, 1.0, 0.0});
@@ -54,8 +55,6 @@ void Portal::draw(const Camera& camera, const std::vector< std::shared_ptr<Light
 }
 
 void Portal::draw1(const Camera &camera) const {
-    // auto custom_camera = camera;
-    // custom_camera.set_view_matrix(camera.get_view_matrix() * get_model_matrix());
     shape->draw(camera, {});
 }
 

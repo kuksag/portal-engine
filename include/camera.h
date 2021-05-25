@@ -26,8 +26,9 @@ private:
     float display_range_far;
 
     glm::vec3 speed = {0, 0, 0};
-    static constexpr glm::vec3 acceleration = {0, -4, 0};
-    static constexpr glm::vec3 jump_speed = {0, 3, 0};
+    static constexpr glm::vec3 acceleration = {0, -9, 0};
+    static constexpr glm::vec3 jump_speed = {0, 4, 0};
+
 
     bool is_on_floor = false;
 

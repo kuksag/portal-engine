@@ -10,7 +10,7 @@ struct Drawable;
 
 struct LightSource : public Entity {
 private:
-    static const int SHADOW_WIDTH = 3000, SHADOW_HEIGHT = 3000;
+    static const int SHADOW_WIDTH = 4000, SHADOW_HEIGHT = 4000;
     glm::vec3 color;
     Camera camera;
     GLuint depth_map;

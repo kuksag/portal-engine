@@ -11,6 +11,7 @@
 #include "portal.h"
 #include "settings.h"
 #include "window.h"
+#include <thread>
 
 Scene::Scene(Window& window, Camera& camera, Controller& controller)
     : window(window),
@@ -23,6 +24,10 @@ Scene::Scene(Window& window, Camera& camera, Controller& controller)
     glClearColor(bg_color.x, bg_color.y, bg_color.z, 0.0f);
     glEnable(GL_CULL_FACE);
     glEnable(GL_DEPTH_TEST);
+    auto p1 = add_portal({-3, 1.2, 0});
+    auto p2 = add_portal({4, 1.2, -1});
+    p2->rotate(M_PI_2, {0, 1, 0});
+    player_portals.set_portals(p1, p2);
 }
 
 void Scene::draw() const {
@@ -51,8 +56,8 @@ void Scene::draw() const {
 std::shared_ptr<Model> Scene::add_model(const std::string& path,
                                         const glm::vec3& position) {
     if (models[path].empty())
-        models[path].push_back(
-            std::make_shared<Model>(path, lighted_shader, true));
+        models[path].push_back
+            (std::make_shared<Model>(path, lighted_shader, true));
     models[path].push_back(
         std::make_shared<Model>(path, lighted_shader, false));
     return models[path].back();
@@ -91,20 +96,37 @@ void Scene::update() {
         portal_gun.launch_bullet();
     }
     float time_delta = controller.get_time_delta();
-    for (const auto& bullet : bullets) {
+    for (const auto &bullet : bullets) {
         auto first_point = bullet->get_position();
-        bullet->move(time_delta);
-        auto last_point = bullet->get_position();
-        for (const auto& portal : portals) {
+        auto last_point = bullet->get_position_after_move(time_delta);
+        bool is_first = true;
+        for (const auto& plane_shared_ptr : primitives[PrimId<Plane>::id]) {
+            if (auto plane = dynamic_cast<const Plane*>(plane_shared_ptr.get()); plane) {
+                if (!is_first && plane->is_visible() && plane->crossed(first_point, last_point)) {
+                    player_portals.replace_portal(glm::translate(glm::mat4(1.0), first_point),
+                        plane->get_rotation_matrix());
+                    bullet->set_unvisible();
+                    std::cerr << "Crossed" << std::endl;
+                }
+            }
+            is_first = false;
+        }
+    }
+
+
+    for (const auto &bullet : bullets) {
+        auto first_point = bullet->get_position();
+        auto last_point = bullet->get_position_after_move(time_delta);
+        for (const auto &portal : portals) {
             if (portal->crossed(first_point, last_point)) {
-                bullet->translate(portal->get_destination()->get_position() -
-                                  portal->get_position());
-                bullet->change_direction(
-                    portal->get_normal(),
-                    portal->get_destination()->get_normal());
+                Camera custom_camera;
+                custom_camera.set_view_matrix(glm::lookAt(first_point, last_point, {0, 1, 0} /*random vector*/));
+                custom_camera = get_portal_destination_camera(custom_camera, *portal);
+                bullet->set_position_by_camera(custom_camera);
                 break;
             }
         }
+        bullet->move(time_delta);
     }
 
     glm::vec3 first_point = controller.get_position();
@@ -278,4 +300,19 @@ void Scene::render_scene(const Camera& Cam, int recursion_level = 0) const {
 
     draw_non_portals(Cam);
     draw_portals(Cam);
+}
+
+
+void PairingPortals::replace_portal(glm::mat4 translation_matrix,
+                                    glm::mat4 rotation_matrix) {
+    std::swap(first, second);
+    second->set_translation_matrix(translation_matrix);
+    //second->set_rotation_matrix(rotation_matrix);
+}
+void PairingPortals::set_portals(std::shared_ptr<Portal> first_,
+                                 std::shared_ptr<Portal> second_) {
+    first = first_;
+    second = second_;
+    first->set_destination(second.get());
+    second->set_destination(first.get());
 }
