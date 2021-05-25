@@ -29,6 +29,7 @@ public:
     glm::vec3 get_position_after_move(float time_delta);
     void translate(const glm::vec3 &data) override;
     void set_position_by_camera(const Camera &camera);
+    void set_unvisible();
 };
 
 #endif    // PORTAL_ENGINE_PORTAL_GUN_H

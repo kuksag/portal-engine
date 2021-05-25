@@ -38,3 +38,6 @@ void Bullet::set_position_by_camera(const Camera &camera) {
 glm::vec3 Bullet::get_position_after_move(float time_delta) {
     return get_position() + Speed * time_delta * direction;
 }
+void Bullet::set_unvisible() {
+    ball->set_unvisible();
+}

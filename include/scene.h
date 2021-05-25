@@ -19,6 +19,15 @@
 
 struct Portal;
 
+struct PairingPortals {
+private:
+    std::shared_ptr<Portal> first = nullptr;
+    std::shared_ptr<Portal> second = nullptr;
+public:
+    void set_portals(std::shared_ptr<Portal> first_, std::shared_ptr<Portal> second_);
+    void replace_portal(glm::mat4 translation_matrix, glm::mat4 rotation_matrix = glm::mat4());
+};
+
 class Scene {
 private:
 
@@ -30,10 +39,11 @@ private:
 	std::vector<std::shared_ptr<LightSource>> lights;
 	std::unordered_map<std::string, std::vector<std::shared_ptr<Model>>> models;
 	std::vector< std::shared_ptr<Portal> > portals;
-    std::vector<std::shared_ptr<Bullet>> bullets;
+        std::vector<std::shared_ptr<Bullet>> bullets;
 	std::shared_ptr<ShaderProgram> lighted_shader;
 
-    PortalGun portal_gun;
+        PortalGun portal_gun;
+        PairingPortals player_portals;
 
 
 	glm::vec3 bg_color = {1, 1, 1};

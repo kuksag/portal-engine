@@ -17,6 +17,7 @@ Portal::Portal(Scene* scene, std::shared_ptr<ShaderProgram> shader)
     shape->rotate(M_PI_2, {1.0, 0.0, 0.0});
     shape->rotate(M_PI, {0.0, 0.0, 1.0});
     shape->link_to(this);
+    shape->set_unvisible();
     // -------------------------------------------------------------------------
     // beacon.scale({0.2, 0.2, 0.2});
     // beacon.set_color({0.0, 1.0, 0.0});
