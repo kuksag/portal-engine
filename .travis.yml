@@ -12,6 +12,9 @@ addons:
       - clang-format
       - clang-tidy
       - clang-tools
+      - clang-10
+      - clang-tidy-10
+      - clang-tools-10
       - cmake
       - cppcheck
       - freeglut3
