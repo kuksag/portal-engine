@@ -91,32 +91,8 @@ void Portal::depth_test_draw(
     // because drawable is an abstract class
 }
 
-namespace {
-glm::vec2 cross_line_with_yz_plane(glm::vec3 first_point,
-                                     glm::vec3 last_point) {
-    glm::vec3 directive_vector = last_point - first_point;
-    float k = -first_point.z / directive_vector.z;
-    return glm::vec2(first_point.x + k * directive_vector.x,
-                     first_point.y + k * directive_vector.y);
-}
-}    // namespace
-
 bool Portal::crossed(glm::vec3 first_point, glm::vec3 last_point) const {
-    auto inverse_operator = glm::inverse(get_model_matrix());
-    first_point = inverse_operator * glm::vec4(first_point, 1.0f);
-    last_point = inverse_operator * glm::vec4(last_point, 1.0f);
-    // using std::swap;
-    // swap(first_point.y, first_point.z);
-    // swap(last_point.y, last_point.z);
-    bool crossed_plane = (first_point.z < 0.0 && last_point.z > 0.0) ||
-                         (first_point.z > 0.0 && last_point.z < 0.0);
-    if (!crossed_plane) {
-        return false;
-    }
-    glm::vec2 intersection =
-        cross_line_with_yz_plane(first_point, last_point);
-    return intersection.x >= -1.0 && intersection.x <= 1.0 &&
-           intersection.y >= -1.0 && intersection.y <= 1.0;
+    return dynamic_cast<Plane*>(shape.get())->crossed(first_point, last_point);
 }
 const Portal *Portal::get_destination() const {
     return destination;

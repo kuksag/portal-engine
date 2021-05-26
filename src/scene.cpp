@@ -107,7 +107,7 @@ void Scene::update() {
             if (auto plane = dynamic_cast<const Plane*>(plane_shared_ptr.get()); plane) {
                 if (!is_first && plane->is_visible() && plane->crossed(first_point, last_point)) {
                     player_portals.replace_portal(glm::translate(glm::mat4(1.0), first_point),
-                        plane->get_rotation_matrix() * glm::rotate(glm::mat4(1.0), (float)-M_PI_2, glm::vec3{1, 0, 0}));
+                        plane->get_rotation_matrix() * glm::rotate(glm::mat4(1.0), (float)M_PI_2, glm::vec3{1, 0, 0}));
                     bullet->set_unvisible();
                 }
             }
