@@ -24,26 +24,28 @@ int main() {
     auto floor = scene.add_primitive<Plane>({0, 0, 0}, {0.5, 0.2, 0.3});
     floor->scale({10, 1, 10});
 
+    auto wall1 = scene.add_primitive<Plane>({5, 1.2, 4}, {0.7, 0.8, 0.5});
+    wall1->scale(glm::vec3(3.0f));
+    wall1->rotate(M_PI_2, {0, 0, 1});
+    auto wall2 = scene.add_primitive<Plane>({-5, 1.2, -2}, {0.7, 0.8, 0.5});
+    wall2->scale(glm::vec3(3.0f));
+    wall2->rotate(M_PI_2, {0, 0, 1});
+    auto cube = scene.add_primitive<Cube>();
+    cube->translate({-2, 1.2, 0});
+    cube->scale(glm::vec3(0.5));
+    cube->set_color({0.4, 0.4, 0.4});
 
-    auto c = scene.add_primitive<Torus>({2, 1.2, 0}, {0.3, 0, 0.3});
-    auto c1 = scene.add_primitive<Cone>({2, 2.2, -2}, {0.2, 0.6, 0.4});
-    c1->link_to(c.get());
-    c->scale({0.3, 0.3, 0.3});
-    c->rotate(-M_PI_2, {0.3, 0.5, 0.6});
-    c->translate({1, 1, 1});
+    auto sphere = scene.add_primitive<Sphere>();
+    sphere->translate({4, 1.2, 5.7});
+    sphere->scale(glm::vec3(0.5));
+    sphere->set_color({0.69, 0.1488, 0.5});
 
-    auto c3 = scene.add_primitive<Cube>({-4, 3, 3.4}, {0.1, 0.8, 0.3});
-    auto c4 = scene.add_primitive<Cylinder>({3, -7, -2}, {0.6, 0.2, 0.4});
-    auto c5 = scene.add_primitive<Cone>({5, 2, -3}, {0.2, 0.6, 0.4});
-    c3->link_to(c5.get());
-    c4->link_to(c5.get());
+    auto cone = scene.add_primitive<Cone>();
+    cone->translate({-4, 1.2, 0});
+    cone->scale(glm::vec3(0.5));
+    cone->set_color({0.4, 0.4, 0.4});
 
-    c5->rotate(3.14 / 4, {1, 1, 0});
 
-    c5->rotate(3.14 / 2, {0, 0, 1});
-
-    c5->translate({2, 0, 3});
-    c5->scale({0.3, 0.4, 0.5});
 
     scene.add_light({5, 25, 5}, {1, 1, 1}, 0.6f, false);
     scene.add_light({5, 25, 5}, {0.7, 0.8, 0.9}, 0.8f, true);

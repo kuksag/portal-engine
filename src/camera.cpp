@@ -55,12 +55,8 @@ void Camera::jump() {
 }
 
 [[nodiscard]] glm::mat4 Camera::get_projection_matrix() const {
-    if (custom_state_projection_matrix) {
-        return custom_projection_matrix;
-    } else {
-        return glm::perspective(glm::radians(fov), ratio, display_range_near,
-                                display_range_far);
-    }
+    return glm::perspective(glm::radians(fov), ratio, display_range_near,
+                            display_range_far);
 }
 
 void Camera::move_forward(float time_delta) {
@@ -123,4 +119,3 @@ void Camera::set_view_matrix(glm::mat4 data, bool recalculate) {
         custom_view_matrix = data;
     }
 }
-void Camera::set_projection_matrix(glm::mat4 data) {}

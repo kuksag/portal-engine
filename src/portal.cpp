@@ -7,10 +7,10 @@
 #include <glm/gtx/quaternion.hpp>
 #include <iostream>
 
-#include "settings.h"
 #include "scene.h"
+#include "settings.h"
 
-Portal::Portal(Scene* scene, std::shared_ptr<ShaderProgram> shader)
+Portal::Portal(Scene *scene, std::shared_ptr<ShaderProgram> shader)
     : Drawable(shader), destination(this) {
     // -------------------------------------------------------------------------
     shape = scene->add_primitive<Plane>();
@@ -50,14 +50,10 @@ Portal::Portal(Scene* scene, std::shared_ptr<ShaderProgram> shader)
     // -------------------------------------------------------------------------
 }
 
-void Portal::draw(const Camera& camera, const std::vector< std::shared_ptr<LightSource> >& ls) const {
+void Portal::draw(const Camera &camera,
+                  const std::vector<std::shared_ptr<LightSource> > &ls) const {}
 
-}
-
-void Portal::draw1(const Camera &camera) const {
-    shape->draw(camera, {});
-}
-
+void Portal::draw1(const Camera &camera) const { shape->draw(camera, {}); }
 
 void Portal::set_destination(Portal *other) { destination = other; }
 
@@ -114,9 +110,7 @@ bool Portal::crossed(glm::vec3 first_point, glm::vec3 last_point) const {
     return intersection.x >= -1.0 && intersection.x <= 1.0 &&
            intersection.y >= -1.0 && intersection.y <= 1.0;
 }
-Portal *const Portal::get_destination() {
-    return destination;
-}
+Portal *const Portal::get_destination() { return destination; }
 glm::vec3 Portal::get_normal() const {
-    return get_model_matrix() * glm::vec4(0.0f, 0.0f, 1.0f, 1.0f);
+    return get_rotation_matrix() * glm::vec4(0.0f, 0.0f, -1.0f, 1.0f);
 }

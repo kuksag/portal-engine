@@ -5,13 +5,13 @@
 
 #include <iostream>
 #include <memory>
+#include <thread>
 
 #include "camera.h"
 #include "controls.h"
 #include "portal.h"
 #include "settings.h"
 #include "window.h"
-#include <thread>
 
 Scene::Scene(Window& window, Camera& camera, Controller& controller)
     : window(window),
@@ -25,10 +25,8 @@ Scene::Scene(Window& window, Camera& camera, Controller& controller)
     glEnable(GL_CULL_FACE);
     glEnable(GL_DEPTH_TEST);
     auto p1 = add_portal({-3, 1.2, 0});
-    auto p2 = add_portal({4, 1.2, -1});
-    p2->translate({0.0, 3.0, 0.0});
-    p2->rotate(M_PI_4, {0.3, 0.8, 0.4});
-    p2->rotate(M_PI_2, {0.0, 1.0, 0.0});
+    auto p2 = add_portal({4, 1.2, 5});
+    p1->rotate(M_PI_2, {0.0, 1.0, 0.0});
     player_portals.set_portals(p1, p2);
 }
 
@@ -58,8 +56,8 @@ void Scene::draw() const {
 std::shared_ptr<Model> Scene::add_model(const std::string& path,
                                         const glm::vec3& position) {
     if (models[path].empty())
-        models[path].push_back
-            (std::make_shared<Model>(path, lighted_shader, true));
+        models[path].push_back(
+            std::make_shared<Model>(path, lighted_shader, true));
     models[path].push_back(
         std::make_shared<Model>(path, lighted_shader, false));
     return models[path].back();
@@ -98,15 +96,21 @@ void Scene::update() {
         portal_gun.launch_bullet();
     }
     float time_delta = controller.get_time_delta();
-    for (const auto &bullet : bullets) {
+    for (const auto& bullet : bullets) {
         auto first_point = bullet->get_position();
         auto last_point = bullet->get_position_after_move(time_delta);
         bool is_first = true;
         for (const auto& plane_shared_ptr : primitives[PrimId<Plane>::id]) {
-            if (auto plane = dynamic_cast<const Plane*>(plane_shared_ptr.get()); plane) {
-                if (!is_first && plane->is_visible() && plane->crossed(first_point, last_point)) {
-                    player_portals.replace_portal(glm::translate(glm::mat4(1.0), first_point),
-                        plane->get_rotation_matrix() * glm::rotate(glm::mat4(1.0), (float)-M_PI_2, glm::vec3{1, 0, 0}));
+            if (auto plane = dynamic_cast<const Plane*>(plane_shared_ptr.get());
+                plane) {
+                if (!is_first && plane->is_visible() &&
+                    plane->crossed(first_point, last_point)) {
+                    player_portals.replace_portal(
+                        glm::translate(glm::mat4(1.0), first_point),
+                        plane->get_rotation_matrix() *
+                            glm::rotate(glm::mat4(1.0), (float)M_PI_2,
+                                        glm::vec3{1, 0, 0}));
+
                     bullet->set_unvisible();
                 }
             }
@@ -114,15 +118,18 @@ void Scene::update() {
         }
     }
 
-
-    for (const auto &bullet : bullets) {
+    for (const auto& bullet : bullets) {
         auto first_point = bullet->get_position();
         auto last_point = bullet->get_position_after_move(time_delta);
-        for (const auto &portal : portals) {
+        for (const auto& portal : portals) {
             if (portal->crossed(first_point, last_point)) {
                 Camera custom_camera;
-                custom_camera.set_view_matrix(glm::lookAt(first_point, last_point, {0, 1, 0} /*random vector*/), true);
-                custom_camera = get_portal_destination_camera(custom_camera, *portal);
+                custom_camera.set_view_matrix(
+                    glm::lookAt(first_point, last_point,
+                                {0, 1, 0} /*random vector*/),
+                    true);
+                custom_camera =
+                    get_portal_destination_camera(custom_camera, *portal);
                 bullet->set_position_by_camera(custom_camera);
                 break;
             }
@@ -134,7 +141,8 @@ void Scene::update() {
     glm::vec3 last_point = controller.get_position_after_move();
     for (const std::shared_ptr<Portal>& portal : portals) {
         if (portal->crossed(first_point, last_point)) {
-            Camera custom_camera = get_portal_destination_camera(camera, *portal);
+            Camera custom_camera =
+                get_portal_destination_camera(camera, *portal);
             camera.set_view_matrix(custom_camera.get_view_matrix(), true);
         }
     }
@@ -144,7 +152,8 @@ void Scene::update() {
     controller.update_time();
 }
 
-void Scene::render_scene(const Camera& Cam, int recursion_level = 0) const {
+void Scene::render_scene(const Camera& Cam, int recursion_level,
+                         std::function<bool(const Entity*)> is_visible) const {
     auto draw_portals = [&](const Camera& cam) {
         for (auto& portal : portals) {
             portal->draw1(cam);
@@ -155,13 +164,15 @@ void Scene::render_scene(const Camera& Cam, int recursion_level = 0) const {
         glUniform4f(lighted_shader->get_uniform_id("color"), 0, 0, 0, 1);
         for (const auto& i : models) {
             for (unsigned j = 1; j < i.second.size(); ++j) {
-                i.second[0]->move_to(i.second[j]);
-                i.second[0]->draw(cam, lights);
+                if (is_visible(i.second[j].get())) {
+                    i.second[0]->move_to(i.second[j]);
+                    i.second[0]->draw(cam, lights);
+                }
             }
         }
         for (const auto& prim : primitives) {
             for (std::size_t i = 1; i < prim.size(); ++i) {
-                if (prim[i]->get_color() != glm::vec3(-1, -1, -1)) {
+                if (is_visible(prim[i].get()) && prim[i]->is_visible()) {
                     prim[0]->move_to(prim[i]);
                     prim[0]->set_color(prim[i]->get_color());
                     prim[0]->draw(cam, lights);
@@ -234,7 +245,17 @@ void Scene::render_scene(const Camera& Cam, int recursion_level = 0) const {
             // Recursion case
             // Pass our new view matrix and the clipped projection matrix (see
             // above)
-            render_scene(destination_camera, recursion_level + 1);
+            auto check_if_visible = [&](const Entity* entity) {
+//                if (auto plane = dynamic_cast<const Plane*>(entity); plane) {
+//                    return true;
+//                }
+                glm::vec3 normal = portal->get_destination()->get_normal();
+                glm::vec3 entity_vector =
+                    entity->get_position() - portal->get_destination()->get_position();
+                return glm::dot(normal, entity_vector) >= 0.0f;
+            };
+            render_scene(destination_camera, recursion_level + 1,
+                         check_if_visible);
         }
 
         // Disable color and depth drawing
@@ -303,7 +324,6 @@ void Scene::render_scene(const Camera& Cam, int recursion_level = 0) const {
     draw_non_portals(Cam);
     draw_portals(Cam);
 }
-
 
 void PairingPortals::replace_portal(glm::mat4 translation_matrix,
                                     glm::mat4 rotation_matrix) {
