@@ -7,10 +7,10 @@
 #include <glm/gtx/quaternion.hpp>
 #include <iostream>
 
-#include "settings.h"
 #include "scene.h"
+#include "settings.h"
 
-Portal::Portal(Scene* scene, std::shared_ptr<ShaderProgram> shader)
+Portal::Portal(Scene *scene, std::shared_ptr<ShaderProgram> shader)
     : Drawable(shader), destination(this) {
     // -------------------------------------------------------------------------
     shape = scene->add_primitive<Plane>();
@@ -59,7 +59,6 @@ void Portal::draw1(const Camera &camera) const {
     shape->draw(camera, {});
 }
 
-
 void Portal::set_destination(Portal *other) { destination = other; }
 
 glm::vec3 Portal::get_center() const {
@@ -98,5 +97,5 @@ const Portal *Portal::get_destination() const {
     return destination;
 }
 glm::vec3 Portal::get_normal() const {
-    return get_model_matrix() * glm::vec4(0.0f, 0.0f, 1.0f, 1.0f);
+    return get_rotation_matrix() * glm::vec4(0.0f, 0.0f, -1.0f, 1.0f);
 }
