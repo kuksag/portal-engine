@@ -15,8 +15,8 @@ private:
     Camera camera;
     GLuint depth_map;
     GLuint depth_map_fbo;
-    bool is_shadowed;
     float intensity_;
+    bool is_shadowed;
 
     void init_depth_map();
 public:

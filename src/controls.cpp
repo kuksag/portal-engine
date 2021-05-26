@@ -154,7 +154,7 @@ void Controller::toggle_fullscreen(bool flag) {
     }
 }
 
-void glfw_scroll_callback(GLFWwindow *window, double x_delta, double y_delta) {
+void glfw_scroll_callback(GLFWwindow *window, [[maybe_unused]] double x_delta, double y_delta) {
     auto *controller =
         reinterpret_cast<Controller *>(glfwGetWindowUserPointer(window));
     if (controller) {
@@ -164,7 +164,7 @@ void glfw_scroll_callback(GLFWwindow *window, double x_delta, double y_delta) {
     }
 }
 
-void glfw_framebuffer_size_callback(GLFWwindow *window, int width, int height) {
+void glfw_framebuffer_size_callback( [[maybe_unused]] GLFWwindow *window, int width, int height) {
     glViewport(0, 0, width, height);
 }
 

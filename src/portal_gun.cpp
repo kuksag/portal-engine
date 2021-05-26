@@ -16,7 +16,7 @@ void PortalGun::launch_bullet() const {
 Bullet::Bullet(glm::vec3 start_point_, glm::vec3 direction_, std::shared_ptr<Primitive> ball_) :
  start_point(std::move(start_point_)),
  direction(glm::normalize(direction_)),
- ball(std::move(ball_)){
+ ball(std::move(ball_)) {
     ball->scale(glm::vec3(0.1f));
     translate(start_point);
 }

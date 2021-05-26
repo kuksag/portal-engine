@@ -50,8 +50,9 @@ Portal::Portal(Scene* scene, std::shared_ptr<ShaderProgram> shader)
     // -------------------------------------------------------------------------
 }
 
-void Portal::draw(const Camera& camera, const std::vector< std::shared_ptr<LightSource> >& ls) const {
-
+void Portal::draw([[maybe_unused]] const Camera& camera, [[maybe_unused]] const std::vector< std::shared_ptr<LightSource> >& ls) const {
+    assert(false);
+    // because drawable is an abstract class
 }
 
 void Portal::draw1(const Camera &camera) const {
@@ -85,10 +86,13 @@ Camera get_portal_destination_camera(const Camera &camera,
 }
 
 void Portal::depth_test_draw(
-    const Camera &camera, std::shared_ptr<ShaderProgram> depth_shader) const {}
+    [[maybe_unused]] const Camera &camera, [[maybe_unused]] std::shared_ptr<ShaderProgram> depth_shader) const {
+    assert(false);
+    // because drawable is an abstract class
+}
 
 namespace {
-glm::vec2 cross_line_with_zero_plane(glm::vec3 first_point,
+glm::vec2 cross_line_with_yz_plane(glm::vec3 first_point,
                                      glm::vec3 last_point) {
     glm::vec3 directive_vector = last_point - first_point;
     float k = -first_point.z / directive_vector.z;
@@ -110,11 +114,11 @@ bool Portal::crossed(glm::vec3 first_point, glm::vec3 last_point) const {
         return false;
     }
     glm::vec2 intersection =
-        cross_line_with_zero_plane(first_point, last_point);
+        cross_line_with_yz_plane(first_point, last_point);
     return intersection.x >= -1.0 && intersection.x <= 1.0 &&
            intersection.y >= -1.0 && intersection.y <= 1.0;
 }
-Portal *const Portal::get_destination() {
+const Portal *Portal::get_destination() const {
     return destination;
 }
 glm::vec3 Portal::get_normal() const {

@@ -62,6 +62,7 @@ std::shared_ptr<Model> Scene::add_model(const std::string& path,
             (std::make_shared<Model>(path, lighted_shader, true));
     models[path].push_back(
         std::make_shared<Model>(path, lighted_shader, false));
+    models[path].back()->translate(position);
     return models[path].back();
 }
 

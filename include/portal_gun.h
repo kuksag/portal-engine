@@ -19,8 +19,8 @@ public:
 struct Bullet : Entity {
 private:
     inline static const float Speed = 10.0f;
-    glm::vec3 direction;
     glm::vec3 start_point;
+    glm::vec3 direction;
     std::shared_ptr<Primitive> ball;
 public:
     inline static const glm::vec3 Bullet_Color = glm::vec3(0.5f, 0.3f, 0.4f);

@@ -97,7 +97,7 @@ GLuint ShaderProgram::get_uniform_id(const std::string &uniform_name) {
     } else {
         GLuint uniform_id =
             glGetUniformLocation(program_id, uniform_name.c_str());
-        if (uniform_id == -1) {
+        if (uniform_id == static_cast<GLuint>(-1)) {
             throw std::logic_error(
                 logic_error_message(vertex_shader_name, uniform_name));
         }
@@ -111,7 +111,7 @@ GLuint ShaderProgram::get_attribute_id(const std::string &attribute_name) {
     } else {
         GLuint attribute_id =
             glGetAttribLocation(program_id, attribute_name.c_str());
-        if (attribute_id == -1) {
+        if (attribute_id == static_cast<GLuint>(-1)) {
             throw std::logic_error(
                 logic_error_message(vertex_shader_name, attribute_name));
         }
