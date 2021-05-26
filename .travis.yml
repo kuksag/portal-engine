@@ -16,6 +16,9 @@ addons:
       - clang-tidy-10
       - clang-tools-10
       - libclang-common-10-dev
+      - lib32gcc-s1
+      - lib32stdc++6
+      - libc6-i386
       - cmake
       - cppcheck
       - freeglut3
