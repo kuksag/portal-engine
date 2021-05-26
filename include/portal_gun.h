@@ -30,6 +30,7 @@ public:
     void translate(const glm::vec3 &data) override;
     void set_position_by_camera(const Camera &camera);
     void set_unvisible();
+    [[nodiscard]] bool is_visible() const;
 };
 
 #endif    // PORTAL_ENGINE_PORTAL_GUN_H

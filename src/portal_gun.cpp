@@ -41,3 +41,6 @@ glm::vec3 Bullet::get_position_after_move(float time_delta) {
 void Bullet::set_unvisible() {
     ball->set_unvisible();
 }
+bool Bullet::is_visible() const {
+    return ball->is_visible();
+}

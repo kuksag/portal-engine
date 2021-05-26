@@ -98,24 +98,12 @@ void Scene::update() {
     }
     float time_delta = controller.get_time_delta();
     for (const auto& bullet : bullets) {
-        auto first_point = bullet->get_position();
-        auto last_point = bullet->get_position_after_move(time_delta);
-        bool is_first = true;
-        for (const auto& plane_shared_ptr : primitives[PrimId<Plane>::id]) {
-            if (auto plane = dynamic_cast<const Plane*>(plane_shared_ptr.get()); plane) {
-                if (!is_first && plane->is_visible() && plane->crossed(first_point, last_point)) {
-                    player_portals.replace_portal(glm::translate(glm::mat4(1.0), first_point),
-                        plane->get_rotation_matrix() * glm::rotate(glm::mat4(1.0), (float)M_PI_2, glm::vec3{1, 0, 0}));
-                    bullet->set_unvisible();
-                }
-            }
-            is_first = false;
+        if (!bullet->is_visible()) {
+            continue;
         }
-    }
-
-    for (const auto& bullet : bullets) {
         auto first_point = bullet->get_position();
         auto last_point = bullet->get_position_after_move(time_delta);
+        bool is_moved_through_portal = false;
         for (const auto& portal : portals) {
             if (portal->crossed(first_point, last_point)) {
                 Camera custom_camera;
@@ -125,11 +113,55 @@ void Scene::update() {
                     true);
                 custom_camera =
                     get_portal_destination_camera(custom_camera, *portal);
+                custom_camera.set_view_matrix(custom_camera.get_view_matrix(), true);
                 bullet->set_position_by_camera(custom_camera);
+                is_moved_through_portal = true;
                 break;
             }
         }
         bullet->move(time_delta);
+        if (is_moved_through_portal) {
+            continue;
+        }
+
+        /*usual planes case*/ {
+            bool is_first = true;
+            for (const auto& plane_shared_ptr : primitives[PrimId<Plane>::id]) {
+                if (auto plane =
+                        dynamic_cast<const Plane*>(plane_shared_ptr.get());
+                    plane) {
+                    if (!is_first && plane->is_visible() &&
+                        plane->crossed(first_point, last_point)) {
+                        player_portals.replace_portal(
+                            glm::translate(glm::mat4(1.0), first_point),
+                            plane->get_rotation_matrix() *
+                                glm::rotate(glm::mat4(1.0), (float)M_PI_2,
+                                            glm::vec3{1, 0, 0}));
+                        bullet->set_unvisible();
+                    }
+                }
+                is_first = false;
+            }
+        }
+
+        /*planes from cubes case*/ {
+            bool is_first = true;
+            for (const auto& cube : primitives[PrimId<Cube>::id]) {
+                if (!is_first) {
+                    for (const auto &plane : dynamic_cast<const Cube*>(cube.get())->get_planes()) {
+                        if (plane->is_visible() && plane->crossed(first_point, last_point)) {
+                            player_portals.replace_portal(
+                                glm::translate(glm::mat4(1.0), first_point),
+                                plane->get_rotation_matrix() *
+                                glm::rotate(glm::mat4(1.0), (float)M_PI_2,
+                                            glm::vec3{1, 0, 0}));
+                            bullet->set_unvisible();
+                        }
+                    }
+                }
+                is_first = false;
+            }
+        }
     }
 
     glm::vec3 first_point = controller.get_position();
