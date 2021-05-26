@@ -120,4 +120,4 @@ void Camera::set_view_matrix(glm::mat4 data, bool recalculate) {
     }
 }
 
-void Camera::set_projection_matrix([[maybe_unused]] glm::mat4 data) {}
+//void Camera::set_projection_matrix([[maybe_unused]] glm::mat4 data) {}
