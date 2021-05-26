@@ -15,6 +15,7 @@ addons:
       - clang-10
       - clang-tidy-10
       - clang-tools-10
+      - libclang-common-10-dev
       - cmake
       - cppcheck
       - freeglut3
