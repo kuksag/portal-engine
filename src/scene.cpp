@@ -24,9 +24,8 @@ Scene::Scene(Window& window, Camera& camera, Controller& controller)
     glClearColor(bg_color.x, bg_color.y, bg_color.z, 0.0f);
     glEnable(GL_CULL_FACE);
     glEnable(GL_DEPTH_TEST);
-    auto p1 = add_portal({-3, 1.2, 0});
-    auto p2 = add_portal({4, 1.2, 5});
-    p1->rotate(M_PI_2, {0.0, 1.0, 0.0});
+    auto p1 = add_portal({0, 1.2, 0});
+    auto p2 = add_portal({0, 1.2, 5});
     player_portals.set_portals(p1, p2);
 }
 
@@ -98,9 +97,6 @@ void Scene::update() {
     }
     float time_delta = controller.get_time_delta();
     for (const auto& bullet : bullets) {
-        if (!bullet->is_visible()) {
-            continue;
-        }
         auto first_point = bullet->get_position();
         auto last_point = bullet->get_position_after_move(time_delta);
         bool is_moved_through_portal = false;
@@ -121,6 +117,9 @@ void Scene::update() {
         }
         bullet->move(time_delta);
         if (is_moved_through_portal) {
+            continue;
+        }
+        if (!bullet->is_visible()) {
             continue;
         }
 

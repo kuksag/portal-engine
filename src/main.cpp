@@ -26,7 +26,7 @@ int main() {
 
     auto wall1 = scene.add_primitive<Plane>({5, 1.2, 4}, {0.7, 0.8, 0.5});
     wall1->scale(glm::vec3(3.0f));
-    wall1->rotate(M_PI_2, {0, 0, 1});
+    wall1->rotate(M_PI_4, {0.4, 0.6, 1});
     auto wall2 = scene.add_primitive<Plane>({-5, 1.2, -2}, {0.7, 0.8, 0.5});
     wall2->scale(glm::vec3(3.0f));
     wall2->rotate(M_PI_2, {0, 0, 1});
