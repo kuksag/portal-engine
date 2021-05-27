@@ -123,20 +123,32 @@ void Scene::update() {
             continue;
         }
 
+        auto create_portal = [this, &bullet, &first_point, &last_point](const auto &plane) {
+
+            player_portals.replace_portal(
+                glm::translate(glm::mat4(1.0), first_point),
+                plane->get_rotation_matrix() *
+                glm::rotate(glm::mat4(1.0), (float)-M_PI_2,
+                            glm::vec3{1, 0, 0}));
+            bullet->set_unvisible();
+
+            if (glm::dot(player_portals.get_first_portal_normal(), last_point - first_point) > 0) {
+                player_portals.move_first_portal(
+                    glm::translate(glm::mat4(1.0), first_point),
+                    plane->get_rotation_matrix() *
+                    glm::rotate(glm::mat4(1.0), (float)M_PI_2,
+                                glm::vec3{1, 0, 0}));
+            }
+        };
+
         /*usual planes case*/ {
             bool is_first = true;
             for (const auto& plane_shared_ptr : primitives[PrimId<Plane>::id]) {
                 if (auto plane =
                         dynamic_cast<const Plane*>(plane_shared_ptr.get());
                     plane) {
-                    if (!is_first && plane->is_visible() &&
-                        plane->crossed(first_point, last_point)) {
-                        player_portals.replace_portal(
-                            glm::translate(glm::mat4(1.0), first_point),
-                            plane->get_rotation_matrix() *
-                                glm::rotate(glm::mat4(1.0), (float)M_PI_2,
-                                            glm::vec3{1, 0, 0}));
-                        bullet->set_unvisible();
+                    if (!is_first && plane->is_visible() && plane->crossed(first_point, last_point)) {
+                        create_portal(plane);
                     }
                 }
                 is_first = false;
@@ -149,12 +161,7 @@ void Scene::update() {
                 if (!is_first) {
                     for (const auto &plane : dynamic_cast<const Cube*>(cube.get())->get_planes()) {
                         if (plane->is_visible() && plane->crossed(first_point, last_point)) {
-                            player_portals.replace_portal(
-                                glm::translate(glm::mat4(1.0), first_point),
-                                plane->get_rotation_matrix() *
-                                glm::rotate(glm::mat4(1.0), (float)M_PI_2,
-                                            glm::vec3{1, 0, 0}));
-                            bullet->set_unvisible();
+                            create_portal(plane);
                         }
                     }
                 }
@@ -354,8 +361,8 @@ void Scene::render_scene(const Camera& Cam, int recursion_level,
 void PairingPortals::replace_portal(glm::mat4 translation_matrix,
                                     glm::mat4 rotation_matrix) {
     std::swap(first, second);
-    second->set_translation_matrix(translation_matrix);
-    second->set_rotation_matrix(rotation_matrix);
+    first->set_translation_matrix(translation_matrix);
+    first->set_rotation_matrix(rotation_matrix);
 }
 void PairingPortals::set_portals(std::shared_ptr<Portal> first_,
                                  std::shared_ptr<Portal> second_) {
@@ -363,4 +370,12 @@ void PairingPortals::set_portals(std::shared_ptr<Portal> first_,
     second = second_;
     first->set_destination(second.get());
     second->set_destination(first.get());
+}
+glm::vec3 PairingPortals::get_first_portal_normal() const {
+    return first->get_normal();
+}
+void PairingPortals::move_first_portal(glm::mat4 translation_matrix,
+                                       glm::mat4 rotation_matrix) {
+    first->set_translation_matrix(translation_matrix);
+    first->set_rotation_matrix(rotation_matrix);
 }

@@ -27,6 +27,10 @@ public:
                      std::shared_ptr<Portal> second_);
     void replace_portal(glm::mat4 translation_matrix,
                         glm::mat4 rotation_matrix = glm::mat4());
+    [[nodiscard]] glm::vec3 get_first_portal_normal() const;
+    void move_first_portal(glm::mat4 translation_matrix,
+                           glm::mat4 rotation_matrix = glm::mat4());
+
 };
 
 class Scene {
