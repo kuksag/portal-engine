@@ -75,7 +75,6 @@ Camera get_portal_destination_camera(const Camera &camera,
         camera.get_view_matrix() * portal.get_model_matrix() *
         // 2. Object is front-facing, the camera is facing the other way:
         glm::rotate(glm::mat4(1.0), static_cast<float>(M_PI),
-                    glm::quat_cast(portal.get_rotation_matrix()) *
                         glm::vec3(0.0, 1.0, 0.0)) *
         // 1. Go the destination portal; using inverse, because camera
         //    transformations are reversed compared to object

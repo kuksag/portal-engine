@@ -26,6 +26,8 @@ Scene::Scene(Window& window, Camera& camera, Controller& controller)
     glEnable(GL_DEPTH_TEST);
     auto p1 = add_portal({0, 1.2, 0});
     auto p2 = add_portal({0, 1.2, 5});
+    p2->translate({5, 4, 5});
+    p2->rotate(-M_PI_4, {1, 1, 0.5});
     player_portals.set_portals(p1, p2);
 }
 

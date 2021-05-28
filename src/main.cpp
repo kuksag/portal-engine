@@ -31,7 +31,7 @@ int main() {
     wall2->scale(glm::vec3(3.0f));
     wall2->rotate(M_PI_2, {0, 0, 1});
     auto cube = scene.add_primitive<Cube>();
-    cube->translate({-2, 1.2, 0});
+    cube->translate({1, 1.2, -2});
     cube->scale(glm::vec3(0.5));
     cube->set_color({0.4, 0.4, 0.4});
 
