@@ -2,10 +2,9 @@
 
 #include "portal.h"
 
-JokersTrap::JokersTrap(Scene& scene, const glm::vec3& position)
-    : Drawable(std::make_shared<ShaderProgram>("shaders/light.vertex",
-                                               "shaders/light.fragment")),
-      base(scene) {
+JokersTrap::JokersTrap(Scene& scene, const glm::vec3& position,
+                       std::shared_ptr<ShaderProgram> shader)
+    : Drawable(shader), base(scene) {
     const float SCALE_OBJECT = 0.8;
 
     if (patterns.empty()) {

@@ -81,7 +81,7 @@ std::shared_ptr<Portal> Scene::add_portal(const glm::vec3& position) {
 }
 
 std::shared_ptr<JokersTrap> Scene::add_jokers_trap(const glm::vec3& position) {
-    return std::make_shared<JokersTrap>(*this, position);
+    return std::make_shared<JokersTrap>(*this, position, lighted_shader);
 }
 
 std::shared_ptr<Bullet> Scene::add_bullet(const glm::vec3& start_point,

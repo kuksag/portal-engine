@@ -25,7 +25,8 @@ private:
     PortalsCube base;
 
 public:
-    JokersTrap(Scene& scene, const glm::vec3& position);
+    JokersTrap(Scene& scene, const glm::vec3& position,
+               std::shared_ptr<ShaderProgram> shader);
 
     void draw(
         const Camera& camera,
