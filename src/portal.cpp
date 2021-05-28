@@ -66,6 +66,9 @@ glm::vec3 Portal::get_center() const {
     return glm::vec3(result[0], result[1], result[2]);
 }
 
+bool Portal::is_support() const { return support; }
+void Portal::set_is_support(bool support) { this->support = support; }
+
 Camera get_portal_destination_camera(const Camera &camera,
                                      const Portal &portal) {
     auto result = camera;

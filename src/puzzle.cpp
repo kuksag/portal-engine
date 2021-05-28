@@ -40,6 +40,7 @@ JokersTrap::JokersTrap(Scene& scene)
     for (std::size_t i = 0; i < EDGE_NUMBER; i++) {
         base.portals[i]->set_destination(patterns[i].portals[i].get());
         base.portals[i]->link_to(&base);
+        base.portals[i]->set_is_support(false);
     }
 
     base.portals[4]->set_destination(patterns[4].portals[4].get());
@@ -57,8 +58,10 @@ JokersTrap::PortalsCube::PortalsCube(Scene& scene) {
     static const float z_offset[] = {1, -1, 0, 0, 0, 0};
 
     portals.resize(EDGE_NUMBER);
-    for (auto& i : portals)
+    for (auto& i : portals) {
         i = scene.add_portal();
+        i->set_is_support(true);
+    }
 
     for (std::size_t j = 0; j < EDGE_NUMBER; j++) {
         portals[j]->translate({x_offset[j], y_offset[j], z_offset[j]});

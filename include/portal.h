@@ -29,7 +29,12 @@ private:
 
     [[nodiscard]] glm::vec3 get_center() const;
 
+    bool support = false;
+
 public:
+
+    bool is_support() const;
+    void set_is_support(bool support);
 
     // bool is_draw_bounds = false;
 

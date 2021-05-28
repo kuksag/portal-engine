@@ -217,6 +217,8 @@ void Scene::render_scene(const Camera& Cam, int recursion_level,
     };
 
     for (auto& portal : portals) {
+        if (portal->is_support())
+            continue;
         // Calculate view matrix as if the player was already teleported
         Camera destination_camera = Cam;
         destination_camera =
