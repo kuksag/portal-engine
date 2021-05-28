@@ -8,17 +8,14 @@
 
 class Window {
 private:
-
-	GLFWwindow* window = nullptr;
+    GLFWwindow* window = nullptr;
 
 public:
+    Window();
 
-	Window();
+    GLFWwindow* glfw_window();
 
-	GLFWwindow* glfw_window();
-
-	bool is_open();
+    bool is_open();
 };
-
 
 #endif    // PORTAL_ENGINE_WINDOW_H

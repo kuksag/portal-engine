@@ -1,5 +1,7 @@
 #include "Texture.h"
+
 #include <SOIL/SOIL.h>
+
 #include <fstream>
 #include <iostream>
 Texture::Texture(const std::string &path_to_texture) {
@@ -17,8 +19,8 @@ Texture::Texture(const std::string &path_to_texture) {
     if (!texture_file.is_open()) {
         throw std::logic_error("Impossible to open: " + path_to_texture);
     }
-    unsigned char * image = SOIL_load_image(path_to_texture.c_str(),
-                                           &width, &height, 0, SOIL_LOAD_RGB);
+    unsigned char *image = SOIL_load_image(path_to_texture.c_str(), &width,
+                                           &height, 0, SOIL_LOAD_RGB);
     glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, width, height, 0, GL_RGB,
                  GL_UNSIGNED_BYTE, image);
     glGenerateMipmap(GL_TEXTURE_2D);
@@ -26,10 +28,6 @@ Texture::Texture(const std::string &path_to_texture) {
     unbind();
 }
 
-void Texture::bind() const {
-    glBindTexture(GL_TEXTURE_2D, texture_id);
-}
+void Texture::bind() const { glBindTexture(GL_TEXTURE_2D, texture_id); }
 
-void Texture::unbind() const {
-    glBindTexture(GL_TEXTURE_2D, 0);
-}
+void Texture::unbind() const { glBindTexture(GL_TEXTURE_2D, 0); }

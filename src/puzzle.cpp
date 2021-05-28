@@ -1,9 +1,11 @@
 #include "puzzle.h"
+
 #include "portal.h"
 
-JokersTrap::JokersTrap(Scene& scene)
+JokersTrap::JokersTrap(Scene& scene, const glm::vec3& position)
     : Drawable(std::make_shared<ShaderProgram>("shaders/light.vertex",
-                                               "shaders/light.fragment")), base(scene) {
+                                               "shaders/light.fragment")),
+      base(scene) {
     const float SCALE_OBJECT = 0.8;
 
     if (patterns.empty()) {
@@ -11,12 +13,18 @@ JokersTrap::JokersTrap(Scene& scene)
             patterns.emplace_back(PortalsCube(scene));
         }
 
-        patterns[0].centroid = scene.add_primitive<Sphere>(glm::vec3(0.0), {0.44, 0.12, 0.78});
-        patterns[1].centroid = scene.add_primitive<Torus>(glm::vec3(0.0), {0.16, 0.95, 0.04});
-        patterns[2].centroid = scene.add_primitive<Cone>(glm::vec3(0.0), {0.88, 0.57, 0.52});
-        patterns[3].centroid = scene.add_primitive<Cylinder>(glm::vec3(0.0), {0.2, 0.03, 0.92});
-        patterns[4].centroid = scene.add_primitive<Cone>(glm::vec3(0.0), {0.92, 0.48, 0.16});
-        patterns[5].centroid = scene.add_primitive<Cube>(glm::vec3(0.0), {0.2, 0.66, 0.66});
+        patterns[0].centroid =
+            scene.add_primitive<Sphere>(glm::vec3(0.0), {0.44, 0.12, 0.78});
+        patterns[1].centroid =
+            scene.add_primitive<Torus>(glm::vec3(0.0), {0.16, 0.95, 0.04});
+        patterns[2].centroid =
+            scene.add_primitive<Cone>(glm::vec3(0.0), {0.88, 0.57, 0.52});
+        patterns[3].centroid =
+            scene.add_primitive<Cylinder>(glm::vec3(0.0), {0.2, 0.03, 0.92});
+        patterns[4].centroid =
+            scene.add_primitive<Cone>(glm::vec3(0.0), {0, 0.8, 0.16});
+        patterns[5].centroid =
+            scene.add_primitive<Cube>(glm::vec3(0.0), {0.2, 0.66, 0.66});
 
         patterns[3].centroid->scale(glm::vec3(0.6));
         patterns[5].centroid->scale(glm::vec3(0.6));
@@ -31,10 +39,6 @@ JokersTrap::JokersTrap(Scene& scene)
             patterns[i].inverse_rotate();
             base.portals[i]->set_destination(patterns[i].portals[i].get());
         }
-
-        patterns[4].portals[4]->rotate(M_PI, {1.0, 0.0, 0.0});
-        patterns[5].portals[5]->rotate(M_PI, {1.0, 0.0, 0.0});
-
     }
     // -------------------------------------------------------------------------
     for (std::size_t i = 0; i < EDGE_NUMBER; i++) {
@@ -47,8 +51,8 @@ JokersTrap::JokersTrap(Scene& scene)
     base.portals[5]->set_destination(patterns[5].portals[5].get());
     base.link_to(this);
     // -------------------------------------------------------------------------
+    translate(position);
 }
-
 
 JokersTrap::PortalsCube::PortalsCube(Scene& scene) {
     const float BOUND_MATCH = 0.9;
@@ -85,26 +89,9 @@ void JokersTrap::PortalsCube::inverse_rotate() {
     portals[5]->rotate(M_PI, {1.0, 0.0, 0.0});
 }
 
-void JokersTrap::draw(const Camera&, const std::vector< std::shared_ptr<LightSource> >&) const {}
+void JokersTrap::draw(const Camera&,
+                      const std::vector<std::shared_ptr<LightSource> >&) const {
+}
 
-// void JokersTrap::set_light_sources(const std::vector<LightSource> *data) {
-//     for (auto &i : base.portals) i.set_light_sources(data);
-//     for (PortalsCube &pattern : patterns)
-//         pattern.centroid->set_light_sources(data);
-// }
-void JokersTrap::depth_test_draw(
-    const Camera &, std::shared_ptr<ShaderProgram> ) const {}
-
-// void JokersTrap::translate(const glm::vec3 &data) { base.translate(data); }
-
-// void JokersTrap::rotate(float angle, const glm::vec3 &data) {
-//     // TODO
-//     //    for (PortalsCube &PS : patterns) PS.rotate(angle, data);
-//     //    base.rotate(angle, data);
-// }
-
-// void JokersTrap::scale(const glm::vec3 &data) {
-//     // TODO
-//     //    for (PortalsCube &PS : patterns) PS.scale(data);
-//     //    base.scale(data);
-// }
+void JokersTrap::depth_test_draw(const Camera&,
+                                 std::shared_ptr<ShaderProgram>) const {}

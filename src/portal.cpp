@@ -50,14 +50,15 @@ Portal::Portal(Scene *scene, std::shared_ptr<ShaderProgram> shader)
     // -------------------------------------------------------------------------
 }
 
-void Portal::draw([[maybe_unused]] const Camera& camera, [[maybe_unused]] const std::vector< std::shared_ptr<LightSource> >& ls) const {
+void Portal::draw(
+    [[maybe_unused]] const Camera &camera,
+    [[maybe_unused]] const std::vector<std::shared_ptr<LightSource> > &ls)
+    const {
     assert(false);
     // because drawable is an abstract class
 }
 
-void Portal::draw1(const Camera &camera) const {
-    shape->draw(camera, {});
-}
+void Portal::draw1(const Camera &camera) const { shape->draw(camera, {}); }
 
 void Portal::set_destination(Portal *other) { destination = other; }
 
@@ -78,7 +79,7 @@ Camera get_portal_destination_camera(const Camera &camera,
         camera.get_view_matrix() * portal.get_model_matrix() *
         // 2. Object is front-facing, the camera is facing the other way:
         glm::rotate(glm::mat4(1.0), static_cast<float>(M_PI),
-                        glm::vec3(0.0, 1.0, 0.0)) *
+                    glm::vec3(0.0, 1.0, 0.0)) *
         // 1. Go the destination portal; using inverse, because camera
         //    transformations are reversed compared to object
         //    transformations:
@@ -87,17 +88,16 @@ Camera get_portal_destination_camera(const Camera &camera,
 }
 
 void Portal::depth_test_draw(
-    [[maybe_unused]] const Camera &camera, [[maybe_unused]] std::shared_ptr<ShaderProgram> depth_shader) const {
+    [[maybe_unused]] const Camera &camera,
+    [[maybe_unused]] std::shared_ptr<ShaderProgram> depth_shader) const {
     assert(false);
     // because drawable is an abstract class
 }
 
 bool Portal::crossed(glm::vec3 first_point, glm::vec3 last_point) const {
-    return dynamic_cast<Plane*>(shape.get())->crossed(first_point, last_point);
+    return dynamic_cast<Plane *>(shape.get())->crossed(first_point, last_point);
 }
-const Portal *Portal::get_destination() const {
-    return destination;
-}
+const Portal *Portal::get_destination() const { return destination; }
 glm::vec3 Portal::get_normal() const {
     return get_rotation_matrix() * glm::vec4(0.0f, 0.0f, -1.0f, 1.0f);
 }

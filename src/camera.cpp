@@ -8,13 +8,13 @@
 using namespace Settings::Camera;
 
 void Camera::update(float dt) {
-     // speed += acceleration * dt;
-     // position += speed * dt;
-     // if (position.y < 1) {
-     //     position.y = 1;
-     //     speed.y = 0;
-     //     is_on_floor = true;
-     // }
+    speed += acceleration * dt;
+    position += speed * dt;
+    if (position.y < 1) {
+        position.y = 1;
+        speed.y = 0;
+        is_on_floor = true;
+    }
 }
 
 void Camera::jump() {
@@ -120,4 +120,4 @@ void Camera::set_view_matrix(glm::mat4 data, bool recalculate) {
     }
 }
 
-//void Camera::set_projection_matrix([[maybe_unused]] glm::mat4 data) {}
+// void Camera::set_projection_matrix([[maybe_unused]] glm::mat4 data) {}

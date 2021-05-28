@@ -14,7 +14,9 @@ protected:
     std::shared_ptr<ShaderProgram> shader;
 
 public:
-    virtual void draw(const Camera& camera, const std::vector< std::shared_ptr<LightSource> >& ls) const = 0;
+    virtual void draw(
+        const Camera& camera,
+        const std::vector<std::shared_ptr<LightSource> >& ls) const = 0;
     virtual void depth_test_draw(
         const Camera& camera,
         std::shared_ptr<ShaderProgram> depth_shader) const = 0;

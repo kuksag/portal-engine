@@ -13,6 +13,7 @@
 #include "model.h"
 #include "portal_gun.h"
 #include "primitives.h"
+#include "puzzle.h"
 #include "window.h"
 
 struct Portal;
@@ -30,7 +31,6 @@ public:
     [[nodiscard]] glm::vec3 get_first_portal_normal() const;
     void move_first_portal(glm::mat4 translation_matrix,
                            glm::mat4 rotation_matrix = glm::mat4());
-
 };
 
 class Scene {
@@ -82,6 +82,9 @@ public:
 
     std::shared_ptr<Bullet> add_bullet(const glm::vec3& start_point,
                                        const glm::vec3& direction);
+
+    std::shared_ptr<JokersTrap> add_jokers_trap(const glm::vec3& position = {
+                                                    0, 0, 0});
 
     void set_bg_color(const glm::vec3& color);
 };

@@ -2,10 +2,11 @@
 #define PORTAL_ENGINE_LIGHT_SOURCE_H
 
 #include <glm/gtc/matrix_transform.hpp>
+#include <memory>
+
 #include "camera.h"
 #include "entity.h"
 #include "shader.h"
-#include <memory>
 struct Drawable;
 
 struct LightSource : public Entity {
@@ -19,8 +20,10 @@ private:
     bool is_shadowed;
 
     void init_depth_map();
+
 public:
-    LightSource(glm::vec3 position_, glm::vec3 color_, float intensity, bool is_shadowed_);
+    LightSource(glm::vec3 position_, glm::vec3 color_, float intensity,
+                bool is_shadowed_);
     [[nodiscard]] float intensity() const;
     [[nodiscard]] bool shadowed() const;
     [[nodiscard]] glm::vec3 get_position() const;
@@ -29,7 +32,7 @@ public:
     [[nodiscard]] GLuint get_depth_map() const;
     void start_depth_test();
     void finish_depth_test();
-    void gen_depth_map(Drawable const * drawable);
+    void gen_depth_map(Drawable const *drawable);
 };
 
 #endif    // PORTAL_ENGINE_LIGHT_SOURCE_H
