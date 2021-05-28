@@ -80,6 +80,10 @@ std::shared_ptr<Portal> Scene::add_portal(const glm::vec3& position) {
     return portals.back();
 }
 
+std::shared_ptr<JokersTrap> Scene::add_jokers_trap(const glm::vec3& position) {
+    return std::make_shared<JokersTrap>(*this, position);
+}
+
 std::shared_ptr<Bullet> Scene::add_bullet(const glm::vec3& start_point,
                                           const glm::vec3& direction) {
     auto ball = add_primitive<Sphere>({0, 0, 0}, Bullet::Bullet_Color);
@@ -111,7 +115,8 @@ void Scene::update() {
                     true);
                 custom_camera =
                     get_portal_destination_camera(custom_camera, *portal);
-                custom_camera.set_view_matrix(custom_camera.get_view_matrix(), true);
+                custom_camera.set_view_matrix(custom_camera.get_view_matrix(),
+                                              true);
                 bullet->set_position_by_camera(custom_camera);
                 is_moved_through_portal = true;
                 break;
@@ -125,21 +130,22 @@ void Scene::update() {
             continue;
         }
 
-        auto create_portal = [this, &bullet, &first_point, &last_point](const auto &plane) {
-
+        auto create_portal = [this, &bullet, &first_point,
+                              &last_point](const auto& plane) {
             player_portals.replace_portal(
                 glm::translate(glm::mat4(1.0), first_point),
-                plane->get_rotation_matrix() *
-                glm::rotate(glm::mat4(1.0), (float)-M_PI_2,
-                            glm::vec3{1, 0, 0}));
+                plane->get_rotation_matrix() * glm::rotate(glm::mat4(1.0),
+                                                           (float)-M_PI_2,
+                                                           glm::vec3{1, 0, 0}));
             bullet->set_unvisible();
 
-            if (glm::dot(player_portals.get_first_portal_normal(), last_point - first_point) > 0) {
+            if (glm::dot(player_portals.get_first_portal_normal(),
+                         last_point - first_point) > 0) {
                 player_portals.move_first_portal(
                     glm::translate(glm::mat4(1.0), first_point),
                     plane->get_rotation_matrix() *
-                    glm::rotate(glm::mat4(1.0), (float)M_PI_2,
-                                glm::vec3{1, 0, 0}));
+                        glm::rotate(glm::mat4(1.0), (float)M_PI_2,
+                                    glm::vec3{1, 0, 0}));
             }
         };
 
@@ -149,7 +155,8 @@ void Scene::update() {
                 if (auto plane =
                         dynamic_cast<const Plane*>(plane_shared_ptr.get());
                     plane) {
-                    if (!is_first && plane->is_visible() && plane->crossed(first_point, last_point)) {
+                    if (!is_first && plane->is_visible() &&
+                        plane->crossed(first_point, last_point)) {
                         create_portal(plane);
                     }
                 }
@@ -161,8 +168,10 @@ void Scene::update() {
             bool is_first = true;
             for (const auto& cube : primitives[PrimId<Cube>::id]) {
                 if (!is_first) {
-                    for (const auto &plane : dynamic_cast<const Cube*>(cube.get())->get_planes()) {
-                        if (plane->is_visible() && plane->crossed(first_point, last_point)) {
+                    for (const auto& plane :
+                         dynamic_cast<const Cube*>(cube.get())->get_planes()) {
+                        if (plane->is_visible() &&
+                            plane->crossed(first_point, last_point)) {
                             create_portal(plane);
                         }
                     }
@@ -217,6 +226,7 @@ void Scene::render_scene(const Camera& Cam, int recursion_level,
     };
 
     for (auto& portal : portals) {
+        if (portal->is_support()) continue;
         // Calculate view matrix as if the player was already teleported
         Camera destination_camera = Cam;
         destination_camera =
@@ -281,12 +291,14 @@ void Scene::render_scene(const Camera& Cam, int recursion_level,
             // Pass our new view matrix and the clipped projection matrix (see
             // above)
             auto check_if_visible = [&](const Entity* entity) {
-//                if (auto plane = dynamic_cast<const Plane*>(entity); plane) {
-//                    return true;
-//                }
+                //                if (auto plane = dynamic_cast<const
+                //                Plane*>(entity); plane) {
+                //                    return true;
+                //                }
                 glm::vec3 normal = portal->get_destination()->get_normal();
                 glm::vec3 entity_vector =
-                    entity->get_position() - portal->get_destination()->get_position();
+                    entity->get_position() -
+                    portal->get_destination()->get_position();
                 return glm::dot(normal, entity_vector) >= 0.0f;
             };
             render_scene(destination_camera, recursion_level + 1,

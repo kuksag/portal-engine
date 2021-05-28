@@ -8,6 +8,7 @@
 struct Texture {
 private:
     GLuint texture_id;
+
 public:
     explicit Texture(const std::string &path_to_texture);
     void bind() const;

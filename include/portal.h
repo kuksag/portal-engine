@@ -3,11 +3,10 @@
 
 #include <memory>
 
-#include "shader.h"
 #include "drawable.h"
 #include "primitives.h"
 #include "scene.h"
-
+#include "shader.h"
 
 struct Portal : public Drawable {
     // -------------------------------------------------------------------------
@@ -29,21 +28,27 @@ private:
 
     [[nodiscard]] glm::vec3 get_center() const;
 
+    bool support = false;
+
 public:
+    bool is_support() const;
+    void set_is_support(bool support);
 
     // bool is_draw_bounds = false;
 
-    Portal(Scene* scene, std::shared_ptr<ShaderProgram> shader);
+    Portal(Scene *scene, std::shared_ptr<ShaderProgram> shader);
 
     // void toggle_draw_bounds();
 
     // TODO: make protected
     void draw1(const Camera &camera) const;
     void depth_test_draw(
-        const Camera& camera,
+        const Camera &camera,
         std::shared_ptr<ShaderProgram> depth_shader) const override;
 
-    void draw(const Camera& camera, const std::vector< std::shared_ptr<LightSource> >& ls) const override;
+    void draw(
+        const Camera &camera,
+        const std::vector<std::shared_ptr<LightSource>> &ls) const override;
 
     void set_destination(Portal *other);
 

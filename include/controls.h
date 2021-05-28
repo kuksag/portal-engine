@@ -11,10 +11,11 @@ struct Controller {
 private:
     Camera& camera;
     Window& window;
-    
+
     float last_time_point;
     bool is_fullscreen;
     void cursor_position_callback_without_changes();
+
 public:
     explicit Controller(Camera& camera_, Window& window);
 
@@ -38,9 +39,9 @@ public:
     //    void mouse_button_callback(int button, int action, int mods);
 };
 
-void glfw_scroll_callback(GLFWwindow *window, double x_delta, double y_delta);
+void glfw_scroll_callback(GLFWwindow* window, double x_delta, double y_delta);
 
-void glfw_framebuffer_size_callback(GLFWwindow *window, int width, int height);
+void glfw_framebuffer_size_callback(GLFWwindow* window, int width, int height);
 
 void glfw_focus_callback(GLFWwindow* window, int focused);
 

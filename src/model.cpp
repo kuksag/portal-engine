@@ -2,21 +2,22 @@
 
 #include <assimp/postprocess.h>
 #include <assimp/scene.h>
+
 #include <assimp/Importer.hpp>
 #include <iostream>
-#include <utility>
-#include <vector>
-#include "light_source.h"
 #include <sstream>
 #include <string>
+#include <utility>
+#include <vector>
 
-Model::Model(const std::string &path, std::shared_ptr<ShaderProgram> shader, bool need_load)
+#include "light_source.h"
+
+Model::Model(const std::string &path, std::shared_ptr<ShaderProgram> shader,
+             bool need_load)
     : Drawable(std::move(shader)),
       directory(path.substr(0, path.find_last_of('/'))) {
+    if (!need_load) return;
 
-    if (!need_load)
-        return;
-    
     Assimp::Importer importer;
     const aiScene *scene = importer.ReadFile(
         path,
@@ -32,21 +33,29 @@ Model::Model(const std::string &path, std::shared_ptr<ShaderProgram> shader, boo
     deep_load_meshes(scene->mRootNode, scene);
 }
 
-void Model::depth_test_draw(const Camera &camera, std::shared_ptr<ShaderProgram> depth_shader) const {
+void Model::depth_test_draw(const Camera &camera,
+                            std::shared_ptr<ShaderProgram> depth_shader) const {
     depth_shader->use();
     auto MVP = camera.get_projection_matrix() * camera.get_view_matrix() *
                get_model_matrix();
     glUniformMatrix4fv(shader->get_uniform_id("MVP"), 1, GL_FALSE, &MVP[0][0]);
     auto model_matrix = get_model_matrix();
-    glUniformMatrix4fv(shader->get_uniform_id("model_matrix"), 1, GL_FALSE, &model_matrix[0][0]);
+    glUniformMatrix4fv(shader->get_uniform_id("model_matrix"), 1, GL_FALSE,
+                       &model_matrix[0][0]);
     for (const auto &i : meshes) i.depth_test_draw(depth_shader);
 }
 
-void Model::set_matrices(const Camera &camera, const std::vector< std::shared_ptr<LightSource> >& light_sources) const {
+void Model::set_matrices(
+    const Camera &camera,
+    const std::vector<std::shared_ptr<LightSource> > &light_sources) const {
     shader->use();
-    auto model_matrix = /*glm::inverse(link ? link->get_model_matrix() : glm::mat4(1)) * */get_model_matrix();
-    auto MVP = camera.get_projection_matrix() * camera.get_view_matrix() * model_matrix;    // TODO: one calculation
-    // model_matrix = glm::inverse(link ? link->get_model_matrix() : glm::mat4(1)) * model_matrix;
+    auto model_matrix =
+        /*glm::inverse(link ? link->get_model_matrix() : glm::mat4(1)) * */
+        get_model_matrix();
+    auto MVP = camera.get_projection_matrix() * camera.get_view_matrix() *
+               model_matrix;    // TODO: one calculation
+    // model_matrix = glm::inverse(link ? link->get_model_matrix() :
+    // glm::mat4(1)) * model_matrix;
     auto normal_transformation = glm::mat3(transpose(inverse(model_matrix)));
 
     glUniformMatrix4fv(shader->get_uniform_id("MVP"), 1, GL_FALSE, &MVP[0][0]);
@@ -66,27 +75,34 @@ void Model::set_matrices(const Camera &camera, const std::vector< std::shared_pt
     }
 }
 
-void Model::draw(const Camera &camera, const std::vector< std::shared_ptr<LightSource> >& light_sources) const {
+void Model::draw(
+    const Camera &camera,
+    const std::vector<std::shared_ptr<LightSource> > &light_sources) const {
     shader->use();
     set_matrices(camera, light_sources);
 
-    auto set_vec3 = [](GLuint id, glm::vec3 data) {//TODO: make ShaderProgram method
+    auto set_vec3 = [](GLuint id,
+                       glm::vec3 data) {    // TODO: make ShaderProgram method
         glUniform3f(id, data.x, data.y, data.z);
     };
     set_vec3(shader->get_uniform_id("camera_pos"), camera.get_position());
-    glUniform1i(shader->get_uniform_id("count_of_light_sources"), light_sources.size());
+    glUniform1i(shader->get_uniform_id("count_of_light_sources"),
+                light_sources.size());
     for (std::size_t i = 0; i < light_sources.size(); ++i) {
         std::stringstream position_uniform_name;
         position_uniform_name << "light_sources[" << i << "].position";
-        set_vec3(shader->get_uniform_id(position_uniform_name.str()), light_sources[i]->get_position());
+        set_vec3(shader->get_uniform_id(position_uniform_name.str()),
+                 light_sources[i]->get_position());
 
         std::stringstream color_uniform_name;
         color_uniform_name << "light_sources[" << i << "].color";
-        set_vec3(shader->get_uniform_id(color_uniform_name.str()), light_sources[i]->get_color());
+        set_vec3(shader->get_uniform_id(color_uniform_name.str()),
+                 light_sources[i]->get_color());
 
         std::stringstream intensity_uniform_name;
         intensity_uniform_name << "light_sources[" << i << "].intensity";
-        glUniform1f(shader->get_uniform_id(intensity_uniform_name.str()), light_sources[i]->intensity());
+        glUniform1f(shader->get_uniform_id(intensity_uniform_name.str()),
+                    light_sources[i]->intensity());
 
         if (light_sources[i]->shadowed()) {
             std::stringstream depth_map_uniform_name;
@@ -99,7 +115,8 @@ void Model::draw(const Camera &camera, const std::vector< std::shared_ptr<LightS
 
         std::stringstream is_shadowed_uniform_fs_name;
         is_shadowed_uniform_fs_name << "is_shadowed_fs[" << i << "]";
-        glUniform1i(shader->get_uniform_id(is_shadowed_uniform_fs_name.str()), light_sources[i]->shadowed() ? 1 : 0);
+        glUniform1i(shader->get_uniform_id(is_shadowed_uniform_fs_name.str()),
+                    light_sources[i]->shadowed() ? 1 : 0);
     }
 
     for (const auto &i : meshes) i.draw();

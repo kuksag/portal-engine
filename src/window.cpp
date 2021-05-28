@@ -1,13 +1,14 @@
 #include "window.h"
-#include "settings.h"
 
-#include <iostream>
 #include <cassert>
+#include <iostream>
+
+#include "settings.h"
 
 using namespace Settings::Window;
 
 Window::Window() {
-	if (!glfwInit()) {
+    if (!glfwInit()) {
         std::cerr << "Failed to initialize GLFW\n";
         getchar();
         assert(false);
@@ -40,14 +41,12 @@ Window::Window() {
 
     glfwSetCursorPos(window, WIDTH, HEIGHT);
 
-	glEnable(GL_DEPTH_TEST);
+    glEnable(GL_DEPTH_TEST);
 }
 
 bool Window::is_open() {
-	return glfwGetKey(window, GLFW_KEY_ESCAPE) != GLFW_PRESS &&
-             glfwWindowShouldClose(window) == 0;
+    return glfwGetKey(window, GLFW_KEY_ESCAPE) != GLFW_PRESS &&
+           glfwWindowShouldClose(window) == 0;
 }
 
-GLFWwindow* Window::glfw_window() {
-	return window;
-}
+GLFWwindow* Window::glfw_window() { return window; }

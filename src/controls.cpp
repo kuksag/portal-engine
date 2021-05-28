@@ -9,16 +9,17 @@
 using namespace Settings::Controls;
 using namespace Settings::Window;
 
-Controller::Controller(Camera& camera_, Window& window_)
+Controller::Controller(Camera &camera_, Window &window_)
     : camera(camera_),
       window(window_),
       last_time_point(),
       is_fullscreen(false) {
-    //window_initialise();
-        // setup functions-callback
+    // window_initialise();
+    // setup functions-callback
     glfwSetWindowUserPointer(window.glfw_window(), this);
     glfwSetScrollCallback(window.glfw_window(), glfw_scroll_callback);
-    glfwSetFramebufferSizeCallback(window.glfw_window(), glfw_framebuffer_size_callback);
+    glfwSetFramebufferSizeCallback(window.glfw_window(),
+                                   glfw_framebuffer_size_callback);
     glfwSetWindowFocusCallback(window.glfw_window(), glfw_focus_callback);
     update_time();
 }
@@ -58,7 +59,7 @@ void Controller::cursor_position_callback() {
     auto y_delta = static_cast<float>(height / 2.0 - y_mouse);
 
     camera.process_mouse_move(static_cast<float>(x_delta),
-                               static_cast<float>(y_delta), time_delta);
+                              static_cast<float>(y_delta), time_delta);
 
     glfwSetCursorPos(window.glfw_window(), width / 2.0, height / 2.0);
 }
@@ -121,8 +122,6 @@ void Controller::key_callback() {
     }
 }
 
-
-
 void Controller::update_time() {
     last_time_point = static_cast<float>(glfwGetTime());
 }
@@ -137,24 +136,27 @@ void Controller::toggle_fullscreen(bool flag) {
 
     if (flag) {
         glfwGetWindowPos(window.glfw_window(), &pos_x_last, &pos_y_last);
-        glfwGetWindowSize(window.glfw_window(), &width_last_size, &height_last_size);
+        glfwGetWindowSize(window.glfw_window(), &width_last_size,
+                          &height_last_size);
 
         const GLFWvidmode *mode = glfwGetVideoMode(glfwGetPrimaryMonitor());
 
-        glfwSetWindowMonitor(window.glfw_window(), glfwGetPrimaryMonitor(), 0, 0, mode->width,
-                             mode->height, mode->refreshRate);
-        glfw_framebuffer_size_callback(window.glfw_window(), mode->width, mode->height);
+        glfwSetWindowMonitor(window.glfw_window(), glfwGetPrimaryMonitor(), 0,
+                             0, mode->width, mode->height, mode->refreshRate);
+        glfw_framebuffer_size_callback(window.glfw_window(), mode->width,
+                                       mode->height);
         is_fullscreen = true;
     } else {
-        glfwSetWindowMonitor(window.glfw_window(), nullptr, pos_x_last, pos_y_last,
-                             width_last_size, height_last_size, 0);
+        glfwSetWindowMonitor(window.glfw_window(), nullptr, pos_x_last,
+                             pos_y_last, width_last_size, height_last_size, 0);
         glfw_framebuffer_size_callback(window.glfw_window(), width_last_size,
                                        height_last_size);
         is_fullscreen = false;
     }
 }
 
-void glfw_scroll_callback(GLFWwindow *window, [[maybe_unused]] double x_delta, double y_delta) {
+void glfw_scroll_callback(GLFWwindow *window, [[maybe_unused]] double x_delta,
+                          double y_delta) {
     auto *controller =
         reinterpret_cast<Controller *>(glfwGetWindowUserPointer(window));
     if (controller) {
@@ -164,7 +166,8 @@ void glfw_scroll_callback(GLFWwindow *window, [[maybe_unused]] double x_delta, d
     }
 }
 
-void glfw_framebuffer_size_callback( [[maybe_unused]] GLFWwindow *window, int width, int height) {
+void glfw_framebuffer_size_callback([[maybe_unused]] GLFWwindow *window,
+                                    int width, int height) {
     glViewport(0, 0, width, height);
 }
 
@@ -176,9 +179,7 @@ void glfw_focus_callback(GLFWwindow *window, int focused) {
     }
 }
 
-glm::vec3 Controller::get_position() const {
-    return camera.get_position();
-}
+glm::vec3 Controller::get_position() const { return camera.get_position(); }
 
 glm::vec3 Controller::get_position_after_move() {
     auto old_version_of_camera = camera;
@@ -189,7 +190,8 @@ glm::vec3 Controller::get_position_after_move() {
     return position;
 }
 bool Controller::is_enter_pressed() {
-    bool is_pressed = glfwGetKey(window.glfw_window(), GLFW_KEY_ENTER) == GLFW_PRESS;
+    bool is_pressed =
+        glfwGetKey(window.glfw_window(), GLFW_KEY_ENTER) == GLFW_PRESS;
     static bool pressed_already = false;
     if (is_pressed && !pressed_already) {
         pressed_already = true;
@@ -200,6 +202,4 @@ bool Controller::is_enter_pressed() {
     }
     return false;
 }
-float Controller::get_time_delta() {
-    return glfwGetTime() - last_time_point;
-}
+float Controller::get_time_delta() { return glfwGetTime() - last_time_point; }

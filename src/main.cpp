@@ -1,13 +1,12 @@
 #include <GL/glew.h>
 #include <GLFW/glfw3.h>
 
-
 #include "camera.h"
 #include "controls.h"
+#include "light_source.h"
 #include "portal.h"
 #include "primitives.h"
 #include "puzzle.h"
-#include "light_source.h"
 #include "scene.h"
 
 using namespace Settings::Window;
@@ -45,19 +44,16 @@ int main() {
     cone->scale(glm::vec3(0.5));
     cone->set_color({0.4, 0.4, 0.4});
 
-
+    auto jt = scene.add_jokers_trap({3, 3, -5});
+    jt->rotate(M_PI_2, {0.1, 0.4, 1});
 
     scene.add_light({5, 25, 5}, {1, 1, 1}, 0.6f, false);
     scene.add_light({5, 25, 5}, {0.7, 0.8, 0.9}, 0.8f, true);
-
 
     // -------------------------------------------------------------------------
     do {
         scene.update();
         scene.draw();
-
-        // p->set_translation_matrix(glm::mat4(1));
-        // p->translate(camera.get_position() + glm::vec3{0, -0.6, 0});
 
         glfwPollEvents();
     } while (window.is_open());

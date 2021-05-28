@@ -1,6 +1,6 @@
 #include "entity.h"
-#include <cassert>
 
+#include <cassert>
 #include <glm/gtc/matrix_transform.hpp>
 
 Entity::Entity()
@@ -13,9 +13,7 @@ void Entity::update() {
     model_matrix = translation_matrix * rotation_matrix * scale_matrix;
 }
 
-void Entity::link_to(Entity* link) {
-    this->link = link;
-}
+void Entity::link_to(Entity *link) { this->link = link; }
 
 glm::mat4 Entity::get_translation_matrix() const { return translation_matrix; }
 
@@ -58,9 +56,7 @@ void Entity::set_model_matrix(const glm::mat4 &data) {
     model_matrix = data;
     // alert! next update will undo this action
 }
-void Entity::move([[maybe_unused]] float time_delta) {
-    assert(false);
-}
+void Entity::move([[maybe_unused]] float time_delta) { assert(false); }
 glm::vec3 Entity::get_position() const {
     return get_model_matrix() * glm::vec4(0.0f, 0.0f, 0.0f, 1.0f);
 }
