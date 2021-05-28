@@ -45,6 +45,9 @@ int main() {
     cone->scale(glm::vec3(0.5));
     cone->set_color({0.4, 0.4, 0.4});
 
+    JokersTrap jt(scene);
+    jt.translate({3, 3, 3});
+
 
 
     scene.add_light({5, 25, 5}, {1, 1, 1}, 0.6f, false);
