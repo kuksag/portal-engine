@@ -14,6 +14,9 @@ _deps
 .idea/
 cmake-build-debug/
 
+# Code Blocks Project
+*.cbp
+
 # Prerequisites
 *.d
 
@@ -21,7 +24,6 @@ cmake-build-debug/
 *.slo
 *.lo
 *.o
-*.obj
 
 # Precompiled Headers
 *.gch

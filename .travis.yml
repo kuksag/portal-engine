@@ -1,0 +1,60 @@
+language: cpp
+os: linux
+dist: focal
+
+addons:
+  apt:
+    packages:
+      - aptitude
+      - assimp-utils
+      - build-essential
+      - clang
+      - clang-format
+      - clang-tidy
+      - clang-tools
+      - clang-10
+      - clang-tidy-10
+      - clang-tools-10
+      - libclang-common-10-dev
+      - lib32gcc-s1
+      - lib32stdc++6
+      - libc6-i386
+      - libc6
+      - cmake
+      - cppcheck
+      - freeglut3
+      - freeglut3-dev
+      - g++
+      - gcc-10
+      - glew-utils
+      - libassimp-dev
+      - libc++-10-dev
+      - libc++abi-10-dev
+      - libglew-dev
+      - libglfw3
+      - libglfw3-dev
+      - libglm-dev
+      - libglu1-mesa-dev
+      - libsoil-dev
+      - libstdc++6
+      - libxi-dev
+      - libxmu-dev
+      - mesa-common-dev
+      - mesa-utils
+      - xorg-dev
+
+branches:
+  only:
+    - master
+
+notifications:
+  email: false
+
+jobs:
+  include:
+    - name: build
+      script: cmake . && cmake --build .
+    - name: clang-format
+      script: for file in $(find . -iname '*.cpp' -or -iname '*.h' -and -not -iname 'doctest.h'); do diff -u <(cat "$file") <(clang-format "$file") || exit 1; done
+    - name: clang-tidy
+      script: cmake . -DCMAKE_CXX_CLANG_TIDY='clang-tidy;-header-filter=.;-checks=*;' -DCMAKE_CXX_FLAGS="-Werror -Wall -Wextra" && cmake --build .
