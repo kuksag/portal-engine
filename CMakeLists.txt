@@ -28,6 +28,13 @@ endif ()
 set(OPENGL_LIBS OpenGL::GL GLFW::GLFW GLEW::GLEW glm::glm SOIL assimp)
 
 add_compile_options(-Wall -Wextra -O2)
+
+#add_compile_options(-fsanitize=address)
+#add_link_options(-fsanitize=address)
+
+#add_compile_options(-fsanitize=undefined)
+#add_link_options(-fsanitize=undefined)
+
 add_executable(main
         src/main.cpp
         src/camera.cpp include/camera.h
