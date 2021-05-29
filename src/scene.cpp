@@ -43,7 +43,8 @@ void Scene::draw() const {
                 ls->gen_depth_map(dynamic_cast<Drawable*>(i.second[j].get()));
         for (const auto& j : primitives)
             for (const auto& i : j)
-                ls->gen_depth_map(dynamic_cast<Drawable*>(i.get()));
+                if (i->is_visible())
+                    ls->gen_depth_map(dynamic_cast<Drawable*>(i.get()));
         ls->finish_depth_test();
     }
     glViewport(0, 0, Settings::Window::WIDTH,
@@ -198,6 +199,9 @@ void Scene::update() {
 
 void Scene::render_scene(const Camera& Cam, int recursion_level,
                          std::function<bool(const Entity*)> is_visible) const {
+
+
+
     auto draw_portals = [&](const Camera& cam) {
         for (auto& portal : portals) {
             portal->draw1(cam);
@@ -291,10 +295,10 @@ void Scene::render_scene(const Camera& Cam, int recursion_level,
             // Pass our new view matrix and the clipped projection matrix (see
             // above)
             auto check_if_visible = [&](const Entity* entity) {
-                //                if (auto plane = dynamic_cast<const
-                //                Plane*>(entity); plane) {
-                //                    return true;
-                //                }
+                                if (auto plane = dynamic_cast<const
+                                Plane*>(entity); plane) {
+                                    return true;
+                                }
                 glm::vec3 normal = portal->get_destination()->get_normal();
                 glm::vec3 entity_vector =
                     entity->get_position() -

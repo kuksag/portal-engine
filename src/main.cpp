@@ -47,8 +47,9 @@ int main() {
     auto jt = scene.add_jokers_trap({3, 3, -5});
     jt->rotate(M_PI_2, {0.1, 0.4, 1});
 
-    scene.add_light({5, 25, 5}, {1, 1, 1}, 0.6f, false);
-    scene.add_light({5, 25, 5}, {0.7, 0.8, 0.9}, 0.8f, true);
+    scene.add_light(glm::vec3(JokersTrap::MOVE_DISTANCE * 3.5f + 1), {1, 1, 1},  0.0f, false);
+    scene.add_light(glm::vec3(JokersTrap::MOVE_DISTANCE * 7.5f + 1), {1, 1, 1},  0.0f, false);
+    scene.add_light(glm::vec3(5.0f, 25.0f, 5.f), {0.3, 0.5, 0.1}, 1.5f, true);
 
     // -------------------------------------------------------------------------
     do {

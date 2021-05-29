@@ -9,7 +9,7 @@ JokersTrap::JokersTrap(Scene& scene, const glm::vec3& position,
 
     if (patterns.empty()) {
         for (std::size_t i = 0; i < EDGE_NUMBER; i++) {
-            patterns.emplace_back(PortalsCube(scene));
+            patterns.emplace_back(scene);
         }
 
         patterns[0].centroid =

@@ -88,6 +88,7 @@ void Model::draw(
     set_vec3(shader->get_uniform_id("camera_pos"), camera.get_position());
     glUniform1i(shader->get_uniform_id("count_of_light_sources"),
                 light_sources.size());
+
     for (std::size_t i = 0; i < light_sources.size(); ++i) {
         std::stringstream position_uniform_name;
         position_uniform_name << "light_sources[" << i << "].position";

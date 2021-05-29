@@ -58,8 +58,13 @@ vec3 calc_light_effect(LightSource light_source, vec3 norm) {
         specular = vec3(0.0f, 0.0f, 0.0f);
     }
 
-    float attenuation = calc_attenuation(distance(light_source.position, vec3(point_pos)));
-
+    float attenuation = 0.0f;
+    const float Eps = 0.0001;
+    if (light_source.intensity < Eps) {
+        attenuation = 1.0f;
+    } else {
+        attenuation = calc_attenuation(distance(light_source.position, vec3(point_pos))) * light_source.intensity;
+    }
     return attenuation * (diffusion + specular);
 }
 
@@ -116,7 +121,7 @@ void main()
     vec3 norm = normalize(Normal);
     vec3 summary_effects = vec3(0.0, 0.0, 0.0);
     for (int i = 0; i < count_of_light_sources; ++i) {
-        vec3 additional_effect = calc_light_effect(light_sources[i], norm) * light_sources[i].intensity;
+        vec3 additional_effect = calc_light_effect(light_sources[i], norm);
         if (is_shadowed_fs[i] == 1) {
             additional_effect *= calc_shadow(i);
         }

@@ -12,7 +12,6 @@ struct Portal;
 struct JokersTrap : Drawable {
 private:
     static const std::size_t EDGE_NUMBER = 6;
-    const float MOVE_DISTANCE = 100.0F * Settings::Camera::DISPLAY_RANGE_FAR;
 
     struct PortalsCube : Entity {
         std::vector<std::shared_ptr<Portal>> portals;
@@ -25,6 +24,9 @@ private:
     PortalsCube base;
 
 public:
+
+    inline static const float MOVE_DISTANCE = 100.0F * Settings::Camera::DISPLAY_RANGE_FAR;
+
     JokersTrap(Scene& scene, const glm::vec3& position,
                std::shared_ptr<ShaderProgram> shader);
 
