@@ -11,6 +11,52 @@
 
 using namespace Settings::Window;
 
+auto add_tunel(Scene& scene) {
+    auto floor1 = scene.add_primitive<Plane>({0, 0, 0}, {0.5, 0.2, 0.3});
+    floor1->scale({10, 1, 10});
+
+    const float MOVE_DISTANCE = 200;
+
+    auto floor2 = scene.add_primitive<Plane>({MOVE_DISTANCE + 5, 0, 0}, {0.5, 0.2, 0.3});
+    floor2->scale({10, 1, 10});
+
+    auto p1 = scene.add_portal({0, 1.1, 2});
+    auto p2 = scene.add_portal({0, 1.1, -2});
+    auto p3 = scene.add_portal({MOVE_DISTANCE, 1.1, 4});
+    auto p4 = scene.add_portal({MOVE_DISTANCE, 1.1, -4});
+    p1->set_destination(p3.get());
+    p3->set_destination(p1.get());
+    p4->set_destination(p2.get());
+    p2->set_destination(p4.get());
+    p1->rotate(M_PI, {0, 1, 0});
+    p4->rotate(M_PI, {0, 1, 0});
+    p1->scale({0.5, 1, 1});
+    p2->scale({0.5, 1, 1});
+    p3->scale({0.5, 1, 1});
+    p4->scale({0.5, 1, 1});
+
+    auto top1 = scene.add_primitive<Plane>({0, 2.3, 0}, {0, 1, 0});
+    top1->scale({0.61, 1, 2});
+    auto top2 = scene.add_primitive<Plane>({MOVE_DISTANCE, 2.3, 0}, {0, 1, 0});
+    top2->scale({0.61, 1, 4});
+    auto right1 = scene.add_primitive<Plane>({0.61, 1.15, 0}, {0, 1, 0});
+    right1->scale({1.16, 1, 2});
+    right1->rotate(M_PI_2, {0, 0, 1});
+    auto right2 = scene.add_primitive<Plane>({MOVE_DISTANCE + 0.61, 1.15, 0}, {0, 1, 0});
+    right2->scale({1.16, 1, 4});
+    right2->rotate(M_PI_2, {0, 0, 1});
+    auto left1 = scene.add_primitive<Plane>({-0.61, 1.15, 0}, {0, 1, 0});
+    left1->scale({1.16, 1, 2});
+    left1->rotate(M_PI_2, {0, 0, 1});
+    auto left2 = scene.add_primitive<Plane>({MOVE_DISTANCE - 0.61, 1.15, 0}, {0, 1, 0});
+    left2->scale({1.16, 1, 4});
+    left2->rotate(M_PI_2, {0, 0, 1});
+
+    scene.add_light(glm::vec3(JokersTrap::MOVE_DISTANCE * 3.5f + 1), {1, 1, 1},  0.0f, false);
+    scene.add_light(glm::vec3(JokersTrap::MOVE_DISTANCE * 7.5f + 1), {1, 1, 1},  0.0f, false);
+    scene.add_light(glm::vec3(5.0f, 25.0f, 5.f), {0.3, 0.5, 0.1}, 1.5f, true);
+};
+
 int main() {
     Window window;
     Camera camera;
@@ -20,18 +66,20 @@ int main() {
     Scene scene(window, camera, controller);
     scene.set_bg_color({0.3, 0.3, 0.6});
 
-    auto floor = scene.add_primitive<Plane>({0, 0, 0}, {0.5, 0.2, 0.3});
-    floor->scale({10, 1, 10});
+    add_tunel(scene);
+
+    // auto floor = scene.add_primitive<Plane>({0, 0, 0}, {0.5, 0.2, 0.3});
+    // floor->scale({10, 1, 10});
 
     // auto t = scene.add_primitive<Plane>({0, 2, 0});
     // t->rotate(3.14 / 2, {-1, 0, 0});
 
-    auto wall1 = scene.add_primitive<Plane>({5, 1.2, 4}, {0.7, 0.8, 0.5});
-    wall1->scale(glm::vec3(3.0f));
-    wall1->rotate(M_PI_4, {0.4, 0.6, 1});
-    auto wall2 = scene.add_primitive<Plane>({-5, 1.2, -2}, {0.7, 0.8, 0.5});
-    wall2->scale(glm::vec3(3.0f));
-    wall2->rotate(M_PI_2, {0, 0, 1});
+    // auto wall1 = scene.add_primitive<Plane>({5, 1.2, 4}, {0.7, 0.8, 0.5});
+    // wall1->scale(glm::vec3(3.0f));
+    // wall1->rotate(M_PI_4, {0.4, 0.6, 1});
+    // auto wall2 = scene.add_primitive<Plane>({-5, 1.2, -2}, {0.7, 0.8, 0.5});
+    // wall2->scale(glm::vec3(3.0f));
+    // wall2->rotate(M_PI_2, {0, 0, 1});
     // auto cube = scene.add_primitive<Cube>();
     // cube->translate({1, 1.2, -2});
     // cube->scale(glm::vec3(0.5));
@@ -50,9 +98,9 @@ int main() {
     // auto jt = scene.add_jokers_trap({3, 3, -5});
     // jt->rotate(M_PI_2, {0.1, 0.4, 1});
 
-    scene.add_light(glm::vec3(JokersTrap::MOVE_DISTANCE * 3.5f + 1), {1, 1, 1},  0.0f, false);
-    scene.add_light(glm::vec3(JokersTrap::MOVE_DISTANCE * 7.5f + 1), {1, 1, 1},  0.0f, false);
-    scene.add_light(glm::vec3(5.0f, 25.0f, 5.f), {0.3, 0.5, 0.1}, 1.5f, true);
+    // scene.add_light(glm::vec3(JokersTrap::MOVE_DISTANCE * 3.5f + 1), {1, 1, 1},  0.0f, false);
+    // scene.add_light(glm::vec3(JokersTrap::MOVE_DISTANCE * 7.5f + 1), {1, 1, 1},  0.0f, false);
+    // scene.add_light(glm::vec3(5.0f, 25.0f, 5.f), {0.3, 0.5, 0.1}, 1.5f, true);
 
     // -------------------------------------------------------------------------
     do {
