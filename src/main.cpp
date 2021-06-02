@@ -15,10 +15,15 @@ auto add_tunel(Scene& scene) {
     auto floor1 = scene.add_primitive<Plane>({0, 0, 0}, {0.5, 0.2, 0.3});
     floor1->scale({10, 1, 10});
 
-    const float MOVE_DISTANCE = 200;
+    const float MOVE_DISTANCE = 10;
 
     auto floor2 = scene.add_primitive<Plane>({MOVE_DISTANCE + 5, 0, 0}, {0.5, 0.2, 0.3});
     floor2->scale({10, 1, 10});
+
+    // auto re_color = [&](const glm::vec3& color, std::shared_ptr<Portal> p) {
+    //     for (auto i : p->bounds)
+    //         i->set_color(color);
+    // }
 
     auto p1 = scene.add_portal({0, 1.1, 2});
     auto p2 = scene.add_portal({0, 1.1, -2});
@@ -34,6 +39,11 @@ auto add_tunel(Scene& scene) {
     p2->scale({0.5, 1, 1});
     p3->scale({0.5, 1, 1});
     p4->scale({0.5, 1, 1});
+
+    p1->rotate(M_PI, {0, 1, 0});
+    p2->rotate(M_PI, {0, 1, 0});
+    p3->rotate(M_PI, {0, 1, 0});
+    p4->rotate(M_PI, {0, 1, 0});
 
     auto top1 = scene.add_primitive<Plane>({0, 2.3, 0}, {0, 1, 0});
     top1->scale({0.61, 1, 2});
