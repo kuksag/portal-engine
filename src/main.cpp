@@ -44,13 +44,29 @@ int main() {
     cone->scale(glm::vec3(0.5));
     cone->set_color({0.4, 0.4, 0.4});
 
-    auto jt = scene.add_jokers_trap({3, 3, -5});
-    jt->rotate(M_PI_2, {0.1, 0.4, 1});
-
-    scene.add_light(glm::vec3(JokersTrap::MOVE_DISTANCE * 3.5f + 1), {1, 1, 1},  0.0f, false);
-    scene.add_light(glm::vec3(JokersTrap::MOVE_DISTANCE * 7.5f + 1), {1, 1, 1},  0.0f, false);
-    scene.add_light(glm::vec3(5.0f, 25.0f, 5.f), {0.3, 0.5, 0.1}, 1.5f, true);
-
+    //auto jt = scene.add_jokers_trap({3, 3, -5});
+    //jt->rotate(M_PI_2, {0.1, 0.4, 1});
+//
+//    scene.add_light(glm::vec3(JokersTrap::MOVE_DISTANCE * 3.5f + 1), {1, 1, 1},  0.0f, false);
+//    scene.add_light(glm::vec3(JokersTrap::MOVE_DISTANCE * 7.5f + 1), {1, 1, 1},  0.0f, false);
+    scene.add_light(glm::vec3(5.0f, 25.0f, 5.f), {0.3, 0.5, 0.1}, 0.8f, true);
+   auto skull = scene.add_model("res/models/skull/12140_Skull_v3_L2.obj");
+    skull->scale(glm::vec3(0.1));
+    skull->rotate(-M_PI_2, {1, 0, 0});
+    skull->translate({1, 1, 1});
+    auto eye1 = scene.add_model("res/models/eye/eyeball.obj");
+    auto eye2 = scene.add_model("res/models/eye/eyeball.obj");
+    eye1->link_to(skull.get());
+    eye1->translate({0, 20, 0});
+    eye1->scale(glm::vec3(1.5));
+    eye1->translate({4.5, -30, 15.5});
+    eye1->rotate(M_PI_2, {1, 0, 0});
+    eye2->link_to(skull.get());
+    eye2->translate({0, 20, 0});
+    eye2->scale(glm::vec3(1.5));
+    eye2->translate({-4.5, -30, 15.5});
+    eye2->rotate(M_PI_2, {1, 0, 0});
+    skull->rotate(M_PI_4, {1, 1, 1});
     // -------------------------------------------------------------------------
     do {
         scene.update();
