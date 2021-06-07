@@ -22,6 +22,8 @@ int main() {
 
     auto floor = scene.add_primitive<Plane>({0, 0, 0}, {0.5, 0.2, 0.3});
     floor->scale({10, 1, 10});
+    auto floor1 = scene.add_primitive<Plane>({0, 0, 0}, {0.5, 0.2, 0.3});
+    floor1->scale({10, 1, 10});
 
     auto wall1 = scene.add_primitive<Plane>({5, 1.2, 4}, {0.7, 0.8, 0.5});
     wall1->scale(glm::vec3(3.0f));
@@ -49,7 +51,7 @@ int main() {
 //
 //    scene.add_light(glm::vec3(JokersTrap::MOVE_DISTANCE * 3.5f + 1), {1, 1, 1},  0.0f, false);
 //    scene.add_light(glm::vec3(JokersTrap::MOVE_DISTANCE * 7.5f + 1), {1, 1, 1},  0.0f, false);
-    scene.add_light(glm::vec3(5.0f, 25.0f, 5.f), {0.3, 0.5, 0.1}, 0.8f, true);
+    scene.add_light(glm::vec3(5.0f, 25.0f, 5.f), glm::vec3(1.0f), 1.0f, true);
    auto skull = scene.add_model("res/models/skull/12140_Skull_v3_L2.obj");
     skull->scale(glm::vec3(0.1));
     skull->rotate(-M_PI_2, {1, 0, 0});
@@ -67,6 +69,11 @@ int main() {
     eye2->translate({-4.5, -30, 15.5});
     eye2->rotate(M_PI_2, {1, 0, 0});
     skull->rotate(M_PI_4, {1, 1, 1});
+    skull->translate({2, 2, 2});
+    auto skull1 = scene.add_model("res/models/skull/12140_Skull_v3_L2.obj");
+    skull1->scale(glm::vec3(0.1));
+    skull1->translate({1, 2, 1});
+    scene.add_primitive<Cube>({3, 4, 1}, {0.3, 0.5, 0.7});
     // -------------------------------------------------------------------------
     do {
         scene.update();

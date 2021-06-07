@@ -38,13 +38,21 @@ void Scene::draw() const {
     glClear(GL_STENCIL_BUFFER_BIT | GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
     for (auto& ls : lights) {
         ls->start_depth_test();
-        for (const auto& i : models)
-            for (unsigned j = 1; j < i.second.size(); ++j)
-                ls->gen_depth_map(dynamic_cast<Drawable*>(i.second[j].get()));
-        for (const auto& j : primitives)
-            for (const auto& i : j)
-                if (i->is_visible())
-                    ls->gen_depth_map(dynamic_cast<Drawable*>(i.get()));
+        for (const auto& i : models) {
+            for (unsigned j = 1; j < i.second.size(); ++j) {
+                    i.second[0]->move_to(i.second[j]);
+                    ls->gen_depth_map(dynamic_cast<Drawable*>(i.second[0].get()));
+            }
+        }
+        for (const auto& prim : primitives) {
+            for (std::size_t i = 1; i < prim.size(); ++i) {
+                if (prim[i]->is_visible()) {
+                    prim[0]->move_to(prim[i]);
+                    prim[0]->set_color(prim[i]->get_color());
+                    ls->gen_depth_map(dynamic_cast<Drawable*>(prim[0].get()));
+                }
+            }
+        }
         ls->finish_depth_test();
     }
     glViewport(0, 0, Settings::Window::WIDTH,
@@ -112,8 +120,7 @@ void Scene::update() {
                 Camera custom_camera;
                 custom_camera.set_view_matrix(
                     glm::lookAt(first_point, last_point,
-                                {0, 1, 0} /*random vector*/),
-                    true);
+                                glm::mat3(portal->get_destination()->get_rotation_matrix()) * glm::vec3(0, 1, 0)));
                 custom_camera =
                     get_portal_destination_camera(custom_camera, *portal);
                 custom_camera.set_view_matrix(custom_camera.get_view_matrix(),
@@ -159,6 +166,7 @@ void Scene::update() {
                     if (!is_first && plane->is_visible() &&
                         plane->crossed(first_point, last_point)) {
                         create_portal(plane);
+                        break;
                     }
                 }
                 is_first = false;
