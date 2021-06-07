@@ -67,7 +67,7 @@ public:
     std::shared_ptr<Primitive> add_primitive(const glm::vec3& position = {0, 0,
                                                                           0},
                                              const glm::vec3& color = {1, 1,
-                                                                       1});
+                                                                       1}, bool need_load = false);
 
     std::shared_ptr<Model> add_model(const std::string& path,
                                      const glm::vec3& position = {0, 0, 0});
@@ -122,13 +122,19 @@ struct PrimId<Cone> {
 
 template <class Type>
 std::shared_ptr<Primitive> Scene::add_primitive(const glm::vec3& position,
-                                                const glm::vec3& color) {
+                                                const glm::vec3& color, bool need_load) {
     static_assert(PrimId<Type>::id != -1);
-    int id = PrimId<Type>::id;
+    const int id = PrimId<Type>::id;
     if (primitives[id].empty())
         primitives[id].push_back(std::make_shared<Type>(lighted_shader, true));
     primitives[id].push_back(
-        std::make_shared<Type>(lighted_shader, true, position, color));
+        std::make_shared<Type>(lighted_shader, need_load, position, color));
+    if (id == PrimId<Plane>::id && !need_load) {
+    	primitives[id].push_back(std::make_shared<Type>(lighted_shader, false, glm::vec3{0, 0, 0}, color));
+		primitives[id].back()->link_to(primitives[id][primitives[id].size() - 2].get());
+		primitives[id].back()->rotate(M_PI, {1, 0, 0});
+		return primitives[id][primitives[id].size() - 2];
+    }
     return primitives[id].back();
 }
 

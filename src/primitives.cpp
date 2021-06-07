@@ -14,13 +14,20 @@ Primitive::Primitive(const glm::vec3& position, const glm::vec3& color,
 
 void Primitive::set_color(glm::vec3 color_) {
     color = color_;
+    color = get_color();
     shader->use();
     glUniform4f(shader->get_uniform_id("color"), color.x, color.y, color.z, 1);
 }
 
 void Primitive::set_unvisible() { set_color({-1, -1, -1}); }
 
-glm::vec3 Primitive::get_color() const { return color; }
+glm::vec3 Primitive::get_color() const {
+    if (link) {
+        Primitive* prim = dynamic_cast<Primitive*>(link);
+        return prim ? prim->color : color;
+    }
+    return color;
+}
 
 bool Primitive::is_visible() const {
     return color.x >= 0 && color.y >= 0 && color.z >= 0;

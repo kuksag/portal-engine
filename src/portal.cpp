@@ -13,7 +13,7 @@
 Portal::Portal(Scene *scene, std::shared_ptr<ShaderProgram> shader)
     : Drawable(shader), destination(this) {
     // -------------------------------------------------------------------------
-    shape = scene->add_primitive<Plane>();
+    shape = scene->add_primitive<Plane>({0, 0, 0}, {-1, -1, -1}, true);
     shape->rotate(M_PI_2, {1.0, 0.0, 0.0});
     shape->rotate(M_PI, {0.0, 0.0, 1.0});
     shape->link_to(this);
