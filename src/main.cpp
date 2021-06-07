@@ -78,8 +78,6 @@ int main() {
 
     auto floor = scene.add_primitive<Plane>({0, 0, 0}, {0.5, 0.2, 0.3});
     floor->scale({10, 1, 10});
-    auto floor1 = scene.add_primitive<Plane>({0, 0, 0}, {0.5, 0.2, 0.3});
-    floor1->scale({10, 1, 10});
 
     auto wall1 = scene.add_primitive<Plane>({5, 1.2, 4}, {0.7, 0.8, 0.5});
     wall1->scale(glm::vec3(3.0f));
