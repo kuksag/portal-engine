@@ -48,7 +48,6 @@ void Scene::draw() const {
             for (std::size_t i = 1; i < prim.size(); ++i) {
                 if (prim[i]->is_visible()) {
                     prim[0]->move_to(prim[i]);
-                    prim[0]->set_color(prim[i]->get_color());
                     ls->gen_depth_map(dynamic_cast<Drawable*>(prim[0].get()));
                 }
             }
@@ -120,7 +119,7 @@ void Scene::update() {
                 Camera custom_camera;
                 custom_camera.set_view_matrix(
                     glm::lookAt(first_point, last_point,
-                                glm::mat3(portal->get_destination()->get_rotation_matrix()) * glm::vec3(0, 1, 0)));
+                                glm::vec3(portal->get_rotation_matrix() * glm::vec4(0, 1, 0, 0))));
                 custom_camera =
                     get_portal_destination_camera(custom_camera, *portal);
                 custom_camera.set_view_matrix(custom_camera.get_view_matrix(),
