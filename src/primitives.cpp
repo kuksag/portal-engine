@@ -14,13 +14,20 @@ Primitive::Primitive(const glm::vec3& position, const glm::vec3& color,
 
 void Primitive::set_color(glm::vec3 color_) {
     color = color_;
+    color = get_color();
     shader->use();
     glUniform4f(shader->get_uniform_id("color"), color.x, color.y, color.z, 1);
 }
 
 void Primitive::set_unvisible() { set_color({-1, -1, -1}); }
 
-glm::vec3 Primitive::get_color() const { return color; }
+glm::vec3 Primitive::get_color() const {
+    if (link) {
+        Primitive* prim = dynamic_cast<Primitive*>(link);
+        return prim ? prim->color : color;
+    }
+    return color;
+}
 
 bool Primitive::is_visible() const {
     return color.x >= 0 && color.y >= 0 && color.z >= 0;
@@ -40,8 +47,7 @@ bool Plane::crossed(glm::vec3 first_point, glm::vec3 last_point) const {
     auto inverse_operator = glm::inverse(get_model_matrix());
     first_point = inverse_operator * glm::vec4(first_point, 1.0f);
     last_point = inverse_operator * glm::vec4(last_point, 1.0f);
-    bool crossed_plane = (first_point.y < 0.0 && last_point.y > 0.0) ||
-                         (first_point.y > 0.0 && last_point.y < 0.0);
+    bool crossed_plane = (first_point.y > 0.0 && last_point.y < 0.0);
     if (!crossed_plane) {
         return false;
     }
