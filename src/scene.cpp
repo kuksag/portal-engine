@@ -230,6 +230,11 @@ void Scene::render_scene(const Camera& Cam, int recursion_level,
     };
 
     for (auto& portal : portals) {
+        /*
+         * Based on Thomas Rinsma’s blog post on rendering recursive portals:
+         * https://th0mas.nl/2013/05/19/rendering-recursive-portals-with-opengl/
+         */
+
         if (portal->is_support()) continue;
         // Calculate view matrix as if the player was already teleported
         Camera destination_camera = Cam;
