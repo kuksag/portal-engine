@@ -16,8 +16,8 @@ make -j10
 
 ## demo
 
-![](/demp/img1.png)
-![](/demp/img2.png)
-![](/demp/img3.png)
-![](/demp/gif.mp4)
+![](/demo/img1.png)
+![](/demo/img2.png)
+![](/demo/img3.png)
+![](/demo/gif.mp4)
 
