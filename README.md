@@ -13,3 +13,11 @@ cmake .
 make -j10 
 ./main
 ```
+
+## demo
+
+![](/demp/img1.png)
+![](/demp/img2.png)
+![](/demp/img3.png)
+![](/demp/gif.mp4)
+
