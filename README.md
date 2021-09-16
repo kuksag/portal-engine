@@ -19,5 +19,5 @@ make -j10
 ![](/demo/img1.png)
 ![](/demo/img2.png)
 ![](/demo/img3.png)
-![](/demo/gif.mp4)
+![](/demo/gif.gif)
 
