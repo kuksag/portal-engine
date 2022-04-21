@@ -1,3 +1,4 @@
+![](/demo/gif.gif)
 # portal-engine
 
 This is a graphic engine that implements Portal effects in OpenGL
@@ -19,5 +20,5 @@ make -j10
 ![](/demo/img1.png)
 ![](/demo/img2.png)
 ![](/demo/img3.png)
-![](/demo/gif.gif)
+
 
